@@ -1,10 +1,18 @@
+import type { AdapterAccount } from "@auth/core/adapters";
 import {
   integer,
-  sqliteTable,
-  text,
   primaryKey,
+  sqliteTableCreator,
+  text,
 } from "drizzle-orm/sqlite-core";
-import type { AdapterAccount } from "@auth/core/adapters";
+
+/**
+ * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
+ * database instance for multiple projects.
+ *
+ * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
+ */
+export const sqliteTable = sqliteTableCreator((name) => `links_${name}`);
 
 export const users = sqliteTable("user", {
   id: text("id").notNull().primaryKey(),
