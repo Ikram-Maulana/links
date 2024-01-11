@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/sonner";
 import { env } from "@/env";
 import { EdgeStoreProvider } from "@/lib/edgestore";
 import "@/styles/globals.css";
@@ -63,6 +64,13 @@ export default function RootLayout({
         <TRPCReactProvider cookies={cookies().toString()}>
           <EdgeStoreProvider>{children}</EdgeStoreProvider>
         </TRPCReactProvider>
+
+        <div className="lg:hidden">
+          <Toaster richColors position="bottom-center" duration={5000} />
+        </div>
+        <div className="hidden lg:flex">
+          <Toaster richColors position="top-center" duration={5000} />
+        </div>
       </body>
     </html>
   );
