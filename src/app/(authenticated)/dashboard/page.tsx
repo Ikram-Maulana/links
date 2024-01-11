@@ -15,7 +15,16 @@ const page: FC = async () => {
     redirect("/auth/login");
   }
 
-  return <div>Dashboard</div>;
+  return (
+    <div className="mb-6 flex flex-col">
+      <h1 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+        Dashboard
+      </h1>
+      <p className="text-sm font-medium leading-6 text-gray-500">
+        Welcome back, {session?.user.name}!
+      </p>
+    </div>
+  );
 };
 
 export default page;
