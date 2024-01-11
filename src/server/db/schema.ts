@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import type { AdapterAccount } from "@auth/core/adapters";
+import { relations } from "drizzle-orm";
 import {
   integer,
   primaryKey,
   sqliteTableCreator,
   text,
 } from "drizzle-orm/sqlite-core";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -14,6 +17,36 @@ import {
  */
 export const sqliteTable = sqliteTableCreator((name) => `links_${name}`);
 
+export const linksList = sqliteTable("linksList", {
+  id: text("id")
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => uuidv4()),
+  image: text("image"),
+  title: text("title").notNull(),
+  url: text("url").notNull(),
+  urlAlias: text("urlAlias").notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp_ms" }).notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp_ms" }).notNull(),
+});
+
+export const publicMetadata = sqliteTable("publicMetadata", {
+  id: text("id")
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => uuidv4()),
+  userId: text("userId")
+    .notNull()
+    .unique()
+    .references(() => users.id, {
+      onDelete: "cascade",
+    }),
+  avatar: text("avatar"),
+  bio: text("bio").notNull(),
+  location: text("location").notNull(),
+});
+
+// Next Auth
 export const users = sqliteTable("user", {
   id: text("id").notNull().primaryKey(),
   name: text("name"),
@@ -21,6 +54,13 @@ export const users = sqliteTable("user", {
   emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image"),
 });
+
+export const usersRelations = relations(users, ({ one }) => ({
+  publicMetadata: one(publicMetadata, {
+    fields: [users.id],
+    references: [publicMetadata.userId],
+  }),
+}));
 
 export const accounts = sqliteTable(
   "account",
