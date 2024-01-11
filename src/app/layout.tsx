@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { EdgeStoreProvider } from "@/lib/edgestore";
 import "@/styles/globals.css";
 import { TRPCReactProvider } from "@/trpc/react";
 import { GeistSans } from "geist/font/sans";
@@ -60,7 +61,7 @@ export default function RootLayout({
     >
       <body className="min-h-screen antialiased">
         <TRPCReactProvider cookies={cookies().toString()}>
-          {children}
+          <EdgeStoreProvider>{children}</EdgeStoreProvider>
         </TRPCReactProvider>
       </body>
     </html>
