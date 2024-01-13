@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { IconTriangleInfo } from "@irsyadadl/paranoid";
+import { IconCircleX } from "@irsyadadl/paranoid";
 import { type FC } from "react";
 import { errors } from "./data";
 
@@ -15,8 +15,11 @@ const ErrorMessage: FC<ErrorMessageProps> = ({ error }) => {
   return (
     <>
       {errorMessage && (
-        <Alert variant="destructive" className="mt-4">
-          <IconTriangleInfo className="h-4 w-4" />
+        <Alert
+          className="mt-4 border-red-500 bg-red-500 text-zinc-50 dark:border-red-900 dark:bg-red-900 dark:text-zinc-50"
+          variant="destructive"
+        >
+          <IconCircleX className="h-4 w-4 !text-[#fafafa]" />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{errorMessage}</AlertDescription>
         </Alert>
