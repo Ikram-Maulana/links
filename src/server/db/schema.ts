@@ -6,6 +6,7 @@ import {
   primaryKey,
   sqliteTableCreator,
   text,
+  unique,
 } from "drizzle-orm/sqlite-core";
 import { v4 as uuidv4 } from "uuid";
 
@@ -30,21 +31,26 @@ export const linksList = sqliteTable("linksList", {
   updatedAt: integer("updatedAt", { mode: "timestamp_ms" }).notNull(),
 });
 
-export const publicMetadata = sqliteTable("publicMetadata", {
-  id: text("id")
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => uuidv4()),
-  userId: text("userId")
-    .notNull()
-    .unique()
-    .references(() => users.id, {
-      onDelete: "cascade",
-    }),
-  avatar: text("avatar"),
-  bio: text("bio").notNull(),
-  location: text("location").notNull(),
-});
+export const publicMetadata = sqliteTable(
+  "publicMetadata",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => uuidv4()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
+    avatar: text("avatar"),
+    bio: text("bio").notNull(),
+    location: text("location").notNull(),
+  },
+  (publicMetadata) => ({
+    unq: unique().on(publicMetadata.userId),
+  }),
+);
 
 // Next Auth
 export const users = sqliteTable("user", {
