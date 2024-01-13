@@ -55,7 +55,8 @@ export const settingsRouter = createTRPCRouter({
               bio: input.bio,
               location: input.location,
             },
-          });
+          })
+          .returning();
 
         return upsertPublicMetadata;
       } catch (error) {
