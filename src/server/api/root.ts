@@ -1,3 +1,4 @@
+import { linksListRouter } from "@/server/api/routers/links-list";
 import { metricsRouter } from "@/server/api/routers/metrics";
 import { publicMetadataRouter } from "@/server/api/routers/public-metadata";
 import { settingsRouter } from "@/server/api/routers/settings";
@@ -9,6 +10,7 @@ import { createTRPCRouter } from "@/server/api/trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
+  linksList: linksListRouter,
   metrics: metricsRouter,
   publicMetadata: publicMetadataRouter,
   settings: settingsRouter,
