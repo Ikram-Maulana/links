@@ -5,6 +5,7 @@ import { IconCircleX } from "@irsyadadl/paranoid";
 import dynamic from "next/dynamic";
 import { type FC } from "react";
 import EditFormSkeleton from "./skeleton/edit-form-skeleton";
+import { unstable_noStore as noStore } from "next/cache";
 
 const EditForm = dynamic(() => import("./edit-form"), {
   ssr: false,
@@ -12,6 +13,7 @@ const EditForm = dynamic(() => import("./edit-form"), {
 });
 
 const EditCard: FC = async () => {
+  noStore();
   const getDetail = await api.settings.getDetail.query();
 
   if (!getDetail || "error" in getDetail) {

@@ -2,11 +2,13 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/trpc/server";
 import { IconCircleX } from "@irsyadadl/paranoid";
+import { unstable_noStore as noStore } from "next/cache";
 import { type FC } from "react";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 
 const Content: FC = async () => {
+  noStore();
   const linksList = await api.linksList.getAll.query();
 
   if (!linksList || "error" in linksList) {
