@@ -4,7 +4,6 @@ import { EdgeStoreProvider } from "@/lib/edgestore";
 import "@/styles/globals.css";
 import { TRPCReactProvider } from "@/trpc/react";
 import { GeistSans } from "geist/font/sans";
-import { cookies } from "next/headers";
 
 export const metadata = {
   title: "Ikram Maulana Links",
@@ -61,7 +60,7 @@ export default function RootLayout({
       className={`font-sans ${GeistSans.className} antialiased motion-safe:scroll-smooth`}
     >
       <body className="min-h-screen antialiased">
-        <TRPCReactProvider cookies={cookies().toString()}>
+        <TRPCReactProvider>
           <EdgeStoreProvider>{children}</EdgeStoreProvider>
         </TRPCReactProvider>
 
