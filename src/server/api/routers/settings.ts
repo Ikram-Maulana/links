@@ -31,8 +31,12 @@ export const settingsRouter = createTRPCRouter({
     .input(
       z.object({
         avatar: z.string().optional().nullable(),
-        bio: z.string(),
-        location: z.string(),
+        bio: z.string({
+          required_error: "Bio is required",
+        }),
+        location: z.string({
+          required_error: "Location is required",
+        }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
