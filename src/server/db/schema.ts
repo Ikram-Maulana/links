@@ -18,20 +18,26 @@ import { v4 as uuidv4 } from "uuid";
  */
 export const sqliteTable = sqliteTableCreator((name) => `links_${name}`);
 
-export const linksList = sqliteTable("linksList", {
-  id: text("id")
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => uuidv4()),
-  image: text("image"),
-  title: text("title").notNull(),
-  url: text("url").notNull(),
-  slug: text("slug").notNull(),
-  createdAt: integer("createdAt", { mode: "timestamp_ms" }).$default(
-    () => new Date(),
-  ),
-  updatedAt: integer("updatedAt", { mode: "timestamp_ms" }),
-});
+export const linksList = sqliteTable(
+  "linksList",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => uuidv4()),
+    image: text("image"),
+    title: text("title").notNull(),
+    url: text("url").notNull(),
+    slug: text("slug").notNull(),
+    createdAt: integer("createdAt", { mode: "timestamp_ms" }).$default(
+      () => new Date(),
+    ),
+    updatedAt: integer("updatedAt", { mode: "timestamp_ms" }),
+  },
+  (linksList) => ({
+    unq: unique().on(linksList.slug),
+  }),
+);
 
 export const publicMetadata = sqliteTable(
   "publicMetadata",
