@@ -19,7 +19,7 @@ export function DataTableToolbar<TData>({
     <div className="flex items-center justify-between">
       <div className="flex flex-1 flex-col items-start space-y-2 md:flex-row md:items-center md:space-x-2 md:space-y-0">
         <Input
-          placeholder="Cari nama proyek"
+          placeholder="Search link title"
           value={
             (table.getColumn("Link Title")?.getFilterValue() as string) ?? ""
           }
