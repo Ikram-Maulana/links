@@ -21,6 +21,10 @@ export const metadata = {
     "Founder Daunnesia",
     "Daunnesia Website",
     "Ikram Daunnesia",
+    "Ikram Links",
+    "Ikram Maulana Links",
+    "Ikram Maulana Social Media",
+    "Ikram Maulana Social Media Links",
   ],
   authors: [
     {
