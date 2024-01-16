@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { linksList } from "@/server/db/schema";
-import { desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const linksListRouter = createTRPCRouter({
@@ -58,6 +58,33 @@ export const linksListRouter = createTRPCRouter({
             url: input.url,
             slug: input.slug,
           })
+          .returning();
+
+        return data;
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+
+        return {
+          error: "Server Error",
+        };
+      }
+    }),
+
+  delete: protectedProcedure
+    .input(
+      z.object({
+        id: z.string({
+          required_error: "ID is required",
+        }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const data = await ctx.db
+          .delete(linksList)
+          .where(eq(linksList.id, input.id))
           .returning();
 
         return data;
