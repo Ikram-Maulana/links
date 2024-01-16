@@ -27,8 +27,10 @@ export const linksList = sqliteTable("linksList", {
   title: text("title").notNull(),
   url: text("url").notNull(),
   slug: text("slug").notNull(),
-  createdAt: integer("createdAt", { mode: "timestamp_ms" }).notNull(),
-  updatedAt: integer("updatedAt", { mode: "timestamp_ms" }).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp_ms" }).$default(
+    () => new Date(),
+  ),
+  updatedAt: integer("updatedAt", { mode: "timestamp_ms" }),
 });
 
 export const publicMetadata = sqliteTable(
