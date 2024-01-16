@@ -1,12 +1,12 @@
 "use client";
 
-import { type ColumnDef } from "@tanstack/react-table";
-import Image from "next/image";
-import { DataTableColumnHeader } from "./data-table-column-header";
-// import { DataTableRowActions } from "./data-table-row-action";
 import { type linksList } from "@/server/db/schema";
+import { type ColumnDef } from "@tanstack/react-table";
 import { type InferSelectModel } from "drizzle-orm";
+import Image from "next/image";
 import Link from "next/link";
+import { DataTableColumnHeader } from "./data-table-column-header";
+import { DataTableRowActions } from "./data-table-row-action";
 
 type TLinks = InferSelectModel<typeof linksList>;
 
@@ -79,8 +79,8 @@ export const columns: ColumnDef<TLinks>[] = [
     enableSorting: true,
     enableHiding: true,
   },
-  // {
-  //   id: "actions",
-  //   cell: ({ row }) => <DataTableRowActions row={row} />,
-  // },
+  {
+    id: "actions",
+    cell: ({ row }) => <DataTableRowActions row={row} />,
+  },
 ];
