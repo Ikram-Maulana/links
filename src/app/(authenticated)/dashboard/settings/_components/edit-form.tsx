@@ -83,18 +83,27 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
   const { mutate: mutateStore, isLoading: isLoadingStore } =
     api.settings.update.useMutation({
       onSuccess: async () => {
-        if (imageUrl !== "") {
-          oldImageUrl !== "" &&
-            (await edgestore.publicFiles.delete({ url: oldImageUrl }));
-          await edgestore.publicFiles.confirmUpload({ url: imageUrl });
+        try {
+          if (imageUrl !== "") {
+            oldImageUrl !== "" &&
+              (await edgestore.publicFiles.delete({ url: oldImageUrl }));
+            await edgestore.publicFiles.confirmUpload({ url: imageUrl });
+          }
+          setProgress(0);
+          toast.success("Details users updated successfully");
+        } catch (error) {
+          toast.error((error as Error).message.toString());
         }
-        toast.success("Details users updated successfully");
-        router.refresh();
-        setProgress(0);
       },
       onError: (error) => {
+        if (error instanceof Error && error.message) {
+          toast.error(error.message);
+        } else {
+          toast.error("An error occurred");
+        }
+      },
+      onSettled: () => {
         router.refresh();
-        toast.error(error.message);
       },
     });
 
