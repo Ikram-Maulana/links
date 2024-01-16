@@ -1,10 +1,14 @@
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 import { linksList } from "@/server/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const linksListRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(async ({ ctx }) => {
+  getAll: publicProcedure.query(async ({ ctx }) => {
     try {
       const data = await ctx.db
         .select()
