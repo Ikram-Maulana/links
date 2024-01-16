@@ -74,7 +74,6 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
 
   useEffect(() => {
     if (imageUrl !== "") {
-      console.log(imageUrl);
       form.setValue("avatar", imageUrl);
     }
   }, [imageUrl, form]);
