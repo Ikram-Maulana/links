@@ -1,9 +1,12 @@
+import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/server";
+import { IconPlus } from "@irsyadadl/paranoid";
 import { type Metadata } from "next";
 import { unstable_noStore as noStore } from "next/cache";
 import { redirect } from "next/navigation";
 import { Suspense, type FC } from "react";
 import Content from "./_components/content";
+import ModalCreate from "./_components/modal-create";
 import DataTableSkeleton from "./_components/skeleton/data-table-skeleton";
 
 export const metadata: Metadata = {
@@ -20,13 +23,22 @@ const page: FC = async () => {
 
   return (
     <>
-      <div className="mb-6 flex flex-col">
-        <h1 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-          Links
-        </h1>
-        <p className="text-sm font-medium leading-6 text-gray-500">
-          This page is used to manage links.
-        </p>
+      <div className="mb-6 flex flex-col space-y-2 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col">
+          <h1 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+            Links
+          </h1>
+          <p className="text-sm font-medium leading-6 text-gray-500">
+            This page is used to manage links.
+          </p>
+        </div>
+
+        <ModalCreate>
+          <Button>
+            <IconPlus className="mr-2 h-4 w-4" />
+            Add New Link
+          </Button>
+        </ModalCreate>
       </div>
 
       <Suspense fallback={<DataTableSkeleton />}>
