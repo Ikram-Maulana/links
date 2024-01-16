@@ -14,6 +14,7 @@ import { DotsHorizontalIcon, ReloadIcon } from "@radix-ui/react-icons";
 import { type Row } from "@tanstack/react-table";
 import { useState } from "react";
 import ModalDelete from "./modal-delete";
+import ModalEdit from "./modal-edit";
 
 interface DataRow<TData> extends Row<TData> {
   original: TData & {
@@ -49,12 +50,12 @@ export function DataTableRowActions<TData>({
         <DropdownMenuGroup onClick={() => handler.open()}>
           {isLoadingDelete ? (
             <>
-              {/* <DropdownMenuItem
+              <DropdownMenuItem
                 className={cn("hover:cursor-pointer")}
                 disabled={isLoadingDelete}
               >
                 Edit
-              </DropdownMenuItem> */}
+              </DropdownMenuItem>
 
               <DropdownMenuItem
                 className={cn("hover:cursor-pointer")}
@@ -66,14 +67,14 @@ export function DataTableRowActions<TData>({
             </>
           ) : (
             <>
-              {/* <EditModal id={techStack.id} key={`edit-${techStack.id}`}>
+              <ModalEdit id={linksList.id} key={`edit-${linksList.id}`}>
                 <DropdownMenuItem
                   className={cn("hover:cursor-pointer")}
                   disabled={isLoadingDelete}
                 >
                   Edit
                 </DropdownMenuItem>
-              </EditModal> */}
+              </ModalEdit>
 
               <ModalDelete
                 id={linksList.id}
