@@ -29,9 +29,12 @@ export const linksListRouter = createTRPCRouter({
         image: z.string({
           required_error: "Image is required",
         }),
-        title: z.string({
-          required_error: "Title is required",
-        }),
+        title: z
+          .string({
+            required_error: "Title is required",
+          })
+          .trim()
+          .min(3, "Please enter a title"),
         url: z
           .string({
             required_error: "URL is required",
@@ -43,6 +46,7 @@ export const linksListRouter = createTRPCRouter({
           .string({
             required_error: "Slug is required",
           })
+          .trim()
           .min(3, {
             message: "Slug must be at least 3 characters",
           }),

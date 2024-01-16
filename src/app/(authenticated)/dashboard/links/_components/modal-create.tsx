@@ -46,7 +46,8 @@ const formSchema = z.object({
     .string({
       required_error: "Please enter a title",
     })
-    .trim(),
+    .trim()
+    .min(3, "Please enter a title"),
   url: z
     .string({
       required_error: "Please enter a URL",

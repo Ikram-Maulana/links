@@ -40,12 +40,14 @@ const FormSchema = z.object({
     .string({
       required_error: "Bio is required",
     })
-    .trim(),
+    .trim()
+    .min(3, "Please enter a bio"),
   location: z
     .string({
       required_error: "Location is required",
     })
-    .trim(),
+    .trim()
+    .min(3, "Please enter a location"),
 });
 
 const EditForm: FC<EditFormProps> = ({ detail }) => {
