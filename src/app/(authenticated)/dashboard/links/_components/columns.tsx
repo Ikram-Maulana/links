@@ -4,7 +4,6 @@ import { type linksList } from "@/server/db/schema";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type InferSelectModel } from "drizzle-orm";
 import Image from "next/image";
-import Link from "next/link";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-action";
 
@@ -59,13 +58,13 @@ export const columns: ColumnDef<TLinks>[] = [
       <DataTableColumnHeader column={column} title="Slug" />
     ),
     cell: ({ row }) => (
-      <Link
+      <a
         href={`/s/${row.original.slug}`}
         className="text-blue-500 hover:underline"
         target="_blank"
       >
         s/{row.original.slug}
-      </Link>
+      </a>
     ),
     enableSorting: true,
     enableHiding: true,
