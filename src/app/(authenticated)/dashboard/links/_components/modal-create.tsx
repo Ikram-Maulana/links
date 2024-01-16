@@ -22,6 +22,7 @@ import { Progress } from "@/components/ui/progress";
 import { useEdgeStore } from "@/lib/edgestore";
 import { getBaseUrl } from "@/lib/utils";
 import { api } from "@/trpc/react";
+import { EdgeStoreApiClientError } from "@edgestore/react/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDisclosure } from "@mantine/hooks";
 import { ReloadIcon } from "@radix-ui/react-icons";
@@ -99,7 +100,31 @@ const ModalCreate: FC<ModalCreateProps> = ({ children }) => {
           handler.close();
           toast.success("Link added successfully");
         } catch (error) {
-          toast.error((error as Error).message.toString());
+          // All errors are typed and you will get intellisense for them
+          if (error instanceof EdgeStoreApiClientError) {
+            // if it fails due to the `maxSize` set in the router config
+            if (error.data.code === "FILE_TOO_LARGE") {
+              toast.error(
+                `File too large. Max size is ${error.data.details.maxFileSize}MB`,
+              );
+            }
+
+            // if it fails due to the `accept` set in the router config
+            if (error.data.code === "MIME_TYPE_NOT_ALLOWED") {
+              toast.error(
+                `File type not allowed. Allowed types are ${error.data.details.allowedMimeTypes.join(
+                  ", ",
+                )}`,
+              );
+            }
+
+            // if it fails during the `beforeUpload` check
+            if (error.data.code === "UPLOAD_NOT_ALLOWED") {
+              toast.error("You don't have permission to upload files here.");
+            }
+          }
+
+          toast.error("An error occurred while uploading the image");
         }
       },
       onError: (error) => {
