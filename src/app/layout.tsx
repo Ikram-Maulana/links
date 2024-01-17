@@ -33,6 +33,13 @@ export const metadata = {
     },
   ],
   creator: "Ikram Maulana",
+  metadataBase: env.NEXT_PUBLIC_BASE_URL,
+  alternates: {
+    canonical: "/",
+    languages: {
+      "en-US": "/en-US",
+    },
+  },
   openGraph: {
     type: "website",
     locale: "id_ID",
