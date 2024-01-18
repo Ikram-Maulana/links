@@ -15,6 +15,11 @@ import { type Row } from "@tanstack/react-table";
 import { useState } from "react";
 import ModalDelete from "./modal-delete";
 import ModalEdit from "./modal-edit";
+import { api } from "@/trpc/react";
+import { useEdgeStore } from "@/lib/edgestore";
+import { toast } from "sonner";
+import { EdgeStoreApiClientError } from "@edgestore/react/shared";
+import { useRouter } from "next/navigation";
 
 interface DataRow<TData> extends Row<TData> {
   original: TData & {
@@ -34,6 +39,45 @@ export function DataTableRowActions<TData>({
   const linksList = row.original;
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
   const [opened, handler] = useDisclosure(false);
+  const router = useRouter();
+
+  const { edgestore } = useEdgeStore();
+
+  const { mutate: deleteImage, isLoading: isDeletingImage } =
+    api.linksList.deleteImage.useMutation({
+      onSuccess: async () => {
+        try {
+          await edgestore.publicFiles.delete({ url: row.original.image ?? "" });
+          toast.success("Image deleted successfully");
+        } catch (err) {
+          if (err instanceof EdgeStoreApiClientError) {
+            if (err.data.code === "DELETE_NOT_ALLOWED") {
+              toast.error("You don't have permission to delete this file.");
+            }
+          }
+
+          toast.error("An error occurred while deleting the image");
+        }
+      },
+      onError: (error) => {
+        if (error instanceof Error && error.message) {
+          toast.error(error.message);
+        } else {
+          toast.error("An error occurred");
+        }
+      },
+      onSettled: () => {
+        router.refresh();
+      },
+    });
+
+  function onDeleteImage({ id }: { id: string }) {
+    if (isDeletingImage || isLoadingDelete) {
+      return;
+    }
+
+    deleteImage({ id });
+  }
 
   return (
     <DropdownMenu open={opened} onOpenChange={handler.toggle}>
@@ -48,29 +92,54 @@ export function DataTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuGroup onClick={() => handler.open()}>
-          {isLoadingDelete ? (
+          {isLoadingDelete || isDeletingImage ? (
             <>
+              {linksList.image && (
+                <DropdownMenuItem
+                  className={cn("hover:cursor-pointer")}
+                  disabled={isLoadingDelete || isDeletingImage}
+                >
+                  {isDeletingImage && (
+                    <ReloadIcon className="mr-2 h-3 w-3 animate-spin" />
+                  )}
+                  Delete Image
+                </DropdownMenuItem>
+              )}
+
               <DropdownMenuItem
                 className={cn("hover:cursor-pointer")}
-                disabled={isLoadingDelete}
+                disabled={isLoadingDelete || isDeletingImage}
               >
                 Edit
               </DropdownMenuItem>
 
               <DropdownMenuItem
                 className={cn("hover:cursor-pointer")}
-                disabled={isLoadingDelete}
+                disabled={isLoadingDelete || isDeletingImage}
               >
-                <ReloadIcon className="mr-2 h-3 w-3 animate-spin" />
+                {isLoadingDelete && (
+                  <ReloadIcon className="mr-2 h-3 w-3 animate-spin" />
+                )}
                 Delete
               </DropdownMenuItem>
             </>
           ) : (
             <>
+              {linksList.image && (
+                <DropdownMenuItem
+                  key={`deleteImage-${linksList.id}`}
+                  className={cn("hover:cursor-pointer")}
+                  disabled={isLoadingDelete || isDeletingImage}
+                  onClick={() => onDeleteImage({ id: linksList.id })}
+                >
+                  Delete Image
+                </DropdownMenuItem>
+              )}
+
               <ModalEdit id={linksList.id} key={`edit-${linksList.id}`}>
                 <DropdownMenuItem
                   className={cn("hover:cursor-pointer")}
-                  disabled={isLoadingDelete}
+                  disabled={isLoadingDelete || isDeletingImage}
                 >
                   Edit
                 </DropdownMenuItem>
