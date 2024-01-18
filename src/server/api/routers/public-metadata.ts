@@ -1,4 +1,8 @@
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 
 export const publicMetadataRouter = createTRPCRouter({
   available: protectedProcedure.query(async ({ ctx }) => {
@@ -12,6 +16,26 @@ export const publicMetadataRouter = createTRPCRouter({
         });
 
       return availablePublicMetadata;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+
+      return {
+        error: "Server Error",
+      };
+    }
+  }),
+
+  getProfile: publicProcedure.query(async ({ ctx }) => {
+    try {
+      const profileData = await ctx.db.query.users.findFirst({
+        with: {
+          publicMetadata: true,
+        },
+      });
+
+      return profileData;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);
