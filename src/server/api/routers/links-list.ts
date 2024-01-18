@@ -114,9 +114,13 @@ export const linksListRouter = createTRPCRouter({
   update: protectedProcedure
     .input(
       z.object({
-        id: z.string({
-          required_error: "ID is required",
-        }),
+        id: z
+          .string({
+            required_error: "ID is required",
+          })
+          .min(3, {
+            message: "Please provide a valid ID",
+          }),
         image: z.string({
           required_error: "Image is required",
         }),
@@ -174,15 +178,53 @@ export const linksListRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(
       z.object({
-        id: z.string({
-          required_error: "ID is required",
-        }),
+        id: z
+          .string({
+            required_error: "ID is required",
+          })
+          .min(3, {
+            message: "Please provide a valid ID",
+          }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       try {
         const data = await ctx.db
           .delete(linksList)
+          .where(eq(linksList.id, input.id))
+          .returning();
+
+        return data;
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+
+        return {
+          error: "Server Error",
+        };
+      }
+    }),
+
+  deleteImage: protectedProcedure
+    .input(
+      z.object({
+        id: z
+          .string({
+            required_error: "ID is required",
+          })
+          .min(3, {
+            message: "Please provide a valid ID",
+          }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const data = await ctx.db
+          .update(linksList)
+          .set({
+            image: null,
+          })
           .where(eq(linksList.id, input.id))
           .returning();
 
