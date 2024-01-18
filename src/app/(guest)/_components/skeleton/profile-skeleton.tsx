@@ -3,12 +3,12 @@ import { type FC } from "react";
 
 const ProfileSkeleton: FC = () => {
   return (
-    <>
-      <Skeleton className="mx-auto mb-4 h-24 w-24 rounded-full" />
-      <Skeleton className="mx-auto h-[28px] w-[137px]" />
-      <Skeleton className="mx-auto mt-1 h-[28px] w-[190px]" />
-      <Skeleton className="mx-auto mt-1 h-[16px] w-[157px]" />
-    </>
+    <div className="flex flex-col items-center">
+      <Skeleton className="mb-4 h-24 w-24 rounded-full" />
+      <Skeleton className="h-[28px] w-[137px]" />
+      <Skeleton className="mt-1 h-[28px] w-[190px]" />
+      <Skeleton className="mt-1 h-[16px] w-[157px]" />
+    </div>
   );
 };
 

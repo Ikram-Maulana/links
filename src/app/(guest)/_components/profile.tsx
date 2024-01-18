@@ -19,26 +19,24 @@ const Profile: FC = async () => {
   }
 
   return (
-    <>
-      <div className="relative mx-auto mb-4 h-24 w-24 overflow-hidden rounded-full">
+    <div className="flex flex-col items-center">
+      <div className="relative mb-4 h-24 w-24 overflow-hidden rounded-full">
         <DynamicImagesBlur
           src={profile.publicMetadata.avatar ?? profile.image ?? ""}
           alt={profile.name ?? ""}
         />
       </div>
 
-      <h1 className="mx-auto w-fit scroll-m-20 text-xl font-semibold tracking-tight">
+      <h1 className="w-fit scroll-m-20 text-xl font-semibold tracking-tight">
         {profile.name}
       </h1>
 
-      <p className="mx-auto mt-1 w-fit leading-7">
-        {profile.publicMetadata.bio}
-      </p>
-      <p className="mx-auto mt-1 flex w-fit items-center text-sm font-medium leading-none">
+      <p className="mt-1 w-fit leading-7">{profile.publicMetadata.bio}</p>
+      <p className="mt-1 flex w-fit items-center text-sm font-medium leading-none">
         <IconLocation className="mr-1 h-4 w-4" />
         {profile.publicMetadata.location}
       </p>
-    </>
+    </div>
   );
 };
 
