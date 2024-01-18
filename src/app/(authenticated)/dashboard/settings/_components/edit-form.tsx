@@ -99,10 +99,6 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
             }
           }
 
-          if (err instanceof Error && err.message) {
-            toast.error(err.message);
-          }
-
           toast.error("An error occurred while deleting the image");
         }
       },
