@@ -1,5 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { publicMetadata } from "@/server/db/schema";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const settingsRouter = createTRPCRouter({
@@ -79,4 +80,29 @@ export const settingsRouter = createTRPCRouter({
         };
       }
     }),
+
+  deleteImage: protectedProcedure.mutation(async ({ ctx }) => {
+    const { session } = ctx;
+    const { user } = session;
+
+    try {
+      const deleteImage = await ctx.db
+        .update(publicMetadata)
+        .set({
+          avatar: null,
+        })
+        .where(eq(publicMetadata.userId, user.id))
+        .returning();
+
+      return deleteImage;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+
+      return {
+        error: "Server Error",
+      };
+    }
+  }),
 });
