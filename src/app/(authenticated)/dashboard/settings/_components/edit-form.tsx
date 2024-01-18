@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { useEdgeStore } from "@/lib/edgestore";
+import { cn } from "@/lib/utils";
 import { type publicMetadata, type users } from "@/server/db/schema";
 import { api } from "@/trpc/react";
 import { EdgeStoreApiClientError } from "@edgestore/react/shared";
@@ -82,6 +83,41 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
     setOldImageUrl(detail?.publicMetadata?.avatar ?? "");
   }, [detail]);
 
+  const { mutate: deleteImage, isLoading: isDeletingImage } =
+    api.settings.deleteImage.useMutation({
+      onSuccess: async () => {
+        try {
+          await edgestore.publicFiles.delete({ url: oldImageUrl });
+          setImageUrl("");
+          setOldImageUrl("");
+          form.setValue("avatar", "");
+          toast.success("Image deleted successfully");
+        } catch (err) {
+          if (err instanceof EdgeStoreApiClientError) {
+            if (err.data.code === "DELETE_NOT_ALLOWED") {
+              toast.error("You don't have permission to delete this file.");
+            }
+          }
+
+          if (err instanceof Error && err.message) {
+            toast.error(err.message);
+          }
+
+          toast.error("An error occurred while deleting the image");
+        }
+      },
+      onError: (error) => {
+        if (error instanceof Error && error.message) {
+          toast.error(error.message);
+        } else {
+          toast.error("An error occurred");
+        }
+      },
+      onSettled: () => {
+        router.refresh();
+      },
+    });
+
   const { mutate: mutateStore, isLoading: isLoadingStore } =
     api.settings.update.useMutation({
       onSuccess: async () => {
@@ -133,6 +169,14 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
       },
     });
 
+  function onDeleteImage() {
+    if (isLoadingStore || isDeletingImage || oldImageUrl === "") {
+      return;
+    }
+
+    deleteImage();
+  }
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
     if (isLoadingStore) {
       return;
@@ -178,37 +222,57 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
                   </div>
 
                   <div className="flex w-full flex-col gap-y-2">
-                    <Input
-                      className="hidden"
-                      type="text"
-                      {...field}
-                      value={field.value ?? ""}
-                    />
-                    <Input
-                      id="avatar"
-                      name="avatar"
-                      type="file"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
+                    <div className="flex w-full gap-x-2">
+                      <Input
+                        className="hidden"
+                        type="text"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                      <Input
+                        id="avatar"
+                        name="avatar"
+                        type="file"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
 
-                        if (file) {
-                          const res = await edgestore.publicFiles.upload({
-                            file,
-                            input: {
-                              type: "profile",
-                            },
-                            onProgressChange: (progress) => {
-                              setProgress(progress);
-                            },
-                            options: {
-                              temporary: true,
-                            },
-                          });
+                          if (file) {
+                            const res = await edgestore.publicFiles.upload({
+                              file,
+                              input: {
+                                type: "profile",
+                              },
+                              onProgressChange: (progress) => {
+                                setProgress(progress);
+                              },
+                              options: {
+                                temporary: true,
+                              },
+                            });
 
-                          setImageUrl(res.url);
+                            setImageUrl(res.url);
+                          }
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={onDeleteImage}
+                        disabled={
+                          isLoadingStore ||
+                          isDeletingImage ||
+                          oldImageUrl === ""
                         }
-                      }}
-                    />
+                        className={cn({
+                          hidden: oldImageUrl === "",
+                        })}
+                      >
+                        {isDeletingImage && (
+                          <ReloadIcon className="mr-2 h-3 w-3 animate-spin" />
+                        )}
+                        Delete
+                      </Button>
+                    </div>
                     <Progress value={progress} />
                     <p className="text-[0.8rem] text-muted-foreground">
                       Max file size 4MB
