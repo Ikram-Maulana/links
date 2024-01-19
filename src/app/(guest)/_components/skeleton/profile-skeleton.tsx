@@ -3,7 +3,7 @@ import { type FC } from "react";
 
 const ProfileSkeleton: FC = () => {
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center pt-16">
       <Skeleton className="mb-4 h-24 w-24 rounded-full" />
       <Skeleton className="h-[28px] w-[137px]" />
       <Skeleton className="mt-1 h-[28px] w-[190px]" />

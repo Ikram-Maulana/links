@@ -38,7 +38,7 @@ const Profile: FC = async () => {
   }
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center pt-16">
       <div className="relative mb-4 h-24 w-24 overflow-hidden rounded-full">
         <DynamicImagesBlur src={imageUrl} alt={profile.name ?? ""} />
       </div>
