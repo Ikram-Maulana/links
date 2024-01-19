@@ -3,6 +3,7 @@ import { type publicMetadata, type users } from "@/server/db/schema";
 import { api } from "@/trpc/server";
 import { IconLocation } from "@irsyadadl/paranoid";
 import { type InferSelectModel } from "drizzle-orm";
+import { unstable_noStore as noStore } from "next/cache";
 import { notFound } from "next/navigation";
 import { type FC } from "react";
 
@@ -11,6 +12,7 @@ type ProfileDataProps = InferSelectModel<typeof users> & {
 };
 
 const Profile: FC = async () => {
+  noStore();
   const profile =
     (await api.publicMetadata.getProfile.query()) as unknown as ProfileDataProps;
 
@@ -18,13 +20,27 @@ const Profile: FC = async () => {
     return notFound();
   }
 
+  let imageUrl = "";
+  try {
+    if (profile.publicMetadata.avatar) {
+      new URL(profile.publicMetadata.avatar); // this will throw an error if avatar is not a valid URL
+      imageUrl = profile.publicMetadata.avatar;
+    } else if (profile.image) {
+      new URL(profile.image); // this will throw an error if image is not a valid URL
+      imageUrl = profile.image;
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error(`Invalid URL: ${err.message}`);
+    }
+
+    console.error("Invalid URL for profile image");
+  }
+
   return (
     <div className="flex flex-col items-center">
       <div className="relative mb-4 h-24 w-24 overflow-hidden rounded-full">
-        <DynamicImagesBlur
-          src={profile.publicMetadata.avatar ?? profile.image ?? ""}
-          alt={profile.name ?? ""}
-        />
+        <DynamicImagesBlur src={imageUrl} alt={profile.name ?? ""} />
       </div>
 
       <h1 className="w-fit scroll-m-20 text-xl font-semibold tracking-tight">
