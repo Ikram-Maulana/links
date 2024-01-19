@@ -4,7 +4,7 @@ import ProfileSkeleton from "./_components/skeleton/profile-skeleton";
 
 export default async function Home() {
   return (
-    <main className="container mx-auto">
+    <main className="container">
       <div className="mx-auto max-w-[680px]">
         <Suspense fallback={<ProfileSkeleton />}>
           <Profile />
