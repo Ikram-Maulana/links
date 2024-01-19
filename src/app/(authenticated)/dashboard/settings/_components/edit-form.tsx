@@ -208,11 +208,21 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
                     ) : detail.image ? (
                       <Avatar className="h-24 w-24">
                         <AvatarImage src={detail.image} />
-                        <AvatarFallback>{detail.name}</AvatarFallback>
+                        <AvatarFallback>
+                          {detail?.name
+                            ?.split(" ")
+                            .map((name: string) => name[0])
+                            .join("")}
+                        </AvatarFallback>
                       </Avatar>
                     ) : (
                       <Avatar className="h-24 w-24">
-                        <AvatarFallback>{detail.name}</AvatarFallback>
+                        <AvatarFallback>
+                          {detail?.name
+                            ?.split(" ")
+                            .map((name: string) => name[0])
+                            .join("")}
+                        </AvatarFallback>
                       </Avatar>
                     )}
                   </div>
