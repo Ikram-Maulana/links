@@ -2,6 +2,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { api } from "@/trpc/server";
 import { IconCircleX, IconLink, IconTriangleInfo } from "@irsyadadl/paranoid";
+import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
 import { type FC } from "react";
 
@@ -12,6 +13,7 @@ interface metricsProps {
 }
 
 const CardMetrics: FC = async () => {
+  noStore();
   const [metrics, publicMetadata] = await Promise.all([
     api.metrics.getAll.query() as unknown as metricsProps,
     api.publicMetadata.available.query(),
