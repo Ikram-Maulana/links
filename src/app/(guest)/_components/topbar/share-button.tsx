@@ -73,7 +73,7 @@ const ShareButton: FC<ShareButtonProps> = ({ yPosition }) => {
       <DrawerTrigger asChild>
         <Button
           className={cn(
-            "col-start-3 flex h-10 w-10 items-center justify-center justify-self-end rounded-full  border-[#E2E2E2] bg-[#F0F0F0] px-3 text-lg font-bold text-zinc-900 hover:bg-[#EBEBEB] focus-visible:ring-[#D2D2D2]",
+            "col-start-3 flex h-10 w-10 items-center justify-center justify-self-end rounded-full border-[#E2E2E2] bg-[#F0F0F0] px-3 text-lg font-bold text-zinc-900 hover:bg-[#EBEBEB] focus-visible:ring-[#D2D2D2]",
             {
               "bg-primary text-zinc-50 hover:bg-primary/90 focus-visible:ring-ring":
                 yPosition > 50,
@@ -110,6 +110,7 @@ const ShareOptions = () => {
         <a
           href={`https://www.linkedin.com/sharing/share-offsite/?url=${getBaseUrl()}?utm_source=ikramlink`}
           target="_blank"
+          rel="noopener"
         >
           <div className="grid w-full grid-cols-[min-content,auto,min-content] gap-4 text-center">
             <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-[#0A66C2] text-zinc-50">
@@ -127,6 +128,7 @@ const ShareOptions = () => {
         <a
           href={`https://wa.me/?text=Check%20out%20this%20Link!%20-%20${getBaseUrl()}?utm_source=ikramlink`}
           target="_blank"
+          rel="noopener"
         >
           <div className="grid w-full grid-cols-[min-content,auto,min-content] gap-4 text-center">
             <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-[#25D366] text-zinc-50">
@@ -144,6 +146,7 @@ const ShareOptions = () => {
         <a
           href={`mailto:?subject= Check out this Linkt! &amp;body= Check%20out%20this%20Link! - ${getBaseUrl()}?utm_source=ikramlink`}
           target="_blank"
+          rel="noopener"
         >
           <div className="grid w-full grid-cols-[min-content,auto,min-content] gap-4 text-center">
             <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-gray-500 text-zinc-50">
