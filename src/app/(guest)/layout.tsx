@@ -20,7 +20,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       <main className="flex-grow">{children}</main>
       <Footer />
 
-      <Script src="https://analytics.ikrammaulana.my.id" />
+      <Script src="https://analytics.ikrammaulana.my.id/script.js" />
     </div>
   );
 };
