@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import Script from "next/script";
 import { type FC } from "react";
 import Footer from "./_components/footer";
 import TopbarSkeleton from "./_components/skeleton/topbar-skeleton";
@@ -18,6 +19,8 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       <Topbar />
       <main className="flex-grow">{children}</main>
       <Footer />
+
+      <Script src="https://analytics.ikrammaulana.my.id" />
     </div>
   );
 };
