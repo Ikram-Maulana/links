@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/react";
 import dynamic from "next/dynamic";
 import { type FC } from "react";
 import Footer from "./_components/footer";
@@ -18,6 +19,8 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       <Topbar />
       <main className="flex-grow">{children}</main>
       <Footer />
+
+      <Analytics />
     </div>
   );
 };
