@@ -162,7 +162,7 @@ const ShareOptions = () => {
 
       <Button
         variant="outline"
-        className="mt-4 h-auto py-4"
+        className="mt-4 h-auto max-w-[375px] py-4"
         onClick={() => clipboard.copy(`${getBaseUrl()}?utm_source=ikramlink`)}
       >
         <div className="flex w-full grid-cols-[min-content,auto,min-content] gap-4 text-center">
