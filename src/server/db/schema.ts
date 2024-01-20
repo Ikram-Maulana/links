@@ -1,11 +1,66 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import type { AdapterAccount } from "@auth/core/adapters";
+import { relations } from "drizzle-orm";
 import {
   integer,
-  sqliteTable,
-  text,
   primaryKey,
+  sqliteTableCreator,
+  text,
+  unique,
 } from "drizzle-orm/sqlite-core";
-import type { AdapterAccount } from "@auth/core/adapters";
+import { v4 as uuidv4 } from "uuid";
 
+/**
+ * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
+ * database instance for multiple projects.
+ *
+ * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
+ */
+export const sqliteTable = sqliteTableCreator((name) => `links_${name}`);
+
+export const linksList = sqliteTable(
+  "linksList",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => uuidv4()),
+    image: text("image"),
+    title: text("title").notNull(),
+    url: text("url").notNull(),
+    slug: text("slug").notNull(),
+    createdAt: integer("createdAt", { mode: "timestamp_ms" }).$default(
+      () => new Date(),
+    ),
+    updatedAt: integer("updatedAt", { mode: "timestamp_ms" }),
+  },
+  (linksList) => ({
+    unq: unique().on(linksList.slug),
+  }),
+);
+
+export const publicMetadata = sqliteTable(
+  "publicMetadata",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => uuidv4()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
+    avatar: text("avatar"),
+    bio: text("bio").notNull(),
+    location: text("location").notNull(),
+  },
+  (publicMetadata) => ({
+    unq: unique().on(publicMetadata.userId),
+  }),
+);
+
+// Next Auth
 export const users = sqliteTable("user", {
   id: text("id").notNull().primaryKey(),
   name: text("name"),
@@ -13,6 +68,13 @@ export const users = sqliteTable("user", {
   emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image"),
 });
+
+export const usersRelations = relations(users, ({ one }) => ({
+  publicMetadata: one(publicMetadata, {
+    fields: [users.id],
+    references: [publicMetadata.userId],
+  }),
+}));
 
 export const accounts = sqliteTable(
   "account",
