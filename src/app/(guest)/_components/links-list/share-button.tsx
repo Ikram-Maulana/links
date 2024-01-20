@@ -156,7 +156,7 @@ const ShareOptions = ({ slug }: { slug: string }) => {
         onClick={() => clipboard.copy(`${getBaseUrl()}/s/${slug}`)}
       >
         <div className="flex w-full grid-cols-[min-content,auto,min-content] gap-4 text-center">
-          <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-gray-500 text-zinc-50">
+          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-sm bg-gray-500 text-zinc-50">
             <IconDuplicate className="h-3 w-3 text-zinc-50" />
           </div>
           <span className="flex max-w-[260px] items-center justify-start truncate md:max-w-none">
