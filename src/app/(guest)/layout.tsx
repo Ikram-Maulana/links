@@ -1,8 +1,8 @@
-import { Analytics } from "@vercel/analytics/react";
 import dynamic from "next/dynamic";
 import { type FC } from "react";
 import Footer from "./_components/footer";
 import TopbarSkeleton from "./_components/skeleton/topbar-skeleton";
+import Script from "next/script";
 
 const Topbar = dynamic(() => import("./_components/topbar"), {
   loading: () => <TopbarSkeleton />,
@@ -20,7 +20,11 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       <main className="flex-grow">{children}</main>
       <Footer />
 
-      <Analytics />
+      <Script
+        src="https://analytics.ikrammaulana.my.id/script.js"
+        strategy="lazyOnload"
+        data-website-id="c5876629-5ba5-42c1-b32b-5ede03260434"
+      />
     </div>
   );
 };
