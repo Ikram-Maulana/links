@@ -4,6 +4,7 @@ import { EdgeStoreProvider } from "@/lib/edgestore";
 import "@/styles/globals.css";
 import { TRPCReactProvider } from "@/trpc/react";
 import { GeistSans } from "geist/font/sans";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata = {
   title: "Ikram Maulana Links",
@@ -71,6 +72,8 @@ export default function RootLayout({
       className={`font-sans ${GeistSans.className} antialiased motion-safe:scroll-smooth`}
     >
       <body className="min-h-screen antialiased">
+        <NextTopLoader color="#22c55e" height={4} showSpinner />
+
         <TRPCReactProvider>
           <EdgeStoreProvider>{children}</EdgeStoreProvider>
         </TRPCReactProvider>
