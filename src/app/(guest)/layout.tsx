@@ -1,8 +1,8 @@
-import { Analytics } from "@vercel/analytics/react";
 import dynamic from "next/dynamic";
 import { type FC } from "react";
 import Footer from "./_components/footer";
 import TopbarSkeleton from "./_components/skeleton/topbar-skeleton";
+import Script from "next/script";
 
 const Topbar = dynamic(() => import("./_components/topbar"), {
   loading: () => <TopbarSkeleton />,
@@ -20,7 +20,11 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       <main className="flex-grow">{children}</main>
       <Footer />
 
-      <Analytics />
+      <Script
+        src="https://eu.umami.is/script.js"
+        strategy="lazyOnload"
+        data-website-id="bd9f9f22-0934-414e-bf9b-e495d2bdfa24"
+      />
     </div>
   );
 };
