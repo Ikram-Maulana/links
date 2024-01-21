@@ -23,7 +23,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       <Script
         src="https://analytics.ikrammaulana.my.id/script.js"
         strategy="lazyOnload"
-        data-website-id="c5876629-5ba5-42c1-b32b-5ede03260434"
+        data-website-id="c27f1d9d-4f96-4854-8ac9-a2f9bd9b043c"
       />
     </div>
   );
