@@ -21,9 +21,9 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       <Footer />
 
       <Script
-        src="https://eu.umami.is/script.js"
+        src="https://analytics.ikrammaulana.my.id/script.js"
         strategy="lazyOnload"
-        data-website-id="bd9f9f22-0934-414e-bf9b-e495d2bdfa24"
+        data-website-id="c5876629-5ba5-42c1-b32b-5ede03260434"
       />
     </div>
   );
