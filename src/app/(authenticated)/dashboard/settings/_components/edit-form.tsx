@@ -1,6 +1,5 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -72,6 +71,23 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
   const [oldImageUrl, setOldImageUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [progress, setProgress] = useState(0);
+  const [imageSource, setImageSource] = useState(
+    "https://placehold.co/96/webp",
+  );
+
+  useEffect(() => {
+    let newImageSource = imageSource;
+
+    if (imageUrl !== "") {
+      newImageSource = imageUrl;
+    } else if (detail.publicMetadata?.avatar) {
+      newImageSource = detail.publicMetadata.avatar;
+    } else if (detail.image) {
+      newImageSource = detail.image;
+    }
+
+    setImageSource(newImageSource);
+  }, [imageUrl, detail, imageSource]);
 
   useEffect(() => {
     if (imageUrl !== "") {
@@ -197,34 +213,14 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
               <FormControl>
                 <div className="flex flex-col gap-4 md:flex-row md:items-center">
                   <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-full">
-                    {imageUrl || detail.publicMetadata?.avatar ? (
-                      <Image
-                        src={imageUrl || (detail.publicMetadata?.avatar ?? "")}
-                        alt={detail.name ?? ""}
-                        className="h-full w-full object-cover"
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 80vw"
-                      />
-                    ) : detail.image ? (
-                      <Avatar className="h-24 w-24">
-                        <AvatarImage src={detail.image} />
-                        <AvatarFallback>
-                          {detail?.name
-                            ?.split(" ")
-                            .map((name: string) => name[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                    ) : (
-                      <Avatar className="h-24 w-24">
-                        <AvatarFallback>
-                          {detail?.name
-                            ?.split(" ")
-                            .map((name: string) => name[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
+                    <Image
+                      src={imageSource}
+                      alt={detail.name ?? ""}
+                      className="h-full w-full object-cover"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 80vw"
+                      priority
+                    />
                   </div>
 
                   <div className="flex w-full flex-col gap-y-2">
