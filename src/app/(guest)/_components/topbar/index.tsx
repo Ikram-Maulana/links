@@ -1,13 +1,13 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { cn, isValidUrl } from "@/lib/utils";
 import { type publicMetadata, type users } from "@/server/db/schema";
 import { api } from "@/trpc/react";
 import { useWindowScroll } from "@mantine/hooks";
 import { type InferSelectModel } from "drizzle-orm";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { type FC } from "react";
 
 const ShareButton = dynamic(() => import("./share-button"), {
@@ -32,26 +32,24 @@ const Topbar: FC = () => {
     return null;
   }
 
-  let imageUrl = "";
-  let profileName = "";
+  const DEFAULT_IMAGE_URL = "https://placehold.co/96/webp";
+  let imageUrl = DEFAULT_IMAGE_URL;
+  const profileName = dataProfile?.name ?? "";
   if (dataProfile && !isLoading) {
-    try {
-      if (dataProfile.publicMetadata.avatar) {
-        new URL(dataProfile.publicMetadata.avatar); // this will throw an error if avatar is not a valid URL
-        imageUrl = dataProfile.publicMetadata.avatar;
-      } else if (dataProfile.image) {
-        new URL(dataProfile.image); // this will throw an error if image is not a valid URL
-        imageUrl = dataProfile.image;
-      }
-    } catch (err) {
-      if (err instanceof Error) {
-        console.error(`Invalid URL: ${err.message}`);
-      }
+    const getImageUrl = (profile: ProfileDataProps): string => {
+      const { avatar } = profile.publicMetadata;
+      const { image } = profile;
 
-      console.error("Invalid URL for profile image");
-    }
+      if (avatar && isValidUrl(avatar)) {
+        return avatar;
+      } else if (image && isValidUrl(image)) {
+        return image;
+      } else {
+        return DEFAULT_IMAGE_URL;
+      }
+    };
 
-    profileName = dataProfile.name ?? "";
+    imageUrl = getImageUrl(dataProfile);
   }
 
   return (
@@ -81,19 +79,18 @@ const Topbar: FC = () => {
 
         {dataProfile && !isLoading && (
           <>
-            <Avatar
-              className={cn("hidden", {
-                block: scroll.y > 50,
-              })}
-            >
-              <AvatarImage src={imageUrl} alt={profileName} />
-              <AvatarFallback>
-                {profileName
-                  .split(" ")
-                  .map((name: string) => name[0])
-                  .join("")}
-              </AvatarFallback>
-            </Avatar>
+            <Image
+              src={imageUrl}
+              alt={profileName}
+              className={cn(
+                "col-start-1 hidden h-10 min-w-10 rounded-full object-cover",
+                {
+                  block: scroll.y > 50,
+                },
+              )}
+              width={40}
+              height={40}
+            />
 
             <p
               className={cn(
