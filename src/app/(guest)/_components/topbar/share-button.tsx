@@ -51,6 +51,7 @@ const ShareButton: FC<ShareButtonProps> = ({ yPosition }) => {
                   yPosition > 50,
               },
             )}
+            aria-label="Share this Link"
           >
             <IconDotsHorizontal />
           </Button>
@@ -79,6 +80,7 @@ const ShareButton: FC<ShareButtonProps> = ({ yPosition }) => {
                 yPosition > 50,
             },
           )}
+          aria-label="Share this Link"
         >
           <IconDotsHorizontal />
         </Button>

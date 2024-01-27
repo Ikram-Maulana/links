@@ -1,6 +1,5 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +14,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import { type Session as TSession } from "next-auth";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -34,12 +34,13 @@ const UserButton: React.FC<UserButtonProps> = ({ user }) => {
     <DropdownMenu open={opened} onOpenChange={handler.toggle}>
       <DropdownMenuTrigger onClick={() => handler.toggle()} asChild>
         <div className="flex items-center justify-center gap-2 hover:cursor-pointer">
-          <Avatar className={cn("h-8 w-8")}>
-            <AvatarImage src={user?.image ?? ""} alt={user?.name ?? ""} />
-            <AvatarFallback>
-              <span>{user?.name?.[0]}</span>
-            </AvatarFallback>
-          </Avatar>
+          <Image
+            src={user?.image ?? ""}
+            alt={user?.name ?? ""}
+            width={32}
+            height={32}
+            className="h-8 w-8 rounded-full object-cover"
+          />
           <p className="hidden text-sm font-semibold leading-7 lg:block">
             {user?.name}
           </p>

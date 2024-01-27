@@ -1,4 +1,5 @@
 import DynamicImagesBlur from "@/components/images/dynamic/blur";
+import { isValidUrl } from "@/lib/utils";
 import { type publicMetadata, type users } from "@/server/db/schema";
 import { api } from "@/trpc/server";
 import { IconLocation } from "@irsyadadl/paranoid";
@@ -20,27 +21,25 @@ const Profile: FC = async () => {
     return notFound();
   }
 
-  let imageUrl = "";
-  try {
-    if (profile.publicMetadata.avatar) {
-      new URL(profile.publicMetadata.avatar); // this will throw an error if avatar is not a valid URL
-      imageUrl = profile.publicMetadata.avatar;
-    } else if (profile.image) {
-      new URL(profile.image); // this will throw an error if image is not a valid URL
-      imageUrl = profile.image;
-    }
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error(`Invalid URL: ${err.message}`);
-    }
+  const DEFAULT_IMAGE_URL = "https://placehold.co/96/webp";
+  const getImageUrl = (profile: ProfileDataProps): string => {
+    const { avatar } = profile.publicMetadata;
+    const { image } = profile;
 
-    console.error("Invalid URL for profile image");
-  }
+    if (avatar && isValidUrl(avatar)) {
+      return avatar;
+    } else if (image && isValidUrl(image)) {
+      return image;
+    } else {
+      return DEFAULT_IMAGE_URL;
+    }
+  };
+  const imageUrl = getImageUrl(profile);
 
   return (
     <div className="flex flex-col items-center pt-16">
       <div className="relative mb-4 h-24 w-24 overflow-hidden rounded-full">
-        <DynamicImagesBlur src={imageUrl} alt={profile.name ?? ""} />
+        <DynamicImagesBlur src={imageUrl} alt={profile.name ?? ""} priority />
       </div>
 
       <h1 className="w-fit scroll-m-20 text-xl font-semibold tracking-tight">

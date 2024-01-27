@@ -46,6 +46,7 @@ const ShareButton: FC<ShareButtonProps> = ({ slug }) => {
           <Button
             variant="ghost"
             className="absolute bottom-0 right-[6px] top-0 z-[1] mx-0 my-auto flex h-10 w-10 items-center justify-center rounded-full px-3 text-lg font-bold transition-all hover:border-[#E2E2E2] hover:bg-[#F0F0F0] sm:right-2 lg:hidden lg:group-hover:flex"
+            aria-label="Share this Link"
           >
             <IconDotsHorizontal />
           </Button>
@@ -69,6 +70,7 @@ const ShareButton: FC<ShareButtonProps> = ({ slug }) => {
         <Button
           variant="ghost"
           className="absolute bottom-0 right-[6px] top-0 z-[1] mx-0 my-auto flex h-10 w-10 items-center justify-center rounded-full px-3 text-lg font-bold transition-all hover:border-[#E2E2E2] hover:bg-[#F0F0F0] sm:right-2 lg:hidden lg:group-hover:flex"
+          aria-label="Share this Link"
         >
           <IconDotsHorizontal />
         </Button>

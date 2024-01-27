@@ -27,3 +27,15 @@ export const getBaseUrl = () => {
     : `${urlArr[0]}//${urlArr[2]}`;
   return baseUrl;
 };
+
+export const isValidUrl = (url: string): boolean => {
+  try {
+    new URL(url);
+    return true;
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error(`Invalid URL: ${err.message}`);
+    }
+    return false;
+  }
+};
