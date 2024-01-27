@@ -14,7 +14,14 @@
     "db:pull": "drizzle-kit introspect:sqlite",
     "db:push": "drizzle-kit push:sqlite",
     "db:studio": "drizzle-kit studio",
-    "db:check": "drizzle-kit check:sqlite"
+    "db:check": "drizzle-kit check:sqlite",
+    "version": "auto-changelog -p"
+  },
+  "auto-changelog": {
+    "output": "CHANGELOG.md",
+    "template": "keepachangelog",
+    "unreleased": true,
+    "commitLimit": false
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^0.3.16",
@@ -72,6 +79,7 @@
     "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
+    "auto-changelog": "^2.4.0",
     "autoprefixer": "^10.4.17",
     "drizzle-kit": "^0.20.13",
     "eslint": "^8.56.0",
