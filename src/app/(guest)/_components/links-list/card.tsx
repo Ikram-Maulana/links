@@ -38,6 +38,8 @@ const Card: FC<CardProps> = ({ image = "", title, url, slug }) => {
         )}
         target="_blank"
         rel="noopener"
+        id={`${slug}-link`}
+        data-umami-event={`${title} link`}
       >
         <div className="h-full w-full">
           <div className="absolute left-1 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center	justify-center overflow-hidden rounded-md">
