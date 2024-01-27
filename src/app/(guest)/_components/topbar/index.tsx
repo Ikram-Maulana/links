@@ -53,7 +53,7 @@ const Topbar: FC = () => {
   }
 
   return (
-    <header className="container fixed top-0 z-10 my-3 w-full px-2">
+    <header className="container fixed top-0 z-10 mx-auto my-3 w-full px-2">
       <div
         className={cn(
           "mx-auto grid max-w-[788px] grid-cols-[min-content,auto,min-content] rounded-full border border-transparent bg-transparent p-3",
