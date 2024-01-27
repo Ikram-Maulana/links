@@ -4,13 +4,11 @@ import LinksListSkeleton from "./_components/links-list/skeleton/links-list-skel
 
 const Loading: FC = () => {
   return (
-    <div className="container px-4">
-      <div className="mx-auto max-w-[680px]">
-        <ProfileSkeleton />
-        <LinksListSkeleton nCard={5} />
-        <span className="sr-only">Loading...</span>
-      </div>
-    </div>
+    <main className="container mx-auto w-screen max-w-[680px] px-4 md:px-0">
+      <ProfileSkeleton />
+      <LinksListSkeleton nCard={5} />
+      <span className="sr-only">Loading...</span>
+    </main>
   );
 };
 
