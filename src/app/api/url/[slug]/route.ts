@@ -1,6 +1,8 @@
+import { addCachedData, getCachedData } from "@/lib/redis";
 import { db } from "@/server/db";
 import { linksList } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
+import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +13,7 @@ export async function GET(req: Request) {
   const slugIsNumber = !isNaN(Number(slug));
 
   if (!slug || slugIsNumber) {
-    return Response.json(
+    return NextResponse.json(
       {
         error:
           "[X] Error: Missing slug? Remember that urls start like this: /s/:slug",
@@ -22,13 +24,19 @@ export async function GET(req: Request) {
     );
   }
 
+  const cachedData = await getCachedData(`slug:${slug}`);
+
+  if (cachedData) {
+    return NextResponse.json(cachedData);
+  }
+
   const data = await db
     .select()
     .from(linksList)
     .where(eq(linksList.slug, slug));
 
   if (!data || data.length === 0) {
-    return Response.json(
+    return NextResponse.json(
       {
         error: "[X] Error: Slug not found",
       },
@@ -38,5 +46,7 @@ export async function GET(req: Request) {
     );
   }
 
-  return Response.json(data);
+  await addCachedData(`slug:${slug}`, data);
+
+  return NextResponse.json(data);
 }

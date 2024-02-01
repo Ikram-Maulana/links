@@ -1,21 +1,38 @@
 import {
+  addCachedData,
+  deleteCachedData,
+  deleteImageLinkCache,
+  deleteLinkCache,
+  getCachedData,
+  getOneCachedData,
+  revalidateLinkCache,
+  revalidateMetricsCache,
+  updateCachedData,
+} from "@/lib/redis";
+import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
 import { linksList } from "@/server/db/schema";
-import { desc, eq } from "drizzle-orm";
+import { type InferSelectModel, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const linksListRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     try {
-      const data = await ctx.db
-        .select()
-        .from(linksList)
-        .orderBy(desc(linksList.createdAt));
+      let data = await getCachedData("linksList");
 
-      return data;
+      if (!data) {
+        data = await ctx.db
+          .select()
+          .from(linksList)
+          .orderBy(desc(linksList.createdAt));
+
+        await addCachedData("linksList", data);
+      }
+
+      return data as InferSelectModel<typeof linksList>[];
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);
@@ -68,6 +85,11 @@ export const linksListRouter = createTRPCRouter({
           })
           .returning();
 
+        await Promise.all([
+          addCachedData("linksList", data),
+          revalidateMetricsCache("create"),
+        ]);
+
         return data;
       } catch (error) {
         if (error instanceof Error) {
@@ -94,12 +116,18 @@ export const linksListRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       try {
-        const data = await ctx.db
-          .select()
-          .from(linksList)
-          .where(eq(linksList.id, input.id));
+        let data = await getOneCachedData("linksList", input.id);
 
-        return data;
+        if (!data) {
+          data = await ctx.db
+            .select()
+            .from(linksList)
+            .where(eq(linksList.id, input.id));
+
+          await addCachedData("linksList", data);
+        }
+
+        return data as InferSelectModel<typeof linksList>[];
       } catch (error) {
         if (error instanceof Error) {
           throw new Error(error.message);
@@ -163,6 +191,14 @@ export const linksListRouter = createTRPCRouter({
           .where(eq(linksList.id, input.id))
           .returning();
 
+        if (data?.[0]) {
+          const linkData = data[0] as InferSelectModel<typeof linksList>;
+          await Promise.all([
+            updateCachedData("linksList", input.id, linkData),
+            revalidateLinkCache(linkData.slug, linkData),
+          ]);
+        }
+
         return data;
       } catch (error) {
         if (error instanceof Error) {
@@ -193,6 +229,15 @@ export const linksListRouter = createTRPCRouter({
           .delete(linksList)
           .where(eq(linksList.id, input.id))
           .returning();
+
+        if (data?.[0]) {
+          const linkData = data[0] as InferSelectModel<typeof linksList>;
+          await Promise.all([
+            deleteCachedData("linksList", input.id),
+            deleteLinkCache(linkData.slug),
+            revalidateMetricsCache("delete"),
+          ]);
+        }
 
         return data;
       } catch (error) {
@@ -227,6 +272,11 @@ export const linksListRouter = createTRPCRouter({
           })
           .where(eq(linksList.id, input.id))
           .returning();
+
+        if (data?.[0]) {
+          const linkData = data[0] as InferSelectModel<typeof linksList>;
+          await deleteImageLinkCache(input.id, linkData.slug);
+        }
 
         return data;
       } catch (error) {
