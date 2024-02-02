@@ -1,4 +1,6 @@
+import { env } from "@/env";
 import dynamic from "next/dynamic";
+import Script from "next/script";
 import { type FC } from "react";
 import Footer from "./_components/footer";
 import TopbarSkeleton from "./_components/skeleton/topbar-skeleton";
@@ -18,6 +20,12 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       <Topbar />
       <main className="flex-grow">{children}</main>
       <Footer />
+
+      <Script
+        src={env.NEXT_PUBLIC_UMAMI_URL}
+        strategy="lazyOnload"
+        data-website-id={env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+      />
     </div>
   );
 };
