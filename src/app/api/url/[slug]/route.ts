@@ -1,7 +1,7 @@
 import { addCachedData, getCachedData } from "@/lib/redis";
 import { db } from "@/server/db";
 import { linksList } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -30,10 +30,13 @@ export async function GET(req: Request) {
     return NextResponse.json(cachedData);
   }
 
-  const data = await db
+  const prepared = db
     .select()
     .from(linksList)
-    .where(eq(linksList.slug, slug));
+    .where(eq(linksList.slug, sql.placeholder("slug")))
+    .prepare();
+
+  const data = await prepared.all({ slug });
 
   if (!data || data.length === 0) {
     return NextResponse.json(

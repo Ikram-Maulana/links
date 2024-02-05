@@ -6,7 +6,9 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const data = await db.select().from(linksList);
+    const prepared = db.select().from(linksList).prepare();
+
+    const data = await prepared.all();
 
     return NextResponse.json(data);
   } catch (err) {
