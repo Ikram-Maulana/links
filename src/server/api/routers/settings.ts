@@ -7,7 +7,7 @@ import {
 } from "@/lib/redis";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { publicMetadata, type users } from "@/server/db/schema";
-import { eq, type InferSelectModel } from "drizzle-orm";
+import { eq, sql, type InferSelectModel } from "drizzle-orm";
 import { z } from "zod";
 
 type PublicMetadataProps = InferSelectModel<typeof publicMetadata>;
@@ -27,13 +27,16 @@ export const settingsRouter = createTRPCRouter({
         return cachedData as ProfileDataProps;
       }
 
-      const detailUser = await ctx.db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.id, user.id),
-        with: {
-          publicMetadata: true,
-        },
-      });
+      const preparedDetail = ctx.db.query.users
+        .findFirst({
+          where: (users, { eq }) => eq(users.id, sql.placeholder("id")),
+          with: {
+            publicMetadata: true,
+          },
+        })
+        .prepare();
 
+      const detailUser = await preparedDetail.all({ id: user.id });
       await addCachedData("profileData", detailUser as ProfileDataProps);
 
       return detailUser as ProfileDataProps;

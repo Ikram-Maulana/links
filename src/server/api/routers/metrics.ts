@@ -18,12 +18,14 @@ export const metricsRouter = createTRPCRouter({
         };
       }
 
-      const totalLinks = await ctx.db
+      const prepared = ctx.db
         .select({
           value: count(),
         })
-        .from(linksList);
+        .from(linksList)
+        .prepare();
 
+      const totalLinks = await prepared.all();
       await addCachedData("metrics", totalLinks);
 
       return {

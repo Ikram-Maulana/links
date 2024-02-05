@@ -24,11 +24,13 @@ export const publicMetadataRouter = createTRPCRouter({
         return cachedData;
       }
 
-      const availablePublicMetadata =
-        await ctx.db.query.publicMetadata.findFirst({
+      const preparedAvailable = ctx.db.query.publicMetadata
+        .findFirst({
           where: (publicMetadata, { eq }) => eq(publicMetadata.userId, user.id),
-        });
+        })
+        .prepare();
 
+      const availablePublicMetadata = await preparedAvailable.all();
       await addCachedData(
         "publicMetadata",
         availablePublicMetadata as PublicMetadataProps,
@@ -56,15 +58,16 @@ export const publicMetadataRouter = createTRPCRouter({
         return cachedData;
       }
 
-      const profileData = await ctx.db.query.users.findFirst({
-        with: {
-          publicMetadata: true,
-        },
-      });
+      const preparedProfile = ctx.db.query.users
+        .findFirst({
+          with: {
+            publicMetadata: true,
+          },
+        })
+        .prepare();
 
+      const profileData = await preparedProfile.all();
       await addCachedData("profileData", profileData as ProfileDataProps);
-
-      console.log(profileData, "profileData");
 
       return profileData as
         | (InferSelectModel<typeof users> & {

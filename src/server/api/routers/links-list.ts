@@ -15,7 +15,7 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import { linksList } from "@/server/db/schema";
-import { type InferSelectModel, desc, eq } from "drizzle-orm";
+import { type InferSelectModel, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
 export const linksListRouter = createTRPCRouter({
@@ -24,11 +24,13 @@ export const linksListRouter = createTRPCRouter({
       let data = await getCachedData("linksList");
 
       if (!data) {
-        data = await ctx.db
+        const prepared = ctx.db
           .select()
           .from(linksList)
-          .orderBy(desc(linksList.createdAt));
+          .orderBy(desc(linksList.createdAt))
+          .prepare();
 
+        data = await prepared.all();
         await addCachedData("linksList", data);
       }
 
@@ -119,10 +121,12 @@ export const linksListRouter = createTRPCRouter({
         let data = await getOneCachedData("linksList", input.id);
 
         if (!data) {
-          data = await ctx.db
+          const preparedById = ctx.db
             .select()
             .from(linksList)
-            .where(eq(linksList.id, input.id));
+            .where(eq(linksList.id, sql.placeholder("id")))
+            .prepare();
+          data = await preparedById.all({ id: input.id });
 
           await addCachedData("linksList", data);
         }
