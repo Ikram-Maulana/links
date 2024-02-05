@@ -1,8 +1,5 @@
-"use client";
-
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { type FC } from "react";
@@ -23,11 +20,7 @@ interface CardProps {
 
 const Card: FC<CardProps> = ({ image = "", title, url, slug }) => {
   return (
-    <motion.div
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 400, damping: 17 }}
-      className="hover:custor-pointer group relative mb-4 h-auto w-full overflow-hidden rounded-lg bg-white shadow-sm"
-    >
+    <div className="custor-pointer group relative mb-4 h-auto w-full transform overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-200 ease-in-out hover:scale-[102%]">
       <a
         href={`${url}?utm_source=ikramlinks&utm_medium=redirect&utm_campaign=ikramlinks`}
         className={cn(
@@ -57,7 +50,7 @@ const Card: FC<CardProps> = ({ image = "", title, url, slug }) => {
       </a>
 
       <ShareButton slug={slug} />
-    </motion.div>
+    </div>
   );
 };
 

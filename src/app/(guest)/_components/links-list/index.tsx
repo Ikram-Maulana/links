@@ -1,17 +1,11 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Skeleton } from "@/components/ui/skeleton";
 import { type linksList } from "@/server/db/schema";
 import { api } from "@/trpc/server";
 import { IconCircleX, IconTriangleInfo } from "@irsyadadl/paranoid";
 import { type InferSelectModel } from "drizzle-orm";
 import { unstable_noStore as noStore } from "next/cache";
-import dynamic from "next/dynamic";
 import { type FC } from "react";
-
-const Card = dynamic(() => import("./card"), {
-  loading: () => <Skeleton className="mb-4 h-14 w-full" />,
-  ssr: false,
-});
+import Card from "./card";
 
 type LinksDataProps = InferSelectModel<typeof linksList>;
 
