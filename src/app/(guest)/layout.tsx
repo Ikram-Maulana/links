@@ -1,8 +1,9 @@
+import { env } from "@/env";
 import dynamic from "next/dynamic";
+import Script from "next/script";
 import { type FC } from "react";
 import Footer from "./_components/footer";
 import TopbarSkeleton from "./_components/skeleton/topbar-skeleton";
-import Script from "next/script";
 
 const Topbar = dynamic(() => import("./_components/topbar"), {
   loading: () => <TopbarSkeleton />,
@@ -21,9 +22,9 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       <Footer />
 
       <Script
-        src="https://analytics.ikrammaulana.my.id/script.js"
+        src={env.NEXT_PUBLIC_UMAMI_URL}
         strategy="lazyOnload"
-        data-website-id="c27f1d9d-4f96-4854-8ac9-a2f9bd9b043c"
+        data-website-id={env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
       />
     </div>
   );

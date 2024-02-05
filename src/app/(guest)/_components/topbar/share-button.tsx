@@ -52,13 +52,8 @@ const ShareButton: FC<ShareButtonProps> = ({ yPosition }) => {
               },
             )}
             aria-label="Share this Link"
-            id="share-button-topbar"
-            data-umami-event="Share button Topbar"
           >
-            <IconDotsHorizontal
-              id="share-button-topbar-icon"
-              data-umami-event="Share button Topbar"
-            />
+            <IconDotsHorizontal />
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
@@ -86,13 +81,8 @@ const ShareButton: FC<ShareButtonProps> = ({ yPosition }) => {
             },
           )}
           aria-label="Share this Link"
-          id="share-button-topbar"
-          data-umami-event="Share button Topbar"
         >
-          <IconDotsHorizontal
-            id="share-button-topbar-icon"
-            data-umami-event="Share button Topbar"
-          />
+          <IconDotsHorizontal />
         </Button>
       </DrawerTrigger>
       <DrawerContent>
@@ -123,8 +113,6 @@ const ShareOptions = () => {
           href={`https://www.linkedin.com/sharing/share-offsite/?url=${getBaseUrl()}?utm_source=ikramlink`}
           target="_blank"
           rel="noopener"
-          id="share-linkedin-button-topbar"
-          data-umami-event="Share Linkedin button topbar"
         >
           <div className="grid w-full grid-cols-[min-content,auto,min-content] gap-4 text-center">
             <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-[#0A66C2] text-zinc-50">
@@ -143,8 +131,6 @@ const ShareOptions = () => {
           href={`https://wa.me/?text=Check%20out%20this%20Link!%20-%20${getBaseUrl()}?utm_source=ikramlink`}
           target="_blank"
           rel="noopener"
-          id="share-whatsapp-button-topbar"
-          data-umami-event="Share Whatsapp button topbar"
         >
           <div className="grid w-full grid-cols-[min-content,auto,min-content] gap-4 text-center">
             <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-[#25D366] text-zinc-50">
@@ -163,8 +149,6 @@ const ShareOptions = () => {
           href={`mailto:?subject= Check out this Linkt! &amp;body= Check%20out%20this%20Link! - ${getBaseUrl()}?utm_source=ikramlink`}
           target="_blank"
           rel="noopener"
-          id="share-email-button-topbar"
-          data-umami-event="Share Email button topbar"
         >
           <div className="grid w-full grid-cols-[min-content,auto,min-content] gap-4 text-center">
             <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-gray-500 text-zinc-50">
@@ -182,34 +166,18 @@ const ShareOptions = () => {
         variant="outline"
         className="mt-4 h-auto max-w-[375px] py-4"
         onClick={() => clipboard.copy(`${getBaseUrl()}?utm_source=ikramlink`)}
-        id="share-copy-button-topbar"
-        data-umami-event="Share Copy button topbar"
       >
-        <div
-          className="flex w-full grid-cols-[min-content,auto,min-content] gap-4 text-center"
-          id="share-copy-content-topbar"
-          data-umami-event="Share Copy button topbar"
-        >
-          <div
-            className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-sm bg-gray-500 text-zinc-50"
-            id="share-copy-icon-topbar"
-            data-umami-event="Share Copy button topbar"
-          >
+        <div className="flex w-full grid-cols-[min-content,auto,min-content] gap-4 text-center">
+          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-sm bg-gray-500 text-zinc-50">
             <IconDuplicate className="h-3 w-3 text-zinc-50" />
           </div>
-          <span
-            className="flex max-w-[260px] items-center justify-start truncate md:max-w-none"
-            id="share-copy-url-topbar"
-            data-umami-event="Share Copy button topbar"
-          >
+          <span className="flex max-w-[260px] items-center justify-start truncate md:max-w-none">
             {getBaseUrl()}
           </span>
           <span
             className={cn("ml-auto flex items-center justify-start", {
               "text-primary": clipboard.copied,
             })}
-            id="share-copy-button-text"
-            data-umami-event="Share Copy button topbar"
           >
             {clipboard.copied ? "Copied!" : "Copy"}
           </span>

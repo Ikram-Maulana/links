@@ -1,7 +1,19 @@
+import {
+  addCachedData,
+  deleteProfileImage,
+  getCachedData,
+  updateCachedData,
+  updateOrCreateCachedData,
+} from "@/lib/redis";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { publicMetadata } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
+import { publicMetadata, type users } from "@/server/db/schema";
+import { eq, sql, type InferSelectModel } from "drizzle-orm";
 import { z } from "zod";
+
+type PublicMetadataProps = InferSelectModel<typeof publicMetadata>;
+type ProfileDataProps = InferSelectModel<typeof users> & {
+  publicMetadata: PublicMetadataProps;
+};
 
 export const settingsRouter = createTRPCRouter({
   getDetail: protectedProcedure.query(async ({ ctx }) => {
@@ -9,14 +21,25 @@ export const settingsRouter = createTRPCRouter({
     const { user } = session;
 
     try {
-      const detailUser = await ctx.db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.id, user.id),
-        with: {
-          publicMetadata: true,
-        },
-      });
+      const cachedData = await getCachedData("profileData");
 
-      return detailUser;
+      if (cachedData) {
+        return cachedData as ProfileDataProps;
+      }
+
+      const preparedDetail = ctx.db.query.users
+        .findFirst({
+          where: (users, { eq }) => eq(users.id, sql.placeholder("id")),
+          with: {
+            publicMetadata: true,
+          },
+        })
+        .prepare();
+
+      const detailUser = await preparedDetail.all({ id: user.id });
+      await addCachedData("profileData", detailUser as ProfileDataProps);
+
+      return detailUser as ProfileDataProps;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);
@@ -69,6 +92,18 @@ export const settingsRouter = createTRPCRouter({
           })
           .returning();
 
+        await Promise.all([
+          updateCachedData(
+            "profileData",
+            user.id,
+            upsertPublicMetadata[0] as unknown as PublicMetadataProps,
+          ),
+          updateOrCreateCachedData(
+            "publicMetadata",
+            upsertPublicMetadata[0] as unknown as PublicMetadataProps,
+          ),
+        ]);
+
         return upsertPublicMetadata;
       } catch (error) {
         if (error instanceof Error) {
@@ -93,6 +128,8 @@ export const settingsRouter = createTRPCRouter({
         })
         .where(eq(publicMetadata.userId, user.id))
         .returning();
+
+      await deleteProfileImage();
 
       return deleteImage;
     } catch (error) {
