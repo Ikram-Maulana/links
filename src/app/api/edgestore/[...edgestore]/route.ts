@@ -2,6 +2,9 @@ import { initEdgeStore } from "@edgestore/server";
 import { createEdgeStoreNextHandler } from "@edgestore/server/adapters/next/app";
 import { z } from "zod";
 
+export const runtime = "edge";
+export const preferredRegion = ["sin1"];
+
 const es = initEdgeStore.create();
 
 /**

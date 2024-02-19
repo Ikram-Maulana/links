@@ -2,7 +2,8 @@ import { db } from "@/server/db";
 import { linksList } from "@/server/db/schema";
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
+export const runtime = "edge";
+export const preferredRegion = ["sin1"];
 
 export async function GET() {
   try {

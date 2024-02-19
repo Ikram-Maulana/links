@@ -4,7 +4,8 @@ import { linksList } from "@/server/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
+export const runtime = "edge";
+export const preferredRegion = ["sin1"];
 
 export async function GET(req: Request) {
   const { pathname } = new URL(req.url);
