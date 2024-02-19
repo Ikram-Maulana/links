@@ -6,9 +6,6 @@ await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
 const config = {
-  experimental: {
-    ppr: true,
-  },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
