@@ -37,10 +37,18 @@ export const getCachedData = async (key: string) => {
       key === "publicMetadata" ||
       key === "profileData"
     ) {
-      result = await redis.json.get(key);
+      result = (await redis.json.get(key)) as
+        | CachedArrayDataProps
+        | ProfileDataProps
+        | PublicMetadataProps
+        | undefined;
     } else if (key.includes("slug")) {
       const cachedData = await redis.json.get(key);
-      result = cachedData;
+      result = cachedData as
+        | CachedArrayDataProps
+        | ProfileDataProps
+        | PublicMetadataProps
+        | undefined;
     } else {
       const listCachedData = await redis.lrange(key, 0, -1);
 
@@ -49,7 +57,11 @@ export const getCachedData = async (key: string) => {
           redis.json.get(`${key}:${id}`),
         );
         const results = await Promise.all(promises);
-        result = results;
+        result = results as
+          | CachedArrayDataProps
+          | ProfileDataProps
+          | PublicMetadataProps
+          | undefined;
       }
     }
 
