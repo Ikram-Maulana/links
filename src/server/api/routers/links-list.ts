@@ -77,7 +77,7 @@ export const linksListRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const data = await ctx.db
+        const dataPrepared = ctx.db
           .insert(linksList)
           .values({
             image: input.image,
@@ -85,7 +85,9 @@ export const linksListRouter = createTRPCRouter({
             url: input.url,
             slug: input.slug,
           })
-          .returning();
+          .returning()
+          .prepare();
+        const data = await dataPrepared.all();
 
         await Promise.all([
           addCachedData("linksList", data),
@@ -183,7 +185,7 @@ export const linksListRouter = createTRPCRouter({
       try {
         const inputImage = input.image !== "" ? { image: input.image } : {};
 
-        const data = await ctx.db
+        const dataPrepared = ctx.db
           .update(linksList)
           .set({
             ...inputImage,
@@ -192,8 +194,10 @@ export const linksListRouter = createTRPCRouter({
             slug: input.slug,
             updatedAt: new Date(),
           })
-          .where(eq(linksList.id, input.id))
-          .returning();
+          .where(eq(linksList.id, sql.placeholder("id")))
+          .returning()
+          .prepare();
+        const data = await dataPrepared.all({ id: input.id });
 
         if (data?.[0]) {
           const linkData = data[0] as InferSelectModel<typeof linksList>;
@@ -229,10 +233,12 @@ export const linksListRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const data = await ctx.db
+        const dataPrepared = ctx.db
           .delete(linksList)
           .where(eq(linksList.id, input.id))
-          .returning();
+          .returning()
+          .prepare();
+        const data = await dataPrepared.all();
 
         if (data?.[0]) {
           const linkData = data[0] as InferSelectModel<typeof linksList>;
@@ -269,13 +275,15 @@ export const linksListRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const data = await ctx.db
+        const dataPrepared = ctx.db
           .update(linksList)
           .set({
             image: null,
           })
           .where(eq(linksList.id, input.id))
-          .returning();
+          .returning()
+          .prepare();
+        const data = await dataPrepared.all();
 
         if (data?.[0]) {
           const linkData = data[0] as InferSelectModel<typeof linksList>;
