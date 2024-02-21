@@ -34,6 +34,7 @@ export const env = createEnv({
     GITHUB_ALLOWED_USER_ID: z.string(),
     UPSTASH_REDIS_REST_URL: z.string().url(),
     UPSTASH_REDIS_REST_TOKEN: z.string(),
+    UPLOADCARE_SECRET_KEY: z.string(),
   },
 
   /**
@@ -46,6 +47,8 @@ export const env = createEnv({
     NEXT_PUBLIC_PORTFOLIO_URL: z.string().url(),
     NEXT_PUBLIC_UMAMI_URL: z.string().url(),
     NEXT_PUBLIC_UMAMI_WEBSITE_ID: z.string(),
+    NEXT_PUBLIC_UPLOADCARE_BASE_URL: z.string().url(),
+    NEXT_PUBLIC_UPLOADCARE_PUBLIC_KEY: z.string(),
   },
 
   /**
@@ -66,6 +69,11 @@ export const env = createEnv({
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
     NEXT_PUBLIC_UMAMI_URL: process.env.NEXT_PUBLIC_UMAMI_URL,
     NEXT_PUBLIC_UMAMI_WEBSITE_ID: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
+    NEXT_PUBLIC_UPLOADCARE_BASE_URL:
+      process.env.NEXT_PUBLIC_UPLOADCARE_BASE_URL,
+    NEXT_PUBLIC_UPLOADCARE_PUBLIC_KEY:
+      process.env.NEXT_PUBLIC_UPLOADCARE_PUBLIC_KEY,
+    UPLOADCARE_SECRET_KEY: process.env.UPLOADCARE_SECRET_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

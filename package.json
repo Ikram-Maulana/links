@@ -48,6 +48,8 @@
     "@trpc/next": "^10.45.1",
     "@trpc/react-query": "^10.45.1",
     "@trpc/server": "^10.45.1",
+    "@uploadcare/blocks": "0.33.2",
+    "@uploadcare/rest-client": "^6.14.0",
     "@upstash/redis": "^1.28.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
