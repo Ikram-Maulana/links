@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -11,22 +14,25 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
-import { useEdgeStore } from "@/lib/edgestore";
+import { env } from "@/env";
+import { deleteUploadcareFile } from "@/lib/uploadcare";
 import { cn } from "@/lib/utils";
 import { type publicMetadata, type users } from "@/server/db/schema";
 import { api } from "@/trpc/react";
-import { EdgeStoreApiClientError } from "@edgestore/react/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { IconTrash } from "@irsyadadl/paranoid";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import * as LR from "@uploadcare/blocks";
 import { type InferSelectModel } from "drizzle-orm";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type FC } from "react";
+import { useEffect, useRef, useState, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+
+LR.registerBlocks(LR);
 
 interface EditFormProps {
   detail: InferSelectModel<typeof users> & {
@@ -67,63 +73,98 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
     location: oldLocation,
   } = detail.publicMetadata ?? {};
 
-  const { edgestore } = useEdgeStore();
-  const [oldImageUrl, setOldImageUrl] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [progress, setProgress] = useState(0);
+  const [oldImageIds, setOldImageIds] = useState("");
+  const [imageIds, setImageIds] = useState("");
   const [imageSource, setImageSource] = useState(
     "https://placehold.co/96/webp",
   );
+  const ctxProviderRef = useRef<
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    typeof LR.UploadCtxProvider.prototype & LR.UploadCtxProvider
+  >(null);
+
+  useEffect(() => {
+    const handleUpload = (event: CustomEvent<LR.OutputCollectionState>) => {
+      if (
+        event.detail &&
+        event.detail.successEntries &&
+        event.detail.successEntries.length > 0
+      ) {
+        setImageIds(event.detail.successEntries[0]?.uuid ?? "");
+      }
+    };
+
+    const current = ctxProviderRef.current;
+    current?.addEventListener("common-upload-success", handleUpload);
+
+    return () => {
+      current?.removeEventListener("common-upload-success", handleUpload);
+    };
+  }, []);
+
+  useEffect(() => {
+    const removeFile = (event: CustomEvent<LR.OutputFileEntry>) => {
+      if (event.detail && event.detail.isRemoved) {
+        setImageIds("");
+      }
+    };
+
+    const current = ctxProviderRef.current;
+    current?.addEventListener("file-removed", removeFile);
+
+    return () => {
+      current?.removeEventListener("file-removed", removeFile);
+    };
+  });
 
   useEffect(() => {
     let newImageSource = imageSource;
 
-    if (imageUrl !== "") {
-      newImageSource = imageUrl;
+    if (imageIds !== "") {
+      newImageSource = `${env.NEXT_PUBLIC_UPLOADCARE_BASE_URL}/${imageIds}/-/quality/lighter/-/progressive/yes/`;
     } else if (detail.publicMetadata?.avatar) {
-      newImageSource = detail.publicMetadata.avatar;
+      newImageSource = `${env.NEXT_PUBLIC_UPLOADCARE_BASE_URL}/${detail.publicMetadata.avatar}/-/quality/lighter/-/progressive/yes/`;
     } else if (detail.image) {
       newImageSource = detail.image;
     }
 
     setImageSource(newImageSource);
-  }, [imageUrl, detail, imageSource]);
+  }, [imageIds, detail, imageSource]);
 
   useEffect(() => {
-    if (imageUrl !== "") {
-      form.setValue("avatar", imageUrl);
+    if (imageIds !== "") {
+      form.setValue("avatar", imageIds);
     }
-  }, [imageUrl, form]);
+  }, [imageIds, form]);
 
   useEffect(() => {
-    setOldImageUrl(detail?.publicMetadata?.avatar ?? "");
+    setOldImageIds(detail.publicMetadata.avatar!);
   }, [detail]);
 
   const { mutate: deleteImage, isLoading: isDeletingImage } =
     api.settings.deleteImage.useMutation({
       onSuccess: async () => {
         try {
-          await edgestore.publicFiles.delete({ url: oldImageUrl });
-          setImageUrl("");
-          setOldImageUrl("");
-          form.setValue("avatar", "");
-          toast.success("Image deleted successfully");
+          await deleteUploadcareFile({ uuid: oldImageIds }).then(() => {
+            setImageIds("");
+            setOldImageIds("");
+            form.setValue("avatar", "");
+          });
+          return toast.success("Image deleted successfully");
         } catch (err) {
-          if (err instanceof EdgeStoreApiClientError) {
-            if (err.data.code === "DELETE_NOT_ALLOWED") {
-              toast.error("You don't have permission to delete this file.");
-            }
+          if (err instanceof Error) {
+            return toast.error(err.message);
           }
 
-          toast.error("An error occurred while deleting the image");
+          return toast.error("An error occurred while deleting the image");
         }
       },
       onError: (error) => {
         if (error instanceof Error && error.message) {
-          toast.error(error.message);
-        } else {
-          toast.error("An error occurred");
+          return toast.error(error.message);
         }
+
+        return toast.error("Something went wrong!");
       },
       onSettled: () => {
         router.refresh();
@@ -134,55 +175,34 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
     api.settings.update.useMutation({
       onSuccess: async () => {
         try {
-          if (imageUrl !== "") {
-            oldImageUrl !== "" &&
-              (await edgestore.publicFiles.delete({ url: oldImageUrl }));
-            await edgestore.publicFiles.confirmUpload({ url: imageUrl });
+          if (imageIds !== "") {
+            oldImageIds !== "" &&
+              (await deleteUploadcareFile({ uuid: oldImageIds }));
           }
-          setProgress(0);
-          toast.success("Details users updated successfully");
+          return toast.success("Details users updated successfully");
         } catch (error) {
-          // All errors are typed and you will get intellisense for them
-          if (error instanceof EdgeStoreApiClientError) {
-            // if it fails due to the `maxSize` set in the router config
-            if (error.data.code === "FILE_TOO_LARGE") {
-              toast.error(
-                `File too large. Max size is ${error.data.details.maxFileSize}MB`,
-              );
-            }
-
-            // if it fails due to the `accept` set in the router config
-            if (error.data.code === "MIME_TYPE_NOT_ALLOWED") {
-              toast.error(
-                `File type not allowed. Allowed types are ${error.data.details.allowedMimeTypes.join(
-                  ", ",
-                )}`,
-              );
-            }
-
-            // if it fails during the `beforeUpload` check
-            if (error.data.code === "UPLOAD_NOT_ALLOWED") {
-              toast.error("You don't have permission to upload files here.");
-            }
+          if (error instanceof Error && error.message) {
+            return toast.error(error.message);
           }
 
-          toast.error("An error occurred while uploading the image");
+          return toast.error("Error occurred while deleting the old image");
         }
       },
       onError: (error) => {
         if (error instanceof Error && error.message) {
-          toast.error(error.message);
-        } else {
-          toast.error("An error occurred");
+          return toast.error(error.message);
         }
+
+        return toast.error("Something went wrong!");
       },
       onSettled: () => {
-        router.refresh();
+        ctxProviderRef.current?.uploadCollection.clearAll();
+        return router.refresh();
       },
     });
 
   function onDeleteImage() {
-    if (isLoadingStore || isDeletingImage || oldImageUrl === "") {
+    if (isLoadingStore || isDeletingImage || oldImageIds === "") {
       return;
     }
 
@@ -195,7 +215,7 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
     }
 
     mutateStore({
-      avatar: imageUrl,
+      avatar: imageIds,
       bio: data.bio,
       location: data.location,
     });
@@ -209,76 +229,67 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
           name="avatar"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Profile Picture</FormLabel>
+              <FormLabel>
+                Profile Picture
+                <p className="mb-4 mt-1 text-[0.8rem] text-muted-foreground">
+                  Max file size 10MB
+                </p>
+              </FormLabel>
               <FormControl>
                 <div className="flex flex-col gap-4 md:flex-row md:items-center">
-                  <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-full">
+                  <div className="relative mx-auto h-24 w-24 flex-shrink-0 overflow-hidden rounded-full">
                     <Image
                       src={imageSource}
                       alt={detail.name ?? ""}
                       className="h-full w-full object-cover"
-                      fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 80vw"
+                      fill
                       priority
                     />
                   </div>
 
-                  <div className="flex w-full flex-col gap-y-2">
-                    <div className="flex w-full gap-x-2">
-                      <Input
-                        className="hidden"
-                        type="text"
-                        {...field}
-                        value={field.value ?? ""}
-                      />
-                      <Input
-                        id="avatar"
-                        name="avatar"
-                        type="file"
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0];
+                  <div className="flex h-fit w-full gap-x-2">
+                    <Input
+                      className="hidden"
+                      type="text"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
 
-                          if (file) {
-                            const res = await edgestore.publicFiles.upload({
-                              file,
-                              input: {
-                                type: "profile",
-                              },
-                              onProgressChange: (progress) => {
-                                setProgress(progress);
-                              },
-                              options: {
-                                temporary: true,
-                              },
-                            });
+                    <lr-config
+                      ctx-name="avatar"
+                      pubkey={env.NEXT_PUBLIC_UPLOADCARE_PUBLIC_KEY}
+                      maxLocalFileSizeBytes={10000000}
+                      multiple={false}
+                      imgOnly={true}
+                    />
+                    <lr-file-uploader-minimal
+                      css-src={`https://cdn.jsdelivr.net/npm/@uploadcare/blocks@${LR.PACKAGE_VERSION}/web/lr-file-uploader-minimal.min.css`}
+                      ctx-name="avatar"
+                      class="my-config"
+                    ></lr-file-uploader-minimal>
+                    <lr-upload-ctx-provider
+                      ref={ctxProviderRef}
+                      ctx-name="avatar"
+                    />
 
-                            setImageUrl(res.url);
-                          }
-                        }}
-                      />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        onClick={onDeleteImage}
-                        disabled={
-                          isLoadingStore ||
-                          isDeletingImage ||
-                          oldImageUrl === ""
-                        }
-                        className={cn({
-                          hidden: oldImageUrl === "",
-                        })}
-                      >
-                        {isDeletingImage && (
-                          <ReloadIcon className="mr-2 h-3 w-3 animate-spin" />
-                        )}
-                        Delete
-                      </Button>
-                    </div>
-                    <Progress value={progress} />
-                    <p className="text-[0.8rem] text-muted-foreground">
-                      Max file size 4MB
-                    </p>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={onDeleteImage}
+                      disabled={
+                        isLoadingStore || isDeletingImage || oldImageIds === ""
+                      }
+                      className={cn("h-[60px] md:mt-[10px]", {
+                        hidden: oldImageIds === "",
+                      })}
+                    >
+                      {isDeletingImage ? (
+                        <ReloadIcon className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <IconTrash className="h-5 w-5" />
+                      )}
+                    </Button>
                   </div>
                 </div>
               </FormControl>
