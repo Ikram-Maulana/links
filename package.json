@@ -93,7 +93,7 @@
     "typescript": "^5.3.3"
   },
   "ct3aMetadata": {
-    "initVersion": "7.25.1"
+    "initVersion": "7.27.0"
   },
   "packageManager": "npm@10.2.3"
 }
