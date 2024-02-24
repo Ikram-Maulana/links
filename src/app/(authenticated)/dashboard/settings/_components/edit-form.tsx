@@ -248,7 +248,11 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
                     />
                   </div>
 
-                  <div className="flex h-fit w-full gap-x-2">
+                  <div
+                    className={cn("flex h-fit w-full", {
+                      "mr-2": oldImageIds !== "",
+                    })}
+                  >
                     <Input
                       className="hidden"
                       type="text"
@@ -262,6 +266,7 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
                       maxLocalFileSizeBytes={10000000}
                       multiple={false}
                       imgOnly={true}
+                      removeCopyright={true}
                     />
                     <lr-file-uploader-minimal
                       css-src={`https://cdn.jsdelivr.net/npm/@uploadcare/blocks@${LR.PACKAGE_VERSION}/web/lr-file-uploader-minimal.min.css`}

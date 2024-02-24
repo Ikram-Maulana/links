@@ -15,7 +15,6 @@ const EditFormSkeleton: FC = () => {
 
           <div className="flex w-full flex-col gap-y-2">
             <Skeleton className="mt-[10px] h-[60px] w-full" />
-            <Skeleton className="mx-auto mb-[10px] h-[17px] w-[127px]" />
           </div>
         </div>
       </div>
