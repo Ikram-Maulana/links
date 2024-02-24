@@ -152,10 +152,6 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
           });
           return toast.success("Image deleted successfully");
         } catch (err) {
-          if (err instanceof Error) {
-            return toast.error(err.message);
-          }
-
           return toast.error("An error occurred while deleting the image");
         }
       },
