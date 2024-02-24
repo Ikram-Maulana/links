@@ -1,6 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
 import { env } from "@/env";
-import { EdgeStoreProvider } from "@/lib/edgestore";
 import { getBaseUrl } from "@/lib/utils";
 import "@/styles/globals.css";
 import { TRPCReactProvider } from "@/trpc/react";
@@ -75,9 +74,7 @@ export default function RootLayout({
       <body className="min-h-screen antialiased">
         <NextTopLoader color="#22c55e" height={4} showSpinner />
 
-        <TRPCReactProvider>
-          <EdgeStoreProvider>{children}</EdgeStoreProvider>
-        </TRPCReactProvider>
+        <TRPCReactProvider>{children}</TRPCReactProvider>
 
         <div className="lg:hidden">
           <Toaster richColors position="bottom-center" duration={5000} />

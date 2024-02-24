@@ -1,3 +1,4 @@
+// @typescript-eslint/no-unsafe-assignment disabled
 import {
   addCachedData,
   deleteProfileImage,
