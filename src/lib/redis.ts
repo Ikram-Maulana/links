@@ -170,22 +170,22 @@ export const deleteProfileImage = async () => {
     ]);
 
     if (cachedProfileData && "publicMetadata" in cachedProfileData) {
-      const updatedPublicMetadata = {
+      const updatedProfileData = {
         ...cachedProfileData.publicMetadata,
-        avatar: "",
+        avatar: null,
       };
 
       await redis.json.set(
         "profileData",
         "$.publicMetadata",
-        updatedPublicMetadata,
+        updatedProfileData,
       );
     }
 
     if (cachedPublicMetadataData && "avatar" in cachedPublicMetadataData) {
       const updatedPublicMetadata = {
         ...cachedPublicMetadataData,
-        avatar: "",
+        avatar: null,
       };
 
       await redis.json.set("publicMetadata", "$", updatedPublicMetadata);
@@ -237,7 +237,7 @@ export const deleteImageLinkCache = async (id: string, slug: string) => {
     if (cachedData) {
       const updatedData = {
         ...cachedData,
-        image: "",
+        image: null,
       };
 
       await Promise.all([
