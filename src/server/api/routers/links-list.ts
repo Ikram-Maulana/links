@@ -80,7 +80,7 @@ export const linksListRouter = createTRPCRouter({
         const dataPrepared = ctx.db
           .insert(linksList)
           .values({
-            image: input.image,
+            image: input.image === "" ? null : input.image,
             title: input.title,
             url: input.url,
             slug: input.slug,
@@ -183,7 +183,19 @@ export const linksListRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const inputImage = input.image !== "" ? { image: input.image } : {};
+        const existingDataPrepared = ctx.db
+          .select()
+          .from(linksList)
+          .where(eq(linksList.id, sql.placeholder("id")))
+          .prepare();
+        const existingData = (await existingDataPrepared.all({
+          id: input.id,
+        })) as InferSelectModel<typeof linksList>[];
+
+        const inputImage =
+          input.image === ""
+            ? { image: existingData[0]!.image }
+            : { image: input.image };
 
         const dataPrepared = ctx.db
           .update(linksList)
@@ -197,10 +209,12 @@ export const linksListRouter = createTRPCRouter({
           .where(eq(linksList.id, sql.placeholder("id")))
           .returning()
           .prepare();
-        const data = await dataPrepared.all({ id: input.id });
+        const data = (await dataPrepared.all({
+          id: input.id,
+        })) as unknown as InferSelectModel<typeof linksList>[];
 
-        if (data?.[0]) {
-          const linkData = data[0] as InferSelectModel<typeof linksList>;
+        if (data && Boolean(data.length)) {
+          const linkData = data[0]!;
           await Promise.all([
             updateCachedData("linksList", input.id, linkData),
             revalidateLinkCache(linkData.slug, linkData),
@@ -238,10 +252,12 @@ export const linksListRouter = createTRPCRouter({
           .where(eq(linksList.id, input.id))
           .returning()
           .prepare();
-        const data = await dataPrepared.all();
+        const data = (await dataPrepared.all()) as unknown as InferSelectModel<
+          typeof linksList
+        >[];
 
-        if (data?.[0]) {
-          const linkData = data[0] as InferSelectModel<typeof linksList>;
+        if (data && Boolean(data.length)) {
+          const linkData = data[0]!;
           await Promise.all([
             deleteCachedData("linksList", input.id),
             deleteLinkCache(linkData.slug),
@@ -280,14 +296,19 @@ export const linksListRouter = createTRPCRouter({
           .set({
             image: null,
           })
-          .where(eq(linksList.id, input.id))
+          .where(eq(linksList.id, sql.placeholder("id")))
           .returning()
           .prepare();
-        const data = await dataPrepared.all();
+        const data = (await dataPrepared.all({
+          id: input.id,
+        })) as InferSelectModel<typeof linksList>[];
 
-        if (data?.[0]) {
-          const linkData = data[0] as InferSelectModel<typeof linksList>;
-          await deleteImageLinkCache(input.id, linkData.slug);
+        if (data && Boolean(data.length)) {
+          const linkData = data[0]!;
+          await Promise.all([
+            updateCachedData("linksList", input.id, linkData),
+            deleteImageLinkCache(input.id, linkData.slug),
+          ]);
         }
 
         return data;
