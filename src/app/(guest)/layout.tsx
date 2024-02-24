@@ -7,7 +7,6 @@ import TopbarSkeleton from "./_components/skeleton/topbar-skeleton";
 
 const Topbar = dynamic(() => import("./_components/topbar"), {
   loading: () => <TopbarSkeleton />,
-  ssr: false,
 });
 
 interface LayoutProps {

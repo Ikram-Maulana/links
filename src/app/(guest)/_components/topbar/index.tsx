@@ -12,7 +12,6 @@ import { type FC } from "react";
 
 const ShareButton = dynamic(() => import("./share-button"), {
   loading: () => <Skeleton className="col-start-3 h-10 w-10 rounded-full" />,
-  ssr: false,
 });
 
 type ProfileDataProps = InferSelectModel<typeof users> & {

@@ -8,7 +8,6 @@ import EditFormSkeleton from "./skeleton/edit-form-skeleton";
 import { unstable_noStore as noStore } from "next/cache";
 
 const EditForm = dynamic(() => import("./edit-form"), {
-  ssr: false,
   loading: () => <EditFormSkeleton />,
 });
 

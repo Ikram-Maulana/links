@@ -14,7 +14,6 @@ import { type FC } from "react";
 import ErrorMessage from "./_components/error-messages";
 
 const LoginButton = dynamic(() => import("./_components/login-button"), {
-  ssr: false,
   loading: () => <Skeleton className="mt-4 h-9 w-full" />,
 });
 

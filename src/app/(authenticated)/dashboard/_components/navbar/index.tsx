@@ -11,12 +11,10 @@ import Link from "next/link";
 import { type FC } from "react";
 
 const NavbarMobile = dynamic(() => import("./navbar-mobile"), {
-  ssr: false,
   loading: () => <Skeleton className="h-[36px] w-[46px]" />,
 });
 
 const UserButton = dynamic(() => import("./user-button"), {
-  ssr: false,
   loading: () => <Skeleton className="h-[36px] w-[56px] lg:w-[165px]" />,
 });
 

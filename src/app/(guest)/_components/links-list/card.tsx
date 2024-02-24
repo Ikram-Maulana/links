@@ -8,7 +8,6 @@ const ShareButton = dynamic(() => import("./share-button"), {
   loading: () => (
     <Skeleton className="absolute bottom-0 right-[6px] top-0 z-[1] mx-0 my-auto h-10 w-10 rounded-full" />
   ),
-  ssr: false,
 });
 
 interface CardProps {

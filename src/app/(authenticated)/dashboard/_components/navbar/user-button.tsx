@@ -19,7 +19,6 @@ import Link from "next/link";
 import React from "react";
 
 const LogoutButton = dynamic(() => import("./logout-button"), {
-  ssr: false,
   loading: () => <Skeleton className="h-[32px] w-full" />,
 });
 
