@@ -167,7 +167,7 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
         return toast.error("Something went wrong!");
       },
       onSettled: () => {
-        router.refresh();
+        return router.refresh();
       },
     });
 

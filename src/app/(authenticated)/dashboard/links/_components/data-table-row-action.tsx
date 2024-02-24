@@ -8,18 +8,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { deleteUploadcareFile } from "@/lib/uploadcare";
 import { cn } from "@/lib/utils";
+import { api } from "@/trpc/react";
 import { useDisclosure } from "@mantine/hooks";
 import { DotsHorizontalIcon, ReloadIcon } from "@radix-ui/react-icons";
 import { type Row } from "@tanstack/react-table";
-import { useState } from "react";
-import ModalDelete from "./modal-delete";
-import ModalEdit from "./modal-edit";
-import { api } from "@/trpc/react";
-import { useEdgeStore } from "@/lib/edgestore";
-import { toast } from "sonner";
-import { EdgeStoreApiClientError } from "@edgestore/react/shared";
+import Error from "next/error";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import ModalDelete from "./modal-delete";
+import { ModalEditWrapper } from "./modal-edit-wrapper";
 
 interface DataRow<TData> extends Row<TData> {
   original: TData & {
@@ -41,30 +41,22 @@ export function DataTableRowActions<TData>({
   const [opened, handler] = useDisclosure(false);
   const router = useRouter();
 
-  const { edgestore } = useEdgeStore();
-
   const { mutate: deleteImage, isLoading: isDeletingImage } =
     api.linksList.deleteImage.useMutation({
       onSuccess: async () => {
         try {
-          await edgestore.publicFiles.delete({ url: row.original.image ?? "" });
-          toast.success("Image deleted successfully");
+          await deleteUploadcareFile({ uuid: row.original.image! });
+          return toast.success("Image deleted successfully");
         } catch (err) {
-          if (err instanceof EdgeStoreApiClientError) {
-            if (err.data.code === "DELETE_NOT_ALLOWED") {
-              toast.error("You don't have permission to delete this file.");
-            }
-          }
-
-          toast.error("An error occurred while deleting the image");
+          return toast.error("An error occurred while deleting the image");
         }
       },
       onError: (error) => {
         if (error instanceof Error && error.message) {
-          toast.error(error.message);
-        } else {
-          toast.error("An error occurred");
+          return toast.error(error.message);
         }
+
+        return toast.error("An error occurred");
       },
       onSettled: () => {
         router.refresh();
@@ -136,19 +128,19 @@ export function DataTableRowActions<TData>({
                 </DropdownMenuItem>
               )}
 
-              <ModalEdit id={linksList.id} key={`edit-${linksList.id}`}>
+              <ModalEditWrapper id={linksList.id} key={`edit-${linksList.id}`}>
                 <DropdownMenuItem
                   className={cn("hover:cursor-pointer")}
                   disabled={isLoadingDelete || isDeletingImage}
                 >
                   Edit
                 </DropdownMenuItem>
-              </ModalEdit>
+              </ModalEditWrapper>
 
               <ModalDelete
                 id={linksList.id}
                 title={linksList.title}
-                imageUrl={linksList.image ?? ""}
+                imageIds={linksList.image!}
                 handler={handler}
                 key={`delete-${linksList.id}`}
                 setIsLoadingDelete={setIsLoadingDelete}
