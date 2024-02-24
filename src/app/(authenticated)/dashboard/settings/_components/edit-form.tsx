@@ -179,6 +179,7 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
             oldImageIds !== "" &&
               (await deleteUploadcareFile({ uuid: oldImageIds }));
           }
+          ctxProviderRef.current?.uploadCollection.clearAll();
           return toast.success("Details users updated successfully");
         } catch (error) {
           if (error instanceof Error && error.message) {
@@ -196,7 +197,6 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
         return toast.error("Something went wrong!");
       },
       onSettled: () => {
-        ctxProviderRef.current?.uploadCollection.clearAll();
         return router.refresh();
       },
     });
