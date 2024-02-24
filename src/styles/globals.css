@@ -66,3 +66,12 @@
 
   @apply w-full md:pt-[10px];
 }
+
+.image-link {
+  --darkmode: 0;
+  --h-accent: 144;
+  --s-accent: 67%;
+  --l-accent: 57%;
+
+  @apply w-full;
+}

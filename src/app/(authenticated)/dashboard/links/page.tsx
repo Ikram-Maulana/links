@@ -6,7 +6,7 @@ import { unstable_noStore as noStore } from "next/cache";
 import { redirect } from "next/navigation";
 import { Suspense, type FC } from "react";
 import Content from "./_components/content";
-import ModalCreate from "./_components/modal-create";
+import ModalCreateWrapper from "./_components/modal-create-wrapper";
 import DataTableSkeleton from "./_components/skeleton/data-table-skeleton";
 
 export const metadata: Metadata = {
@@ -33,12 +33,12 @@ const page: FC = async () => {
           </p>
         </div>
 
-        <ModalCreate>
+        <ModalCreateWrapper>
           <Button>
             <IconPlus className="mr-2 h-4 w-4" />
             Add New Link
           </Button>
-        </ModalCreate>
+        </ModalCreateWrapper>
       </div>
 
       <Suspense fallback={<DataTableSkeleton />}>
