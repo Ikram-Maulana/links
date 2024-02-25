@@ -14,7 +14,7 @@ export const LinksList: FC = async () => {
   const links =
     (await api.linksList.getAll.query()) as unknown as LinksDataProps[];
 
-  if (!links) {
+  if (!links || (links && !Boolean(links.length))) {
     return (
       <Alert
         className="mt-8 border-amber-500 bg-amber-500 text-zinc-50 dark:border-amber-900 dark:bg-amber-900 dark:text-zinc-50"
