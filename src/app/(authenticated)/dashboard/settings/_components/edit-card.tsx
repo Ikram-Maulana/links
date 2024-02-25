@@ -2,16 +2,19 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/trpc/server";
 import { IconCircleX } from "@irsyadadl/paranoid";
+import { unstable_noStore as noStore } from "next/cache";
 import dynamic from "next/dynamic";
 import { type FC } from "react";
-import EditFormSkeleton from "./skeleton/edit-form-skeleton";
-import { unstable_noStore as noStore } from "next/cache";
+import { EditFormSkeleton } from "./skeleton/edit-form-skeleton";
 
-const EditForm = dynamic(() => import("./edit-form"), {
-  loading: () => <EditFormSkeleton />,
-});
+const EditForm = dynamic(
+  () => import("./edit-form").then((mod) => mod.EditForm),
+  {
+    loading: () => <EditFormSkeleton />,
+  },
+);
 
-const EditCard: FC = async () => {
+export const EditCard: FC = async () => {
   noStore();
   const getDetail = await api.settings.getDetail.query();
 
@@ -38,5 +41,3 @@ const EditCard: FC = async () => {
     </Card>
   );
 };
-
-export default EditCard;

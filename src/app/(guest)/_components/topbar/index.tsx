@@ -6,19 +6,14 @@ import { type publicMetadata, type users } from "@/server/db/schema";
 import { api } from "@/trpc/react";
 import { useWindowScroll } from "@mantine/hooks";
 import { type InferSelectModel } from "drizzle-orm";
-import dynamic from "next/dynamic";
 import Image from "next/image";
-import { type FC } from "react";
-
-const ShareButton = dynamic(() => import("./share-button"), {
-  loading: () => <Skeleton className="col-start-3 h-10 w-10 rounded-full" />,
-});
+import { ShareButton } from "./share-button";
 
 type ProfileDataProps = InferSelectModel<typeof users> & {
   publicMetadata: InferSelectModel<typeof publicMetadata>;
 };
 
-const Topbar: FC = () => {
+export default function Topbar() {
   const [scroll] = useWindowScroll();
 
   const {
@@ -108,6 +103,4 @@ const Topbar: FC = () => {
       </div>
     </header>
   );
-};
-
-export default Topbar;
+}

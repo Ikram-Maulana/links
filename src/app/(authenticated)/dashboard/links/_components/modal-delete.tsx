@@ -33,7 +33,7 @@ type DeleteProps = {
   setIsLoadingDelete: (isLoading: boolean) => void;
 };
 
-const ModalDelete = ({
+export const ModalDelete = ({
   id,
   title,
   imageIds,
@@ -115,5 +115,3 @@ const ModalDelete = ({
     </AlertDialog>
   );
 };
-
-export default ModalDelete;

@@ -9,13 +9,17 @@ import dynamic from "next/dynamic";
 import { type FC } from "react";
 
 // Not using ssr false because not using web browser API
-const ModalCreateForm = dynamic(() => import("./modal-create-form"));
+const ModalCreateForm = dynamic(() =>
+  import("./modal-create-form").then((mod) => mod.ModalCreateForm),
+);
 
 interface ModalCreateWrapperProps {
   children: React.ReactNode;
 }
 
-const ModalCreateWrapper: FC<ModalCreateWrapperProps> = ({ children }) => {
+export const ModalCreateWrapper: FC<ModalCreateWrapperProps> = ({
+  children,
+}) => {
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -29,5 +33,3 @@ const ModalCreateWrapper: FC<ModalCreateWrapperProps> = ({ children }) => {
     </Dialog>
   );
 };
-
-export default ModalCreateWrapper;

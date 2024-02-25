@@ -11,7 +11,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
-export default function NavbarMobile() {
+export function NavbarMobile() {
   const pathname = usePathname();
   const [opened, handler] = useDisclosure(false);
   const { width } = useViewportSize();

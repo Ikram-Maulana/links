@@ -35,7 +35,7 @@ interface ShareButtonProps {
   slug: string;
 }
 
-const ShareButton: FC<ShareButtonProps> = ({ slug }) => {
+export const ShareButton: FC<ShareButtonProps> = ({ slug }) => {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -176,5 +176,3 @@ const ShareOptions = ({ slug }: { slug: string }) => {
     </div>
   );
 };
-
-export default ShareButton;

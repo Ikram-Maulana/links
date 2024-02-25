@@ -11,9 +11,13 @@ import { type linksList } from "@/server/db/schema";
 import { api } from "@/trpc/react";
 import { useDisclosure } from "@mantine/hooks";
 import { type InferSelectModel } from "drizzle-orm";
+import dynamic from "next/dynamic";
 import { type FC } from "react";
 import { toast } from "sonner";
-import ModalEditForm from "./modal-edit-form";
+
+const ModalEditForm = dynamic(() =>
+  import("./modal-edit-form").then((mod) => mod.ModalEditForm),
+);
 
 interface ModalEditWrapperProps {
   children: React.ReactNode;

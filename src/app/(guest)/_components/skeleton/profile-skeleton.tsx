@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { type FC } from "react";
 
-const ProfileSkeleton: FC = () => {
+export const ProfileSkeleton: FC = () => {
   return (
     <div className="flex flex-col items-center pt-16">
       <Skeleton className="mb-4 h-24 w-24 rounded-full" />
@@ -11,5 +11,3 @@ const ProfileSkeleton: FC = () => {
     </div>
   );
 };
-
-export default ProfileSkeleton;

@@ -35,7 +35,7 @@ interface ShareButtonProps {
   yPosition: number;
 }
 
-const ShareButton: FC<ShareButtonProps> = ({ yPosition }) => {
+export const ShareButton: FC<ShareButtonProps> = ({ yPosition }) => {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -186,5 +186,3 @@ const ShareOptions = () => {
     </div>
   );
 };
-
-export default ShareButton;

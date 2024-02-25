@@ -3,8 +3,8 @@ import { type Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { Suspense, type FC } from "react";
-import CardMetrics from "../_components/card-metrics";
-import CardMetricsSkeleton from "../_components/skeleton/card-metrics-skeleton";
+import { CardMetrics } from "../_components/card-metrics";
+import { CardMetricsSkeleton } from "../_components/skeleton/card-metrics-skeleton";
 
 export const metadata: Metadata = {
   title: "Dashboard | Ikram Maulana Links",

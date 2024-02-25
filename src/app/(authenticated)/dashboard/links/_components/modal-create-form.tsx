@@ -56,7 +56,7 @@ const formSchema = z.object({
     .min(3, "Slug must be at least 3 characters"),
 });
 
-const ModalCreateForm: FC = () => {
+export const ModalCreateForm: FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -277,5 +277,3 @@ const ModalCreateForm: FC = () => {
     </Form>
   );
 };
-
-export default ModalCreateForm;

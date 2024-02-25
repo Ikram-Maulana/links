@@ -5,7 +5,7 @@ interface LinksListSkeletonProps {
   nCard: number;
 }
 
-const LinksListSkeleton: FC<LinksListSkeletonProps> = ({ nCard }) => {
+export const LinksListSkeleton: FC<LinksListSkeletonProps> = ({ nCard }) => {
   return (
     <div className="mt-8">
       {Array(nCard)
@@ -19,5 +19,3 @@ const LinksListSkeleton: FC<LinksListSkeletonProps> = ({ nCard }) => {
     </div>
   );
 };
-
-export default LinksListSkeleton;

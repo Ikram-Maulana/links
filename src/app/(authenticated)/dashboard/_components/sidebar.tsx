@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function Sidebar() {
+export function Sidebar() {
   const pathname = usePathname();
   const remainingLinks = navbarSidebarLink.slice(1);
 

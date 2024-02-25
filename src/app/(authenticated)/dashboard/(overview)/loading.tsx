@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { type FC } from "react";
-import CardMetricsSkeleton from "../_components/skeleton/card-metrics-skeleton";
+import { CardMetricsSkeleton } from "../_components/skeleton/card-metrics-skeleton";
 
 const Loading: FC = () => {
   return (

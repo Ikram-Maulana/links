@@ -1,12 +1,12 @@
 "use client";
 
+import { env } from "@/env";
 import { type linksList } from "@/server/db/schema";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type InferSelectModel } from "drizzle-orm";
 import Image from "next/image";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-action";
-import { env } from "@/env";
 
 type TLinks = InferSelectModel<typeof linksList>;
 
@@ -18,14 +18,14 @@ export const columns: ColumnDef<TLinks>[] = [
       <DataTableColumnHeader column={column} title="Gambar" />
     ),
     cell: ({ row }) =>
-    row.original.image ? (
-      <a href={
-        `${env.NEXT_PUBLIC_UPLOADCARE_BASE_URL}/${row.original.image}/-/quality/lighter/-/progressive/yes/`
-      } target="_blank" rel="noopener noreferrer">
+      row.original.image ? (
+        <a
+          href={`${env.NEXT_PUBLIC_UPLOADCARE_BASE_URL}/${row.original.image}/-/quality/lighter/-/progressive/yes/`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <Image
-            src={
-              `${env.NEXT_PUBLIC_UPLOADCARE_BASE_URL}/${row.original.image}/-/quality/lighter/-/progressive/yes/`
-            }
+            src={`${env.NEXT_PUBLIC_UPLOADCARE_BASE_URL}/${row.original.image}/-/quality/lighter/-/progressive/yes/`}
             alt={row.original.title}
             width={0}
             height={0}

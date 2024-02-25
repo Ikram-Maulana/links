@@ -70,7 +70,7 @@ const formSchema = z.object({
     .min(3, "Slug must be at least 3 characters"),
 });
 
-const ModalEditForm: FC<ModalEditFormProps> = ({
+export const ModalEditForm: FC<ModalEditFormProps> = ({
   id,
   handler,
   detailLink,
@@ -311,5 +311,3 @@ const ModalEditForm: FC<ModalEditFormProps> = ({
     </Form>
   );
 };
-
-export default ModalEditForm;

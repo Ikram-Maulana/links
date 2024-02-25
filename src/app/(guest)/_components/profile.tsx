@@ -1,4 +1,4 @@
-import DynamicImagesBlur from "@/components/images/dynamic/blur";
+import { DynamicImagesBlur } from "@/components/images/dynamic/blur";
 import { isValidUrl } from "@/lib/utils";
 import { type publicMetadata, type users } from "@/server/db/schema";
 import { api } from "@/trpc/server";
@@ -12,7 +12,7 @@ type ProfileDataProps = InferSelectModel<typeof users> & {
   publicMetadata: InferSelectModel<typeof publicMetadata>;
 };
 
-const Profile: FC = async () => {
+export const Profile: FC = async () => {
   noStore();
   const profile =
     (await api.publicMetadata.getProfile.query()) as unknown as ProfileDataProps;
@@ -54,5 +54,3 @@ const Profile: FC = async () => {
     </div>
   );
 };
-
-export default Profile;

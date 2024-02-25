@@ -56,7 +56,7 @@ const FormSchema = z.object({
     .min(3, "Please enter a location"),
 });
 
-const EditForm: FC<EditFormProps> = ({ detail }) => {
+export const EditForm: FC<EditFormProps> = ({ detail }) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -375,5 +375,3 @@ const EditForm: FC<EditFormProps> = ({ detail }) => {
     </Form>
   );
 };
-
-export default EditForm;

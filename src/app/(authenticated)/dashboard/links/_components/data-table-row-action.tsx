@@ -18,7 +18,7 @@ import Error from "next/error";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import ModalDelete from "./modal-delete";
+import { ModalDelete } from "./modal-delete";
 import { ModalEditWrapper } from "./modal-edit-wrapper";
 
 interface DataRow<TData> extends Row<TData> {

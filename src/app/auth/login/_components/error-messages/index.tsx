@@ -7,7 +7,7 @@ interface ErrorMessageProps {
   error: string;
 }
 
-const ErrorMessage: FC<ErrorMessageProps> = ({ error }) => {
+export const ErrorMessage: FC<ErrorMessageProps> = ({ error }) => {
   const errorMessage = error
     ? errors.find((e) => e.name.toLowerCase() === error.toLowerCase())?.message
     : errors.find((e) => e.name === "default")?.message;
@@ -27,5 +27,3 @@ const ErrorMessage: FC<ErrorMessageProps> = ({ error }) => {
     </>
   );
 };
-
-export default ErrorMessage;

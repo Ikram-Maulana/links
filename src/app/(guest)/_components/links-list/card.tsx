@@ -1,14 +1,7 @@
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import { type FC } from "react";
-
-const ShareButton = dynamic(() => import("./share-button"), {
-  loading: () => (
-    <Skeleton className="absolute bottom-0 right-[6px] top-0 z-[1] mx-0 my-auto h-10 w-10 rounded-full" />
-  ),
-});
+import { ShareButton } from "./share-button";
 
 interface CardProps {
   image: string | null;
@@ -17,7 +10,7 @@ interface CardProps {
   slug: string;
 }
 
-const Card: FC<CardProps> = ({ image = "", title, url, slug }) => {
+export const Card: FC<CardProps> = ({ image = "", title, url, slug }) => {
   return (
     <div className="custor-pointer group relative mb-4 h-auto w-full transform overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-200 ease-in-out hover:scale-[102%]">
       <a
@@ -52,5 +45,3 @@ const Card: FC<CardProps> = ({ image = "", title, url, slug }) => {
     </div>
   );
 };
-
-export default Card;

@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { type FC } from "react";
 
-const EditFormSkeleton: FC = () => {
+export const EditFormSkeleton: FC = () => {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
@@ -40,5 +40,3 @@ const EditFormSkeleton: FC = () => {
     </div>
   );
 };
-
-export default EditFormSkeleton;

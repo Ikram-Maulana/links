@@ -1,6 +1,6 @@
 import { type FC } from "react";
-import ProfileSkeleton from "./_components/skeleton/profile-skeleton";
-import LinksListSkeleton from "./_components/links-list/skeleton/links-list-skeleton";
+import { LinksListSkeleton } from "./_components/links-list/skeleton/links-list-skeleton";
+import { ProfileSkeleton } from "./_components/skeleton/profile-skeleton";
 
 const Loading: FC = () => {
   return (

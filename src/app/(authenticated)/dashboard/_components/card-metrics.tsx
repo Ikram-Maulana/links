@@ -12,7 +12,7 @@ interface metricsProps {
   };
 }
 
-const CardMetrics: FC = async () => {
+export const CardMetrics: FC = async () => {
   noStore();
   const [metrics, publicMetadata] = await Promise.all([
     api.metrics.getAll.query() as unknown as metricsProps,
@@ -79,5 +79,3 @@ const CardMetrics: FC = async () => {
     </>
   );
 };
-
-export default CardMetrics;
