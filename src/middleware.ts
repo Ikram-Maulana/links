@@ -14,8 +14,13 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(req.nextUrl.origin);
     }
 
-    const dataToJson = (await data.json()) as DataLinkProps;
-    const url = dataToJson?.url;
+    const dataToJson = (await data.json()) as DataLinkProps | DataLinkProps[];
+    let url: string | undefined;
+    if (Array.isArray(dataToJson)) {
+      url = dataToJson[0]?.url;
+    } else {
+      url = dataToJson.url;
+    }
 
     if (url) {
       try {
