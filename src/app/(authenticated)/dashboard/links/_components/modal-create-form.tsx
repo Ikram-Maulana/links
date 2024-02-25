@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import * as LR from "@uploadcare/blocks";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type FC } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -56,7 +56,7 @@ const formSchema = z.object({
     .min(3, "Slug must be at least 3 characters"),
 });
 
-export const ModalCreateForm: FC = () => {
+export default function ModalCreateForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -276,4 +276,4 @@ export const ModalCreateForm: FC = () => {
       </form>
     </Form>
   );
-};
+}

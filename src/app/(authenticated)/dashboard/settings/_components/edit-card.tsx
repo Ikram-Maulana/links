@@ -7,12 +7,9 @@ import dynamic from "next/dynamic";
 import { type FC } from "react";
 import { EditFormSkeleton } from "./skeleton/edit-form-skeleton";
 
-const EditForm = dynamic(
-  () => import("./edit-form").then((mod) => mod.EditForm),
-  {
-    loading: () => <EditFormSkeleton />,
-  },
-);
+const EditForm = dynamic(() => import("./edit-form"), {
+  loading: () => <EditFormSkeleton />,
+});
 
 export const EditCard: FC = async () => {
   noStore();

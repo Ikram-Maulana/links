@@ -15,9 +15,7 @@ import dynamic from "next/dynamic";
 import { type FC } from "react";
 import { toast } from "sonner";
 
-const ModalEditForm = dynamic(() =>
-  import("./modal-edit-form").then((mod) => mod.ModalEditForm),
-);
+const ModalEditForm = dynamic(() => import("./modal-edit-form"));
 
 interface ModalEditWrapperProps {
   children: React.ReactNode;

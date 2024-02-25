@@ -27,7 +27,7 @@ import * as LR from "@uploadcare/blocks";
 import { type InferSelectModel } from "drizzle-orm";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type FC } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -56,7 +56,7 @@ const FormSchema = z.object({
     .min(3, "Please enter a location"),
 });
 
-export const EditForm: FC<EditFormProps> = ({ detail }) => {
+export default function EditForm({ detail }: EditFormProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -374,4 +374,4 @@ export const EditForm: FC<EditFormProps> = ({ detail }) => {
       </form>
     </Form>
   );
-};
+}

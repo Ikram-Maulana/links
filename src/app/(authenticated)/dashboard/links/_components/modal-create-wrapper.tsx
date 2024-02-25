@@ -9,9 +9,7 @@ import dynamic from "next/dynamic";
 import { type FC } from "react";
 
 // Not using ssr false because not using web browser API
-const ModalCreateForm = dynamic(() =>
-  import("./modal-create-form").then((mod) => mod.ModalCreateForm),
-);
+const ModalCreateForm = dynamic(() => import("./modal-create-form"));
 
 interface ModalCreateWrapperProps {
   children: React.ReactNode;

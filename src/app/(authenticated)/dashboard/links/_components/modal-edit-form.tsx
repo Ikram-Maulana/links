@@ -24,7 +24,7 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import * as LR from "@uploadcare/blocks";
 import { type InferSelectModel } from "drizzle-orm";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type FC } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -70,12 +70,12 @@ const formSchema = z.object({
     .min(3, "Slug must be at least 3 characters"),
 });
 
-export const ModalEditForm: FC<ModalEditFormProps> = ({
+export default function ModalEditForm({
   id,
   handler,
   detailLink,
   isLoadingDetailLink,
-}) => {
+}: ModalEditFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -310,4 +310,4 @@ export const ModalEditForm: FC<ModalEditFormProps> = ({
       </form>
     </Form>
   );
-};
+}
