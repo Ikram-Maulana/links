@@ -85,7 +85,10 @@ async function addArrayDataToRedis(
   await Promise.all(promises);
 }
 
-async function addNonArrayDataToRedis(key: string, data: MetricsProps[]) {
+async function addNonArrayDataToRedis(
+  key: string,
+  data: MetricsProps[] | PublicMetadataProps,
+) {
   await redis.json.set(key, "$", data);
 }
 
@@ -100,7 +103,14 @@ export const addCachedData = async (
       key === "profileData" ||
       key.includes("slug")
     ) {
-      await addNonArrayDataToRedis(key, data as MetricsProps[]);
+      if (!data) {
+        return;
+      }
+
+      await addNonArrayDataToRedis(
+        key,
+        data as MetricsProps[] | PublicMetadataProps,
+      );
     } else {
       await addArrayDataToRedis(key, data as LinksListProps[]);
     }

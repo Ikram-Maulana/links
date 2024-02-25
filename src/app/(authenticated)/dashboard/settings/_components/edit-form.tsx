@@ -138,7 +138,7 @@ export default function EditForm({ detail }: EditFormProps) {
   }, [imageIds, form]);
 
   useEffect(() => {
-    setOldImageIds(detail.publicMetadata.avatar!);
+    setOldImageIds(detail.publicMetadata?.avatar ?? "");
   }, [detail]);
 
   const { mutate: deleteImage, isLoading: isDeletingImage } =
