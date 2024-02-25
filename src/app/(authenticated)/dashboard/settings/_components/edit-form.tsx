@@ -244,11 +244,7 @@ export default function EditForm({ detail }: EditFormProps) {
                     />
                   </div>
 
-                  <div
-                    className={cn("flex h-fit w-full", {
-                      "mr-2": oldImageIds !== "",
-                    })}
-                  >
+                  <div className="flex h-fit w-full">
                     <Input
                       className="hidden"
                       type="text"
@@ -267,7 +263,9 @@ export default function EditForm({ detail }: EditFormProps) {
                     <lr-file-uploader-minimal
                       css-src={`https://cdn.jsdelivr.net/npm/@uploadcare/blocks@${LR.PACKAGE_VERSION}/web/lr-file-uploader-minimal.min.css`}
                       ctx-name="avatar"
-                      class="my-config"
+                      class={cn("my-config", {
+                        "md:mr-2": oldImageIds !== "",
+                      })}
                     ></lr-file-uploader-minimal>
                     <lr-upload-ctx-provider
                       ref={ctxProviderRef}
@@ -281,7 +279,7 @@ export default function EditForm({ detail }: EditFormProps) {
                       disabled={
                         isLoadingStore || isDeletingImage || oldImageIds === ""
                       }
-                      className={cn("h-[60px] md:mt-[10px]", {
+                      className={cn("h-[60px]", {
                         hidden: oldImageIds === "",
                       })}
                     >
