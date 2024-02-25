@@ -14,8 +14,8 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(req.nextUrl.origin);
     }
 
-    const dataToJson = (await data.json()) as DataLinkProps[];
-    const url = dataToJson[0]?.url;
+    const dataToJson = (await data.json()) as DataLinkProps;
+    const url = dataToJson?.url;
 
     if (url) {
       try {
