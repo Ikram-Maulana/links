@@ -1,4 +1,3 @@
-// @typescript-eslint/no-unsafe-assignment disabled
 import {
   addCachedData,
   deleteProfileImage,
@@ -98,7 +97,9 @@ export const settingsRouter = createTRPCRouter({
             set: {
               avatar:
                 input.avatar === ""
-                  ? existingPublicMetadata[0]?.avatar
+                  ? existingPublicMetadata && Boolean(existingPublicMetadata)
+                    ? existingPublicMetadata[0]?.avatar
+                    : null
                   : input.avatar,
               bio: input.bio,
               location: input.location,
