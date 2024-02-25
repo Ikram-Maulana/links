@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { type FC } from "react";
@@ -28,7 +29,7 @@ export const Card: FC<CardProps> = ({ image = "", title, url, slug }) => {
           <div className="absolute left-1 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center	justify-center overflow-hidden rounded-md">
             {image !== "" && image && (
               <Image
-                src={image}
+                src={`${env.NEXT_PUBLIC_UPLOADCARE_BASE_URL}/${image}/-/quality/lighter/-/progressive/yes/`}
                 alt={title}
                 layout="fill"
                 sizes="100vw"

@@ -1,6 +1,7 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { env } from "@/env";
 import { cn, isValidUrl } from "@/lib/utils";
 import { type publicMetadata, type users } from "@/server/db/schema";
 import { api } from "@/trpc/react";
@@ -34,9 +35,9 @@ export default function Topbar() {
       const { avatar } = profile.publicMetadata;
       const { image } = profile;
 
-      if (avatar && isValidUrl(avatar)) {
-        return avatar;
-      } else if (image && isValidUrl(image)) {
+      if (avatar && avatar !== "") {
+        return `${env.NEXT_PUBLIC_UPLOADCARE_BASE_URL}/${avatar}/-/quality/lighter/-/progressive/yes/`;
+      } else if (image && image !== "" && isValidUrl(image)) {
         return image;
       } else {
         return DEFAULT_IMAGE_URL;
