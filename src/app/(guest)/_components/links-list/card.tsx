@@ -1,7 +1,10 @@
-import { env } from "@/env";
+"use client";
+
 import { cn } from "@/lib/utils";
+import { useViewportSize } from "@mantine/hooks";
+import { LazyMotion, domAnimation, m, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { type FC } from "react";
+import { useEffect, useState, type FC } from "react";
 import { ShareButton } from "./share-button";
 
 interface CardProps {
@@ -12,37 +15,64 @@ interface CardProps {
 }
 
 export const Card: FC<CardProps> = ({ image = "", title, url, slug }) => {
+  const shouldReduceMotion = useReducedMotion();
+  const { width } = useViewportSize();
+  const [scaleProp, setScaleProp] = useState<{ scale: number } | undefined>();
+  const [transitionProp, setTransitionProp] = useState<
+    { type: string; stiffness: number; damping: number } | undefined
+  >();
+
+  useEffect(() => {
+    if (width <= 768) {
+      setScaleProp(undefined);
+      setTransitionProp(undefined);
+    } else {
+      setScaleProp(shouldReduceMotion ? undefined : { scale: 1.02 });
+      setTransitionProp(
+        shouldReduceMotion
+          ? undefined
+          : { type: "spring", stiffness: 400, damping: 17 },
+      );
+    }
+  }, [shouldReduceMotion, width]);
+
   return (
-    <div className="custor-pointer group relative mb-4 h-auto w-full transform overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-200 ease-in-out hover:scale-[102%]">
-      <a
-        href={`${url}?utm_source=ikramlinks&utm_medium=redirect&utm_campaign=ikramlinks`}
-        className={cn(
-          "text-break relative flex h-auto min-h-14 w-full items-center justify-center px-[66px] py-4 text-center",
-          {
-            "px-[44px]": image === "" && !image,
-          },
-        )}
-        target="_blank"
-        rel="noopener"
+    <LazyMotion features={domAnimation}>
+      <m.div
+        whileHover={scaleProp}
+        transition={transitionProp}
+        className="hover:custor-pointer group relative mb-4 h-auto w-full overflow-hidden rounded-lg bg-white shadow-sm"
       >
-        <div className="h-full w-full">
-          <div className="absolute left-1 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center	justify-center overflow-hidden rounded-md">
-            {image !== "" && image && (
-              <Image
-                src={`${env.NEXT_PUBLIC_UPLOADCARE_BASE_URL}/${image}/-/quality/lighter/-/progressive/yes/`}
-                alt={title}
-                layout="fill"
-                sizes="100vw"
-                className="h-full w-full object-cover"
-              />
-            )}
+        <a
+          href={`${url}?utm_source=ikramlinks&utm_medium=redirect&utm_campaign=ikramlinks`}
+          className={cn(
+            "text-break relative flex h-auto min-h-14 w-full items-center justify-center px-[66px] py-4 text-center",
+            {
+              "px-[44px]": image === "" && !image,
+            },
+          )}
+          target="_blank"
+          rel="noopener"
+        >
+          <div className="h-full w-full">
+            <div className="absolute left-1 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center	justify-center overflow-hidden rounded-md">
+              {image !== "" && image && (
+                <Image
+                  src={image}
+                  alt={title}
+                  layout="fill"
+                  sizes="100vw"
+                  className="h-full w-full object-cover"
+                />
+              )}
+            </div>
+
+            <p className="h-fit font-medium leading-6">{title}</p>
           </div>
+        </a>
 
-          <p className="h-fit font-medium leading-6">{title}</p>
-        </div>
-      </a>
-
-      <ShareButton slug={slug} />
-    </div>
+        <ShareButton slug={slug} />
+      </m.div>
+    </LazyMotion>
   );
 };
