@@ -2,7 +2,14 @@
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
 import { sql } from "drizzle-orm";
-import { index, int, sqliteTableCreator, text } from "drizzle-orm/sqlite-core";
+import {
+  index,
+  int,
+  sqliteTableCreator,
+  text,
+  unique,
+} from "drizzle-orm/sqlite-core";
+import { v7 as uuidv7 } from "uuid";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -10,19 +17,23 @@ import { index, int, sqliteTableCreator, text } from "drizzle-orm/sqlite-core";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = sqliteTableCreator((name) => `ikrammaulana-links_${name}`);
+export const createTable = sqliteTableCreator((name) => `links_${name}`);
 
-export const posts = createTable(
-  "post",
+export const list = createTable(
+  "list",
   {
-    id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    name: text("name", { length: 256 }),
+    id: text("id").notNull().primaryKey().$defaultFn(uuidv7),
+    image: text("image"),
+    title: text("title").notNull(),
+    url: text("url").notNull(),
+    slug: text("slug").notNull(),
     createdAt: int("created_at", { mode: "timestamp" })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: int("updatedAt", { mode: "timestamp" }),
+    updatedAt: int("updated_at", { mode: "timestamp" }),
   },
-  (example) => ({
-    nameIndex: index("name_idx").on(example.name),
-  })
+  (list) => ({
+    unq: unique().on(list.slug),
+    idListIdx: index("id_list_idx").on(list.id),
+  }),
 );
