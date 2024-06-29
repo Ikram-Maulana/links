@@ -16,8 +16,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
-      <body>
+      <html
+        className={`${GeistSans.className} antialiased motion-safe:scroll-smooth`}
+        lang="en"
+        suppressHydrationWarning
+      >
+        <body className="antialiased">
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>
