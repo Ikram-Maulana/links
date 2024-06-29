@@ -1,10 +1,11 @@
-import DynamicImagesBlur from "@/components/images/dynamic/blur";
+import { env } from "@/env";
 import { isValidUrl } from "@/lib/utils";
 import { type publicMetadata, type users } from "@/server/db/schema";
 import { api } from "@/trpc/server";
 import { IconLocation } from "@irsyadadl/paranoid";
 import { type InferSelectModel } from "drizzle-orm";
 import { unstable_noStore as noStore } from "next/cache";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { type FC } from "react";
 
@@ -12,7 +13,7 @@ type ProfileDataProps = InferSelectModel<typeof users> & {
   publicMetadata: InferSelectModel<typeof publicMetadata>;
 };
 
-const Profile: FC = async () => {
+export const Profile: FC = async () => {
   noStore();
   const profile =
     (await api.publicMetadata.getProfile.query()) as unknown as ProfileDataProps;
@@ -26,9 +27,9 @@ const Profile: FC = async () => {
     const { avatar } = profile.publicMetadata;
     const { image } = profile;
 
-    if (avatar && isValidUrl(avatar)) {
-      return avatar;
-    } else if (image && isValidUrl(image)) {
+    if (avatar && avatar !== "") {
+      return `${env.NEXT_PUBLIC_UPLOADCARE_BASE_URL}/${avatar}/-/quality/lighter/-/progressive/yes/`;
+    } else if (image && image !== "" && isValidUrl(image)) {
       return image;
     } else {
       return DEFAULT_IMAGE_URL;
@@ -39,7 +40,14 @@ const Profile: FC = async () => {
   return (
     <div className="flex flex-col items-center pt-16">
       <div className="relative mb-4 h-24 w-24 overflow-hidden rounded-full">
-        <DynamicImagesBlur src={imageUrl} alt={profile.name ?? ""} priority />
+        <Image
+          src={imageUrl}
+          alt={profile.name ?? ""}
+          className="h-full w-full object-cover"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          priority
+        />
       </div>
 
       <h1 className="w-fit scroll-m-20 text-xl font-semibold tracking-tight">
@@ -54,5 +62,3 @@ const Profile: FC = async () => {
     </div>
   );
 };
-
-export default Profile;

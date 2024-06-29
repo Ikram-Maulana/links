@@ -6,15 +6,15 @@ await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
 const config = {
-  experimental: {
-    ppr: true,
-  },
   images: {
-    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",
         hostname: "files.edgestore.dev",
+      },
+      {
+        protocol: "https",
+        hostname: "ucarecdn.com",
       },
       {
         protocol: "https",

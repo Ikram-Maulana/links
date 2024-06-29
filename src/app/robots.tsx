@@ -1,4 +1,4 @@
-import { env } from "@/env";
+import { getBaseUrl } from "@/lib/utils";
 import { type MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/dashboard/*", "/auth/*"],
     },
-    host: env.NEXT_PUBLIC_BASE_URL,
-    sitemap: `${env.NEXT_PUBLIC_BASE_URL}/sitemap.xml`,
+    host: getBaseUrl(),
+    sitemap: `${getBaseUrl()}/sitemap.xml`,
   };
 }

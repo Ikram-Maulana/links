@@ -1,19 +1,20 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { type FC } from "react";
 
-const EditFormSkeleton: FC = () => {
+export const EditFormSkeleton: FC = () => {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Skeleton className="h-4 w-[95px]" />
+        <div>
+          <Skeleton className="h-4 w-[95px]" />
+          <Skeleton className="mb-4 mt-1 h-4 w-[105px]" />
+        </div>
 
         <div className="flex flex-col gap-4 md:flex-row md:items-center">
-          <Skeleton className="h-24 w-24 flex-shrink-0 rounded-full" />
+          <Skeleton className="mx-auto h-24 w-24 flex-shrink-0 rounded-full" />
 
           <div className="flex w-full flex-col gap-y-2">
-            <Skeleton className="h-9 w-full" />
-            <Skeleton className="h-2 w-full" />
-            <Skeleton className="h-[19px] w-full" />
+            <Skeleton className="mt-[10px] h-[60px] w-full" />
           </div>
         </div>
       </div>
@@ -39,5 +40,3 @@ const EditFormSkeleton: FC = () => {
     </div>
   );
 };
-
-export default EditFormSkeleton;

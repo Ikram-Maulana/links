@@ -1,26 +1,16 @@
 import ikramBrandImage from "@/assets/images/ikram-brand.png";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { authOptions } from "@/server/auth";
 import { IconOpenLink } from "@irsyadadl/paranoid";
 import { getServerSession } from "next-auth";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { type FC } from "react";
+import { NavbarMobile } from "./navbar-mobile";
+import { UserButton } from "./user-button";
 
-const NavbarMobile = dynamic(() => import("./navbar-mobile"), {
-  ssr: false,
-  loading: () => <Skeleton className="h-[36px] w-[46px]" />,
-});
-
-const UserButton = dynamic(() => import("./user-button"), {
-  ssr: false,
-  loading: () => <Skeleton className="h-[36px] w-[56px] lg:w-[165px]" />,
-});
-
-const Navbar: FC = async () => {
+export const Navbar: FC = async () => {
   const session = await getServerSession(authOptions);
 
   return (
@@ -54,5 +44,3 @@ const Navbar: FC = async () => {
     </header>
   );
 };
-
-export default Navbar;

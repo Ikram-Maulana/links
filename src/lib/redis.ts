@@ -37,10 +37,18 @@ export const getCachedData = async (key: string) => {
       key === "publicMetadata" ||
       key === "profileData"
     ) {
-      result = await redis.json.get(key);
+      result = (await redis.json.get(key)) as
+        | CachedArrayDataProps
+        | ProfileDataProps
+        | PublicMetadataProps
+        | undefined;
     } else if (key.includes("slug")) {
       const cachedData = await redis.json.get(key);
-      result = cachedData;
+      result = cachedData as
+        | CachedArrayDataProps
+        | ProfileDataProps
+        | PublicMetadataProps
+        | undefined;
     } else {
       const listCachedData = await redis.lrange(key, 0, -1);
 
@@ -49,7 +57,11 @@ export const getCachedData = async (key: string) => {
           redis.json.get(`${key}:${id}`),
         );
         const results = await Promise.all(promises);
-        result = results;
+        result = results as
+          | CachedArrayDataProps
+          | ProfileDataProps
+          | PublicMetadataProps
+          | undefined;
       }
     }
 
@@ -73,7 +85,10 @@ async function addArrayDataToRedis(
   await Promise.all(promises);
 }
 
-async function addNonArrayDataToRedis(key: string, data: MetricsProps[]) {
+async function addNonArrayDataToRedis(
+  key: string,
+  data: MetricsProps[] | PublicMetadataProps,
+) {
   await redis.json.set(key, "$", data);
 }
 
@@ -88,7 +103,14 @@ export const addCachedData = async (
       key === "profileData" ||
       key.includes("slug")
     ) {
-      await addNonArrayDataToRedis(key, data as MetricsProps[]);
+      if (!data) {
+        return;
+      }
+
+      await addNonArrayDataToRedis(
+        key,
+        data as MetricsProps[] | PublicMetadataProps,
+      );
     } else {
       await addArrayDataToRedis(key, data as LinksListProps[]);
     }
@@ -158,22 +180,22 @@ export const deleteProfileImage = async () => {
     ]);
 
     if (cachedProfileData && "publicMetadata" in cachedProfileData) {
-      const updatedPublicMetadata = {
+      const updatedProfileData = {
         ...cachedProfileData.publicMetadata,
-        avatar: "",
+        avatar: null,
       };
 
       await redis.json.set(
         "profileData",
         "$.publicMetadata",
-        updatedPublicMetadata,
+        updatedProfileData,
       );
     }
 
     if (cachedPublicMetadataData && "avatar" in cachedPublicMetadataData) {
       const updatedPublicMetadata = {
         ...cachedPublicMetadataData,
-        avatar: "",
+        avatar: null,
       };
 
       await redis.json.set("publicMetadata", "$", updatedPublicMetadata);
@@ -225,7 +247,7 @@ export const deleteImageLinkCache = async (id: string, slug: string) => {
     if (cachedData) {
       const updatedData = {
         ...cachedData,
-        image: "",
+        image: null,
       };
 
       await Promise.all([

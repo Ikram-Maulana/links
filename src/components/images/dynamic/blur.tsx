@@ -11,7 +11,7 @@ export interface DynamicImageBlurProps
   alt: string;
 }
 
-const DynamicImagesBlur = React.forwardRef<
+export const DynamicImagesBlur = React.forwardRef<
   HTMLImageElement,
   DynamicImageBlurProps
 >(async ({ src, alt, className, ...props }, ref) => {
@@ -36,4 +36,3 @@ const DynamicImagesBlur = React.forwardRef<
 });
 
 DynamicImagesBlur.displayName = "DynamicImagesBlur";
-export default DynamicImagesBlur;

@@ -13,7 +13,7 @@ export const applyIconClassNames = (icon: ReactNode, classNames = "") => {
   });
 };
 
-export const getBaseUrl = () => {
+export const getBaseUrl = (): string => {
   const IS_SERVER = typeof window === "undefined";
   let urlArr: string[] = [];
 
@@ -22,9 +22,10 @@ export const getBaseUrl = () => {
     urlArr = url.split("/");
   }
 
-  const baseUrl = IS_SERVER
+  const baseUrl: string = IS_SERVER
     ? env.NEXT_PUBLIC_BASE_URL
     : `${urlArr[0]}//${urlArr[2]}`;
+
   return baseUrl;
 };
 

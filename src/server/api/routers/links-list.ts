@@ -77,15 +77,17 @@ export const linksListRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const data = await ctx.db
+        const dataPrepared = ctx.db
           .insert(linksList)
           .values({
-            image: input.image,
+            image: input.image === "" ? null : input.image,
             title: input.title,
             url: input.url,
             slug: input.slug,
           })
-          .returning();
+          .returning()
+          .prepare();
+        const data = await dataPrepared.all();
 
         await Promise.all([
           addCachedData("linksList", data),
@@ -181,9 +183,21 @@ export const linksListRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const inputImage = input.image !== "" ? { image: input.image } : {};
+        const existingDataPrepared = ctx.db
+          .select()
+          .from(linksList)
+          .where(eq(linksList.id, sql.placeholder("id")))
+          .prepare();
+        const existingData = (await existingDataPrepared.all({
+          id: input.id,
+        })) as InferSelectModel<typeof linksList>[];
 
-        const data = await ctx.db
+        const inputImage =
+          input.image === ""
+            ? { image: existingData[0]!.image }
+            : { image: input.image };
+
+        const dataPrepared = ctx.db
           .update(linksList)
           .set({
             ...inputImage,
@@ -192,11 +206,15 @@ export const linksListRouter = createTRPCRouter({
             slug: input.slug,
             updatedAt: new Date(),
           })
-          .where(eq(linksList.id, input.id))
-          .returning();
+          .where(eq(linksList.id, sql.placeholder("id")))
+          .returning()
+          .prepare();
+        const data = (await dataPrepared.all({
+          id: input.id,
+        })) as unknown as InferSelectModel<typeof linksList>[];
 
-        if (data?.[0]) {
-          const linkData = data[0] as InferSelectModel<typeof linksList>;
+        if (data && Boolean(data.length)) {
+          const linkData = data[0]!;
           await Promise.all([
             updateCachedData("linksList", input.id, linkData),
             revalidateLinkCache(linkData.slug, linkData),
@@ -229,13 +247,17 @@ export const linksListRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const data = await ctx.db
+        const dataPrepared = ctx.db
           .delete(linksList)
           .where(eq(linksList.id, input.id))
-          .returning();
+          .returning()
+          .prepare();
+        const data = (await dataPrepared.all()) as unknown as InferSelectModel<
+          typeof linksList
+        >[];
 
-        if (data?.[0]) {
-          const linkData = data[0] as InferSelectModel<typeof linksList>;
+        if (data && Boolean(data.length)) {
+          const linkData = data[0]!;
           await Promise.all([
             deleteCachedData("linksList", input.id),
             deleteLinkCache(linkData.slug),
@@ -269,17 +291,24 @@ export const linksListRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        const data = await ctx.db
+        const dataPrepared = ctx.db
           .update(linksList)
           .set({
             image: null,
           })
-          .where(eq(linksList.id, input.id))
-          .returning();
+          .where(eq(linksList.id, sql.placeholder("id")))
+          .returning()
+          .prepare();
+        const data = (await dataPrepared.all({
+          id: input.id,
+        })) as InferSelectModel<typeof linksList>[];
 
-        if (data?.[0]) {
-          const linkData = data[0] as InferSelectModel<typeof linksList>;
-          await deleteImageLinkCache(input.id, linkData.slug);
+        if (data && Boolean(data.length)) {
+          const linkData = data[0]!;
+          await Promise.all([
+            updateCachedData("linksList", input.id, linkData),
+            deleteImageLinkCache(input.id, linkData.slug),
+          ]);
         }
 
         return data;

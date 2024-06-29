@@ -5,16 +5,16 @@ import { IconCircleX, IconTriangleInfo } from "@irsyadadl/paranoid";
 import { type InferSelectModel } from "drizzle-orm";
 import { unstable_noStore as noStore } from "next/cache";
 import { type FC } from "react";
-import Card from "./card";
+import { Card } from "./card";
 
 type LinksDataProps = InferSelectModel<typeof linksList>;
 
-const LinksList: FC = async () => {
+export const LinksList: FC = async () => {
   noStore();
   const links =
     (await api.linksList.getAll.query()) as unknown as LinksDataProps[];
 
-  if (!links) {
+  if (!links || (links && !Boolean(links.length))) {
     return (
       <Alert
         className="mt-8 border-amber-500 bg-amber-500 text-zinc-50 dark:border-amber-900 dark:bg-amber-900 dark:text-zinc-50"
@@ -56,5 +56,3 @@ const LinksList: FC = async () => {
     </div>
   );
 };
-
-export default LinksList;

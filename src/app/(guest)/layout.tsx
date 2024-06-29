@@ -2,12 +2,11 @@ import { env } from "@/env";
 import dynamic from "next/dynamic";
 import Script from "next/script";
 import { type FC } from "react";
-import Footer from "./_components/footer";
-import TopbarSkeleton from "./_components/skeleton/topbar-skeleton";
+import { Footer } from "./_components/footer";
+import { TopbarSkeleton } from "./_components/skeleton/topbar-skeleton";
 
 const Topbar = dynamic(() => import("./_components/topbar"), {
   loading: () => <TopbarSkeleton />,
-  ssr: false,
 });
 
 interface LayoutProps {

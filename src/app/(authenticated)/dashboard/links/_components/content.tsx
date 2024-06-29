@@ -7,7 +7,7 @@ import { type FC } from "react";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 
-const Content: FC = async () => {
+export const Content: FC = async () => {
   noStore();
   const linksList = await api.linksList.getAll.query();
 
@@ -34,5 +34,3 @@ const Content: FC = async () => {
     </Card>
   );
 };
-
-export default Content;

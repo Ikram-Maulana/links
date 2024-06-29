@@ -7,27 +7,21 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { IconOpenLink } from "@irsyadadl/paranoid";
 import { useDisclosure } from "@mantine/hooks";
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import { type Session as TSession } from "next-auth";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-
-const LogoutButton = dynamic(() => import("./logout-button"), {
-  ssr: false,
-  loading: () => <Skeleton className="h-[32px] w-full" />,
-});
+import { LogoutButton } from "./logout-button";
 
 interface UserButtonProps {
   user: TSession["user"] | undefined;
 }
 
-const UserButton: React.FC<UserButtonProps> = ({ user }) => {
+export const UserButton: React.FC<UserButtonProps> = ({ user }) => {
   const [opened, handler] = useDisclosure(false);
 
   return (
@@ -69,5 +63,3 @@ const UserButton: React.FC<UserButtonProps> = ({ user }) => {
     </DropdownMenu>
   );
 };
-
-export default UserButton;

@@ -4,10 +4,9 @@ import { getServerSession } from "next-auth";
 import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import React from "react";
-import Navbar from "./_components/navbar";
+import { Navbar } from "./_components/navbar";
 
 const Sidebar = dynamic(() => import("./_components/sidebar"), {
-  ssr: false,
   loading: () => (
     <Skeleton className="fixed top-20 z-30 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 rounded-none border-r border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900 lg:sticky lg:block" />
   ),

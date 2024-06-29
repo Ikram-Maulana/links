@@ -17,7 +17,7 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { signOut } from "next-auth/react";
 import { useState, type FC } from "react";
 
-const LogoutButton: FC = () => {
+export const LogoutButton: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignOut = async () => {
@@ -61,5 +61,3 @@ const LogoutButton: FC = () => {
     </AlertDialog>
   );
 };
-
-export default LogoutButton;

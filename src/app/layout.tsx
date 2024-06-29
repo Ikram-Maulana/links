@@ -1,6 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
 import { env } from "@/env";
-import { EdgeStoreProvider } from "@/lib/edgestore";
+import { getBaseUrl } from "@/lib/utils";
 import "@/styles/globals.css";
 import { TRPCReactProvider } from "@/trpc/react";
 import { GeistSans } from "geist/font/sans";
@@ -34,7 +34,7 @@ export const metadata = {
     },
   ],
   creator: "Ikram Maulana",
-  metadataBase: env.NEXT_PUBLIC_BASE_URL,
+  metadataBase: getBaseUrl(),
   alternates: {
     canonical: "/",
     languages: {
@@ -48,7 +48,7 @@ export const metadata = {
     title: "Ikram Maulana Links",
     description:
       "Discover the social media links of Ikram Maulana, a Full Stack Web Developer. Explore my collection of projects and skills in web development.",
-    url: env.NEXT_PUBLIC_BASE_URL,
+    url: getBaseUrl(),
     images: [
       {
         url: "/og.jpg",
@@ -74,9 +74,7 @@ export default function RootLayout({
       <body className="min-h-screen antialiased">
         <NextTopLoader color="#22c55e" height={4} showSpinner />
 
-        <TRPCReactProvider>
-          <EdgeStoreProvider>{children}</EdgeStoreProvider>
-        </TRPCReactProvider>
+        <TRPCReactProvider>{children}</TRPCReactProvider>
 
         <div className="lg:hidden">
           <Toaster richColors position="bottom-center" duration={5000} />

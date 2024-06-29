@@ -1,6 +1,6 @@
 import { type FC } from "react";
 
-const Footer: FC = () => {
+export const Footer: FC = () => {
   return (
     <footer className="container py-10">
       <div className="mx-auto max-w-[680px] text-center">
@@ -11,5 +11,3 @@ const Footer: FC = () => {
     </footer>
   );
 };
-
-export default Footer;

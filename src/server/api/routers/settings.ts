@@ -74,10 +74,20 @@ export const settingsRouter = createTRPCRouter({
       const { user } = session;
 
       try {
-        const upsertPublicMetadata = await ctx.db
+        const getExistingPublicMetadataById = ctx.db.query.publicMetadata
+          .findFirst({
+            where: (publicMetadata, { eq }) =>
+              eq(publicMetadata.userId, sql.placeholder("id")),
+          })
+          .prepare();
+        const existingPublicMetadata = (await getExistingPublicMetadataById.all(
+          { id: user.id },
+        )) as unknown as InferSelectModel<typeof publicMetadata>[];
+
+        const upsertPublicMetadataPrepared = ctx.db
           .insert(publicMetadata)
           .values({
-            avatar: input.avatar,
+            avatar: input.avatar === "" ? null : input.avatar,
             bio: input.bio,
             location: input.location,
             userId: user.id,
@@ -85,12 +95,19 @@ export const settingsRouter = createTRPCRouter({
           .onConflictDoUpdate({
             target: [publicMetadata.userId],
             set: {
-              avatar: input.avatar,
+              avatar:
+                input.avatar === ""
+                  ? existingPublicMetadata && Boolean(existingPublicMetadata)
+                    ? existingPublicMetadata[0]?.avatar
+                    : null
+                  : input.avatar,
               bio: input.bio,
               location: input.location,
             },
           })
-          .returning();
+          .returning()
+          .prepare();
+        const upsertPublicMetadata = await upsertPublicMetadataPrepared.all();
 
         await Promise.all([
           updateCachedData(
@@ -121,15 +138,19 @@ export const settingsRouter = createTRPCRouter({
     const { user } = session;
 
     try {
-      const deleteImage = await ctx.db
+      const deleteImagePrepared = ctx.db
         .update(publicMetadata)
         .set({
           avatar: null,
         })
         .where(eq(publicMetadata.userId, user.id))
-        .returning();
+        .returning()
+        .prepare();
 
-      await deleteProfileImage();
+      const [deleteImage] = await Promise.all([
+        deleteImagePrepared.all(),
+        deleteProfileImage(),
+      ]);
 
       return deleteImage;
     } catch (error) {

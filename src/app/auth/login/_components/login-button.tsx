@@ -11,7 +11,7 @@ interface LoginButtonProps {
   className?: string;
 }
 
-const LoginButton: FC<LoginButtonProps> = ({ className }) => {
+export const LoginButton: FC<LoginButtonProps> = ({ className }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const loginWithGithub = async () => {
@@ -45,5 +45,3 @@ const LoginButton: FC<LoginButtonProps> = ({ className }) => {
     </>
   );
 };
-
-export default LoginButton;

@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { type FC } from "react";
-import DataTableSkeleton from "./_components/skeleton/data-table-skeleton";
+import { DataTableSkeleton } from "./_components/skeleton/data-table-skeleton";
 
 const Loading: FC = () => {
   return (

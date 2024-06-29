@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { type FC } from "react";
 
-const TopbarSkeleton: FC = () => {
+export const TopbarSkeleton: FC = () => {
   return (
     <header className="container fixed top-0 z-10 my-3 w-full">
       <Skeleton className="brder mx-auto grid max-w-[770px] rounded-full border-transparent bg-transparent p-3">
@@ -10,5 +10,3 @@ const TopbarSkeleton: FC = () => {
     </header>
   );
 };
-
-export default TopbarSkeleton;

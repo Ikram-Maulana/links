@@ -8,7 +8,7 @@ export interface StaticImageBlurProps
   alt: string;
 }
 
-const StaticImagesBlur = React.forwardRef<
+export const StaticImagesBlur = React.forwardRef<
   HTMLImageElement,
   StaticImageBlurProps
 >(({ src, alt, className, ...props }, ref) => (
@@ -25,4 +25,3 @@ const StaticImagesBlur = React.forwardRef<
 ));
 
 StaticImagesBlur.displayName = "StaticImagesBlur";
-export default StaticImagesBlur;

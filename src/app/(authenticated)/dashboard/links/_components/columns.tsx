@@ -1,5 +1,6 @@
 "use client";
 
+import { env } from "@/env";
 import { type linksList } from "@/server/db/schema";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type InferSelectModel } from "drizzle-orm";
@@ -18,9 +19,13 @@ export const columns: ColumnDef<TLinks>[] = [
     ),
     cell: ({ row }) =>
       row.original.image ? (
-        <a href={row.original.image} target="_blank" rel="noopener noreferrer">
+        <a
+          href={`${env.NEXT_PUBLIC_UPLOADCARE_BASE_URL}/${row.original.image}/-/quality/lighter/-/progressive/yes/`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <Image
-            src={row.original.image}
+            src={`${env.NEXT_PUBLIC_UPLOADCARE_BASE_URL}/${row.original.image}/-/quality/lighter/-/progressive/yes/`}
             alt={row.original.title}
             width={0}
             height={0}

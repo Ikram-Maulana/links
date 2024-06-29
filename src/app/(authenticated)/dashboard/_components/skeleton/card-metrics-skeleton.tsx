@@ -5,7 +5,9 @@ interface CardMetricsSkeletonProps {
   length: number;
 }
 
-const CardMetricsSkeleton: FC<CardMetricsSkeletonProps> = ({ length }) => {
+export const CardMetricsSkeleton: FC<CardMetricsSkeletonProps> = ({
+  length,
+}) => {
   return (
     <div className="grid grid-flow-row grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
       {Array.from({ length }).map((_, i) => (
@@ -14,5 +16,3 @@ const CardMetricsSkeleton: FC<CardMetricsSkeletonProps> = ({ length }) => {
     </div>
   );
 };
-
-export default CardMetricsSkeleton;

@@ -1,22 +1,16 @@
 import fieldImage from "@/assets/images/field.jpg";
 import ikramLogo from "@/assets/images/ikram-logo.png";
-import StaticImagesBlur from "@/components/images/static/blur";
+import { StaticImagesBlur } from "@/components/images/static/blur";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { authOptions } from "@/server/auth";
 import { IconArrowLeft } from "@irsyadadl/paranoid";
 import { getServerSession } from "next-auth";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { type FC } from "react";
-import ErrorMessage from "./_components/error-messages";
-
-const LoginButton = dynamic(() => import("./_components/login-button"), {
-  ssr: false,
-  loading: () => <Skeleton className="mt-4 h-9 w-full" />,
-});
+import { ErrorMessage } from "./_components/error-messages";
+import { LoginButton } from "./_components/login-button";
 
 interface LoginPageProps {
   searchParams: {

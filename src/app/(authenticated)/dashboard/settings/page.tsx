@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { type Metadata } from "next";
 import { Suspense, type FC } from "react";
-import EditCard from "./_components/edit-card";
+import { EditCard } from "./_components/edit-card";
 
 export const metadata: Metadata = {
   title: "Dashboard Settings | Ikram Maulana Links",

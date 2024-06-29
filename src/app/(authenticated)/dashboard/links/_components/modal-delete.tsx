@@ -13,10 +13,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { useEdgeStore } from "@/lib/edgestore";
+import { deleteUploadcareFile } from "@/lib/uploadcare";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
-import { EdgeStoreApiClientError } from "@edgestore/react/shared";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
@@ -25,7 +24,7 @@ import { toast } from "sonner";
 type DeleteProps = {
   id: string;
   title: string;
-  imageUrl: string;
+  imageIds: string;
   handler: {
     open: () => void;
     close: () => void;
@@ -34,44 +33,34 @@ type DeleteProps = {
   setIsLoadingDelete: (isLoading: boolean) => void;
 };
 
-const ModalDelete = ({
+export const ModalDelete = ({
   id,
   title,
-  imageUrl,
+  imageIds,
   handler,
   setIsLoadingDelete,
 }: DeleteProps) => {
   const router = useRouter();
-  const { edgestore } = useEdgeStore();
 
   const { mutate: deleteLink, isLoading: isDeletingLink } =
     api.linksList.delete.useMutation({
       onSuccess: async () => {
         try {
-          if (imageUrl && imageUrl !== "") {
-            await edgestore.publicFiles.delete({
-              url: imageUrl,
-            });
+          if (imageIds && imageIds !== "") {
+            await deleteUploadcareFile({ uuid: imageIds });
           }
           handler.close();
-          toast.success(`Link \"${title}\" deleted successfully`);
+          return toast.success(`Link \"${title}\" deleted successfully`);
         } catch (error) {
-          // All errors are typed and you will get intellisense for them
-          if (error instanceof EdgeStoreApiClientError) {
-            if (error.data.code === "DELETE_NOT_ALLOWED") {
-              toast.error("You don't have permission to delete the image");
-            }
-          }
-
-          toast.error("An error occurred while deleting the image");
+          return toast.error("An error occurred while deleting the image");
         }
       },
       onError: (error) => {
         if (error instanceof Error && error.message) {
-          toast.error(error.message);
-        } else {
-          toast.error("An error occurred");
+          return toast.error(error.message);
         }
+
+        return toast.error("An error occurred");
       },
       onSettled: () => {
         setIsLoadingDelete(false);
@@ -126,5 +115,3 @@ const ModalDelete = ({
     </AlertDialog>
   );
 };
-
-export default ModalDelete;
