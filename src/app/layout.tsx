@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 
+import { ClerkProvider } from "@clerk/nextjs";
 import { GeistSans } from "geist/font/sans";
 
 import { TRPCReactProvider } from "@/trpc/react";
@@ -16,14 +17,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+    <ClerkProvider>
       <html
         className={`${GeistSans.className} antialiased motion-safe:scroll-smooth`}
         lang="en"
         suppressHydrationWarning
       >
         <body className="antialiased">
-        <TRPCReactProvider>{children}</TRPCReactProvider>
-      </body>
-    </html>
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

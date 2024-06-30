@@ -12,6 +12,9 @@ export const env = createEnv({
       .url()
       .refine((str) => str !== "", "Please provide a database URL"),
     DATABASE_AUTH_TOKEN: z.string().optional(),
+    CLERK_SECRET_KEY: z
+      .string()
+      .refine((str) => str !== "", "Please provide a clerk secret key"),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -23,7 +26,16 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z
+      .string()
+      .refine(
+        (str) => str !== "",
+        "You forgot to change the clerk publishable key",
+      ),
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string(),
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string(),
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string(),
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string(),
   },
 
   /**
@@ -31,7 +43,14 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   experimental__runtimeEnv: {
-    // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL,
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL:
+      process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,
+    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL:
+      process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
