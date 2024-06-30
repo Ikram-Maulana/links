@@ -9,10 +9,19 @@ body,
 }
 
 body,
+#topbar-desktop,
+#topbar-mobile,
 #sidebar {
   background-image: url("../assets/images/noise.png");
   background-size: 200px 200px;
   background-position: 0 0;
+}
+
+.cl-internal-180wb59,
+.cl-internal-11ttlho,
+.cl-internal-lqfubk,
+.cl-footer {
+  display: none !important;
 }
 
 @layer base {

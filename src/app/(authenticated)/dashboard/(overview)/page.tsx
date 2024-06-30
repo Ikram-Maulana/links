@@ -1,5 +1,7 @@
-import { RedirectToSignIn, SignOutButton } from "@clerk/nextjs";
+import { RedirectToSignIn } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
+import { ContentWrapper } from "../_components/content-wrapper";
+import { Header, HeaderText } from "../_components/header";
 
 export default async function Dashboard() {
   const user = await currentUser();
@@ -9,9 +11,13 @@ export default async function Dashboard() {
   }
 
   return (
-    <>
-      <h1>Hello Dashboard</h1>
-      <SignOutButton />
-    </>
+    <ContentWrapper>
+      <Header>
+        <HeaderText
+          title="Dashboard"
+          subtitle={`Welcome back, ${user.fullName}!`}
+        />
+      </Header>
+    </ContentWrapper>
   );
 }
