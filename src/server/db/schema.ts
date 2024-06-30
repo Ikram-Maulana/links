@@ -23,10 +23,15 @@ export const list = createTable(
   "list",
   {
     id: text("id").notNull().primaryKey().$defaultFn(uuidv7),
-    image: text("image"),
     title: text("title").notNull(),
     url: text("url").notNull(),
     slug: text("slug").notNull(),
+    clicked: int("clicked")
+      .notNull()
+      .$default(() => 0),
+    isPublished: int("is_published", { mode: "boolean" })
+      .notNull()
+      .$default(() => false),
     createdAt: int("created_at", { mode: "timestamp" })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
