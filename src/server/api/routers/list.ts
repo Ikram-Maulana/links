@@ -170,4 +170,32 @@ export const listRouter = createTRPCRouter({
         };
       }
     }),
+
+  delete: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      try {
+        const deleteListPrepared = db
+          .delete(list)
+          .where(eq(list.id, sql.placeholder("listId")))
+          .prepare();
+        const deleteList = await deleteListPrepared.all({
+          listId: input.id,
+        });
+
+        return deleteList;
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+
+        return {
+          error: "Internal Server Error",
+        };
+      }
+    }),
 });
