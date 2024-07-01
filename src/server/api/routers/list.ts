@@ -1,9 +1,10 @@
 import { getListSchema } from "@/app/(authenticated)/dashboard/links-list/_lib/validation";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { db } from "@/server/db";
-import { asc, count, desc, type InferSelectModel } from "drizzle-orm";
+import { asc, count, desc, eq, sql, type InferSelectModel } from "drizzle-orm";
 import { list } from "@/server/db/schema";
 import { filterColumn } from "@/lib/filter-column";
+import * as z from "zod";
 
 type List = InferSelectModel<typeof list>;
 
@@ -85,4 +86,37 @@ export const listRouter = createTRPCRouter({
       };
     }
   }),
+
+  setIsPublished: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        isPublished: z.boolean(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      try {
+        const setIsPublishedPrepared = db
+          .update(list)
+          .set({
+            isPublished: input.isPublished,
+          })
+          .where(eq(list.id, sql.placeholder("listId")))
+          .returning()
+          .prepare();
+        const setIsPublished = await setIsPublishedPrepared.all({
+          listId: input.id,
+        });
+
+        return setIsPublished;
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+
+        return {
+          error: "Internal Server Error",
+        };
+      }
+    }),
 });
