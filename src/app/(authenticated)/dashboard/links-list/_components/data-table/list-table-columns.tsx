@@ -8,6 +8,7 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 import { Badge } from "@/components/ui/badge";
 import { type list } from "@/server/db/schema";
 import { type InferSelectModel } from "drizzle-orm";
+import { ListTableActions } from "./list-table-actions";
 import { PublishedSwitch } from "./published-switch";
 
 type List = InferSelectModel<typeof list>;
@@ -85,10 +86,10 @@ export function getColumns(): ColumnDef<List>[] {
       enableSorting: false,
       enableHiding: false,
     },
-    // {
-    //   id: "actions",
-    //   cell: ({ row }) => <ListTableActions row={row} />,
-    // },
+    {
+      id: "actions",
+      cell: ({ row }) => <ListTableActions row={row} />,
+    },
   ];
 }
 
