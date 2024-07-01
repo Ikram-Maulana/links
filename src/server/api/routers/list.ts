@@ -1,9 +1,10 @@
 import { getListSchema } from "@/app/(authenticated)/dashboard/links-list/_lib/validation";
+import { filterColumn } from "@/lib/filter-column";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { db } from "@/server/db";
-import { asc, count, desc, eq, sql, type InferSelectModel } from "drizzle-orm";
 import { list } from "@/server/db/schema";
-import { filterColumn } from "@/lib/filter-column";
+import { asc, count, desc, eq, sql, type InferSelectModel } from "drizzle-orm";
+import slugify from "slugify";
 import * as z from "zod";
 
 type List = InferSelectModel<typeof list>;
@@ -86,6 +87,56 @@ export const listRouter = createTRPCRouter({
       };
     }
   }),
+
+  create: protectedProcedure
+    .input(
+      z.object({
+        title: z.string(),
+        url: z.string().url(),
+        isPublished: z.boolean(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      try {
+        const slug = slugify(input.title, { lower: true });
+
+        const existingListPrepared = db
+          .select()
+          .from(list)
+          .where(eq(list.slug, sql.placeholder("slug")))
+          .prepare();
+        const [existingList] = await existingListPrepared.all({ slug });
+        const isSlugExist = !!existingList;
+
+        if (isSlugExist) {
+          throw new Error("Change the title, the slug already exists.");
+        }
+
+        const listData = {
+          title: input.title,
+          slug,
+          url: input.url,
+          isPublished: input.isPublished,
+        } as InferSelectModel<typeof list>;
+
+        const createListPrepared = db
+          .insert(list)
+          .values(listData)
+          .returning()
+          .prepare();
+        const createdList = await createListPrepared.all();
+
+        return createdList;
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+
+        return {
+          error: "Internal Server Error",
+        };
+      }
+    }),
 
   setIsPublished: protectedProcedure
     .input(
