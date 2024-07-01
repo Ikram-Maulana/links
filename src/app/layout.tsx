@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { GeistSans } from "geist/font/sans";
 
 import { TRPCReactProvider } from "@/trpc/react";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata = {
   title: "Create T3 App",
@@ -25,6 +26,13 @@ export default function RootLayout({
       >
         <body className="antialiased">
           <TRPCReactProvider>{children}</TRPCReactProvider>
+
+          <div className="lg:hidden">
+            <Toaster richColors position="bottom-center" duration={5000} />
+          </div>
+          <div className="hidden lg:flex">
+            <Toaster richColors position="top-center" duration={5000} />
+          </div>
         </body>
       </html>
     </ClerkProvider>

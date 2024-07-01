@@ -8,6 +8,7 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 import { Badge } from "@/components/ui/badge";
 import { type list } from "@/server/db/schema";
 import { type InferSelectModel } from "drizzle-orm";
+import { PublishedSwitch } from "./published-switch";
 
 type List = InferSelectModel<typeof list>;
 
@@ -62,6 +63,27 @@ export function getColumns(): ColumnDef<List>[] {
       ),
       enableSorting: false,
       enableHiding: true,
+    },
+    {
+      accessorKey: "is_published",
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title="Published"
+          className="text-xs"
+        />
+      ),
+      cell: ({ row }) => {
+        return (
+          <PublishedSwitch
+            id={row.original.id}
+            checked={row.original.isPublished}
+            key={`published-${row.original.id}`}
+          />
+        );
+      },
+      enableSorting: false,
+      enableHiding: false,
     },
     // {
     //   id: "actions",
