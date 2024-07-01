@@ -3,8 +3,9 @@ import "@/styles/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { GeistSans } from "geist/font/sans";
 
-import { TRPCReactProvider } from "@/trpc/react";
 import { Toaster } from "@/components/ui/sonner";
+import { TRPCReactProvider } from "@/trpc/react";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata = {
   title: "Create T3 App",
@@ -25,6 +26,8 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <body className="antialiased">
+          <NextTopLoader color="#16a34a" height={4} showSpinner={false} />
+
           <TRPCReactProvider>{children}</TRPCReactProvider>
 
           <div className="lg:hidden">
