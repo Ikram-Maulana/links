@@ -171,6 +171,89 @@ export const listRouter = createTRPCRouter({
       }
     }),
 
+  getOneById: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      try {
+        const getOnePrepared = db
+          .select()
+          .from(list)
+          .where(eq(list.id, sql.placeholder("listId")))
+          .prepare();
+        const [listData] = await getOnePrepared.all({
+          listId: input.id,
+        });
+
+        return listData;
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+
+        return {
+          error: "Internal Server Error",
+        };
+      }
+    }),
+
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        url: z.string().url(),
+        isPublished: z.boolean(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      try {
+        const slug = slugify(input.title, { lower: true });
+
+        const existingListPrepared = db
+          .select()
+          .from(list)
+          .where(eq(list.slug, sql.placeholder("slug")))
+          .prepare();
+        const [existingList] = await existingListPrepared.all({ slug });
+        const isSlugExist = !!existingList;
+
+        if (isSlugExist && existingList?.id !== input.id) {
+          throw new Error("Change the title, the slug already exists.");
+        }
+
+        const listData = {
+          title: input.title,
+          slug,
+          url: input.url,
+          isPublished: input.isPublished,
+        } as InferSelectModel<typeof list>;
+
+        const updateListPrepared = db
+          .update(list)
+          .set(listData)
+          .where(eq(list.id, sql.placeholder("listId")))
+          .returning()
+          .prepare();
+        const updatedList = await updateListPrepared.all({
+          listId: input.id,
+        });
+
+        return updatedList;
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+
+        return {
+          error: "Internal Server Error",
+        };
+      }
+    }),
+
   delete: protectedProcedure
     .input(
       z.object({
