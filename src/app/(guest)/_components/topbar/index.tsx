@@ -3,6 +3,7 @@
 import { ShareTrigger } from "@/components/share-trigger";
 import { Button } from "@/components/ui/button";
 import { publicMetadata } from "@/data";
+import { env } from "@/env";
 import { cn } from "@/lib/utils";
 import { IconDotsHorizontal } from "@irsyadadl/paranoid";
 import { useWindowScroll } from "@mantine/hooks";
@@ -56,7 +57,7 @@ export default function Topbar() {
           {publicMetadata.name}
         </p>
 
-        <ShareTrigger asChild>
+        <ShareTrigger url={env.NEXT_PUBLIC_BASE_URL} asChild>
           <Button
             className={cn(
               "col-start-3 flex h-10 w-10 items-center justify-center justify-self-end rounded-full border-[#E2E2E2] bg-[#F0F0F0] px-3 text-lg font-bold text-zinc-900 hover:bg-[#EBEBEB] focus-visible:ring-[#D2D2D2]",

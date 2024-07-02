@@ -12,15 +12,15 @@ import {
   RemoTitle,
   RemoTrigger,
 } from "@/components/ui/remo";
-import { env } from "@/env";
 import { type FC } from "react";
 
 interface ShareTriggerProps {
   children: React.ReactNode;
+  url: string;
   asChild: true;
 }
 
-export const ShareTrigger: FC<ShareTriggerProps> = ({ children }) => {
+export const ShareTrigger: FC<ShareTriggerProps> = ({ children, url }) => {
   return (
     <Remo>
       <RemoTrigger asChild>{children}</RemoTrigger>
@@ -31,7 +31,7 @@ export const ShareTrigger: FC<ShareTriggerProps> = ({ children }) => {
             Select options below to share this link with others.
           </RemoDescription>
         </RemoHeader>
-        <ShareOptions url={env.NEXT_PUBLIC_BASE_URL} />
+        <ShareOptions url={url} />
         <RemoFooter className="pt-4 md:hidden">
           <RemoClose asChild>
             <Button variant="outline">Cancel</Button>
