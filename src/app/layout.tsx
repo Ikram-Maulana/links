@@ -5,8 +5,9 @@ import { GeistSans } from "geist/font/sans";
 
 import { Toaster } from "@/components/ui/sonner";
 import { TRPCReactProvider } from "@/trpc/react";
-import NextTopLoader from "nextjs-toploader";
 import { type Metadata } from "next";
+import NextTopLoader from "nextjs-toploader";
+import PostHogProvider from "./posthog-providers";
 
 export const metadata: Metadata = {
   title: "Ikram Maulana Links",
@@ -84,18 +85,20 @@ export default function RootLayout({
         lang="en"
         suppressHydrationWarning
       >
-        <body className="antialiased">
-          <NextTopLoader color="#16a34a" height={4} showSpinner={false} />
+        <PostHogProvider>
+          <body className="antialiased">
+            <NextTopLoader color="#16a34a" height={4} showSpinner={false} />
 
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+            <TRPCReactProvider>{children}</TRPCReactProvider>
 
-          <div className="lg:hidden">
-            <Toaster richColors position="bottom-center" duration={5000} />
-          </div>
-          <div className="hidden lg:flex">
-            <Toaster richColors position="top-center" duration={5000} />
-          </div>
-        </body>
+            <div className="lg:hidden">
+              <Toaster richColors position="bottom-center" duration={5000} />
+            </div>
+            <div className="hidden lg:flex">
+              <Toaster richColors position="top-center" duration={5000} />
+            </div>
+          </body>
+        </PostHogProvider>
       </html>
     </ClerkProvider>
   );
