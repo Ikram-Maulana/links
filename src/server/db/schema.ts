@@ -1,14 +1,15 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import type { AdapterAccount } from "@auth/core/adapters";
-import { createId } from "@paralleldrive/cuid2";
-import { relations } from "drizzle-orm";
+// Example model schema from the Drizzle docs
+// https://orm.drizzle.team/docs/sql-schema-declaration
+
+import { sql } from "drizzle-orm";
 import {
-  integer,
-  primaryKey,
+  index,
+  int,
   sqliteTableCreator,
   text,
   unique,
 } from "drizzle-orm/sqlite-core";
+import { v7 as uuidv7 } from "uuid";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -16,100 +17,29 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const sqliteTable = sqliteTableCreator((name) => `links_${name}`);
+export const createTable = sqliteTableCreator((name) => `links_${name}`);
 
-export const linksList = sqliteTable(
-  "linksList",
+export const list = createTable(
+  "list",
   {
-    id: text("id").notNull().primaryKey().$defaultFn(createId),
-    image: text("image"),
+    id: text("id").notNull().primaryKey().$defaultFn(uuidv7),
     title: text("title").notNull(),
     url: text("url").notNull(),
     slug: text("slug").notNull(),
-    createdAt: integer("createdAt", { mode: "timestamp_ms" }).$default(
-      () => new Date(),
-    ),
-    updatedAt: integer("updatedAt", { mode: "timestamp_ms" }),
-  },
-  (linksList) => ({
-    unq: unique().on(linksList.slug),
-  }),
-);
-
-export const publicMetadata = sqliteTable(
-  "publicMetadata",
-  {
-    id: text("id").notNull().primaryKey().$defaultFn(createId),
-    userId: text("userId")
+    clicked: int("clicked")
       .notNull()
-      .references(() => users.id, {
-        onDelete: "cascade",
-      }),
-    avatar: text("avatar"),
-    bio: text("bio").notNull(),
-    location: text("location").notNull(),
-  },
-  (publicMetadata) => ({
-    unq: unique().on(publicMetadata.userId),
-  }),
-);
-
-// Next Auth
-export const users = sqliteTable("user", {
-  id: text("id").notNull().primaryKey(),
-  name: text("name"),
-  email: text("email").notNull(),
-  emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
-  image: text("image"),
-});
-
-export const usersRelations = relations(users, ({ one }) => ({
-  publicMetadata: one(publicMetadata, {
-    fields: [users.id],
-    references: [publicMetadata.userId],
-  }),
-}));
-
-export const accounts = sqliteTable(
-  "account",
-  {
-    userId: text("userId")
+      .$default(() => 0),
+    isPublished: int("is_published", { mode: "boolean" })
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    type: text("type").$type<AdapterAccount["type"]>().notNull(),
-    provider: text("provider").notNull(),
-    providerAccountId: text("providerAccountId").notNull(),
-    refresh_token: text("refresh_token"),
-    access_token: text("access_token"),
-    expires_at: integer("expires_at"),
-    token_type: text("token_type"),
-    scope: text("scope"),
-    id_token: text("id_token"),
-    session_state: text("session_state"),
+      .$default(() => false),
+    createdAt: int("created_at", { mode: "timestamp" })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: int("updated_at", { mode: "timestamp" }),
   },
-  (account) => ({
-    compoundKey: primaryKey({
-      columns: [account.provider, account.providerAccountId],
-    }),
-  }),
-);
-
-export const sessions = sqliteTable("session", {
-  sessionToken: text("sessionToken").notNull().primaryKey(),
-  userId: text("userId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
-});
-
-export const verificationTokens = sqliteTable(
-  "verificationToken",
-  {
-    identifier: text("identifier").notNull(),
-    token: text("token").notNull(),
-    expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
-  },
-  (vt) => ({
-    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+  (list) => ({
+    unq: unique().on(list.slug),
+    idListIdx: index("id_list_idx").on(list.id),
+    slugListIdx: index("slug_list_idx").on(list.slug),
   }),
 );

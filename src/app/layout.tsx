@@ -1,12 +1,15 @@
-import { Toaster } from "@/components/ui/sonner";
-import { env } from "@/env";
-import { getBaseUrl } from "@/lib/utils";
 import "@/styles/globals.css";
-import { TRPCReactProvider } from "@/trpc/react";
-import { GeistSans } from "geist/font/sans";
-import NextTopLoader from "nextjs-toploader";
 
-export const metadata = {
+import { ClerkProvider } from "@clerk/nextjs";
+import { GeistSans } from "geist/font/sans";
+
+import { Toaster } from "@/components/ui/sonner";
+import { TRPCReactProvider } from "@/trpc/react";
+import { type Metadata } from "next";
+import NextTopLoader from "nextjs-toploader";
+import PostHogProvider from "./posthog-providers";
+
+export const metadata: Metadata = {
   title: "Ikram Maulana Links",
   description:
     "Discover the social media links of Ikram Maulana, a Full Stack Web Developer. Explore my collection of projects and skills in web development.",
@@ -14,41 +17,50 @@ export const metadata = {
   keywords: [
     "Ikram Maulana",
     "Ikram Maulana Portfolio",
+    "Ikram Maulana Links",
     "Ikram Maulana Website",
     "Ikram Maulana Full Stack Web Developer",
-    "Full Stack Web Developer",
-    "React Developer",
-    "Daunnesia",
-    "Founder Daunnesia",
-    "Daunnesia Website",
-    "Ikram Daunnesia",
-    "Ikram Links",
-    "Ikram Maulana Links",
     "Ikram Maulana Social Media",
     "Ikram Maulana Social Media Links",
+    "Ikram Links",
+    "Portfolio",
+    "Web Developer",
+    "Fullstack Developer",
+    "Fullstack Web Developer",
+    "React Developer",
+    "Founder Daunnesia",
+    "Ikram UMMI",
+    "Daunnesia",
+    "Daunnesia Agensi",
+    "Daunnesia Agency",
+    "Agency",
+    "Agensi",
+    "Universitas Muhammadiyah Sukabumi",
+    "Universitas Muhammadiyah Sukabumi Informatics Engineering",
+    "Universitas Muhammadiyah Sukabumi Teknik Informatika",
+    "UMMI",
+    "UMMI Sukabumi",
+    "UMMI Informatics Engineering",
+    "UMMI Teknik Informatika",
+    "Informatics Engineering",
+    "Teknik Informatika",
   ],
   authors: [
     {
       name: "Ikram Maulana",
-      url: env.NEXT_PUBLIC_PORTFOLIO_URL,
+      url: "https://ikrammaulana.my.id",
     },
   ],
   creator: "Ikram Maulana",
-  metadataBase: getBaseUrl(),
-  alternates: {
-    canonical: "/",
-    languages: {
-      "en-US": "/en-US",
-    },
-  },
+  metadataBase: new URL("https://links.ikrammaulana.my.id"),
   openGraph: {
     type: "website",
-    locale: "id_ID",
+    locale: "en_US",
     siteName: "Ikram Maulana Links",
     title: "Ikram Maulana Links",
     description:
       "Discover the social media links of Ikram Maulana, a Full Stack Web Developer. Explore my collection of projects and skills in web development.",
-    url: getBaseUrl(),
+    url: "https://links.ikrammaulana.my.id",
     images: [
       {
         url: "/og.jpg",
@@ -67,22 +79,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`font-sans ${GeistSans.className} antialiased motion-safe:scroll-smooth`}
-    >
-      <body className="min-h-screen antialiased">
-        <NextTopLoader color="#22c55e" height={4} showSpinner />
+    <ClerkProvider>
+      <html
+        className={`${GeistSans.className} antialiased motion-safe:scroll-smooth`}
+        lang="en"
+        suppressHydrationWarning
+      >
+        <PostHogProvider>
+          <body className="antialiased">
+            <NextTopLoader color="#16a34a" height={4} showSpinner={false} />
 
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+            <TRPCReactProvider>{children}</TRPCReactProvider>
 
-        <div className="lg:hidden">
-          <Toaster richColors position="bottom-center" duration={5000} />
-        </div>
-        <div className="hidden lg:flex">
-          <Toaster richColors position="top-center" duration={5000} />
-        </div>
-      </body>
-    </html>
+            <div className="lg:hidden">
+              <Toaster richColors position="bottom-center" duration={5000} />
+            </div>
+            <div className="hidden lg:flex">
+              <Toaster richColors position="top-center" duration={5000} />
+            </div>
+          </body>
+        </PostHogProvider>
+      </html>
+    </ClerkProvider>
   );
 }

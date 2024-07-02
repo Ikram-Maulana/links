@@ -1,19 +1,21 @@
+import { type Metadata } from "next";
 import { Suspense } from "react";
 import { LinksList } from "./_components/links-list";
 import { LinksListSkeleton } from "./_components/links-list/skeleton/links-list-skeleton";
 import { Profile } from "./_components/profile";
-import { ProfileSkeleton } from "./_components/skeleton/profile-skeleton";
 
-export default async function Home() {
+export const metadata: Metadata = {
+  title: "Homepage | Ikram Maulana Links",
+};
+
+export default function Home() {
   return (
-    <main className="container mx-auto w-screen max-w-[680px] px-4 md:px-0">
-      <Suspense fallback={<ProfileSkeleton />}>
-        <Profile />
-      </Suspense>
+    <div className="container max-w-xl px-4 md:px-0">
+      <Profile />
 
-      <Suspense fallback={<LinksListSkeleton nCard={5} />}>
+      <Suspense fallback={<LinksListSkeleton nItem={5} />}>
         <LinksList />
       </Suspense>
-    </main>
+    </div>
   );
 }

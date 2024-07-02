@@ -2,13 +2,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { type FC } from "react";
 
 interface LinksListSkeletonProps {
-  nCard: number;
+  nItem: number;
 }
 
-export const LinksListSkeleton: FC<LinksListSkeletonProps> = ({ nCard }) => {
+export const LinksListSkeleton: FC<LinksListSkeletonProps> = ({ nItem }) => {
   return (
     <div className="mt-8">
-      {Array(nCard)
+      {Array(nItem)
         .fill(null)
         .map((_, i) => (
           <Skeleton

@@ -1,20 +1,18 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { type linksList } from "@/server/db/schema";
+import { type list } from "@/server/db/schema";
 import { api } from "@/trpc/server";
 import { IconCircleX, IconTriangleInfo } from "@irsyadadl/paranoid";
 import { type InferSelectModel } from "drizzle-orm";
-import { unstable_noStore as noStore } from "next/cache";
 import { type FC } from "react";
-import { Card } from "./card";
+import { LinksItem } from "./links-item";
 
-type LinksDataProps = InferSelectModel<typeof linksList>;
+type LinksListDataProps = InferSelectModel<typeof list>;
 
 export const LinksList: FC = async () => {
-  noStore();
-  const links =
-    (await api.linksList.getAll.query()) as unknown as LinksDataProps[];
+  const linksList =
+    (await api.list.getAllWithoutPagination()) as LinksListDataProps[];
 
-  if (!links || (links && !Boolean(links.length))) {
+  if (!linksList || (linksList && !Boolean(linksList.length))) {
     return (
       <Alert
         className="mt-8 border-amber-500 bg-amber-500 text-zinc-50 dark:border-amber-900 dark:bg-amber-900 dark:text-zinc-50"
@@ -27,7 +25,7 @@ export const LinksList: FC = async () => {
     );
   }
 
-  if ("error" in links) {
+  if ("error" in linksList) {
     return (
       <Alert
         className="mt-8 border-red-500 bg-red-500 text-zinc-50 dark:border-red-900 dark:bg-red-900 dark:text-zinc-50"
@@ -44,13 +42,11 @@ export const LinksList: FC = async () => {
 
   return (
     <div className="mt-8">
-      {links.map((link) => (
-        <Card
-          key={`linkslist-${link.id}`}
+      {linksList.map((link) => (
+        <LinksItem
+          key={`link-${link.id}`}
           title={link.title}
-          url={link.url}
           slug={link.slug}
-          image={link.image}
         />
       ))}
     </div>

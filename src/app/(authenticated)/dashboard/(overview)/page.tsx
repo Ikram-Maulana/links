@@ -1,38 +1,35 @@
-import { authOptions } from "@/server/auth";
+import { RedirectToSignIn } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { type Metadata } from "next";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { Suspense, type FC } from "react";
-import { CardMetrics } from "../_components/card-metrics";
-import { CardMetricsSkeleton } from "../_components/skeleton/card-metrics-skeleton";
+import { Suspense } from "react";
+import { ContentWrapper } from "../_components/content-wrapper";
+import { Header, HeaderText } from "../_components/header";
+import { Content } from "./_components/content";
+import { ContentSkeleton } from "./_components/skeleton/content-skeleton";
 
 export const metadata: Metadata = {
   title: "Dashboard | Ikram Maulana Links",
 };
 
-const page: FC = async () => {
-  const session = await getServerSession(authOptions);
+export default async function Dashboard() {
+  const user = await currentUser();
 
-  if (!session?.user) {
-    redirect("/auth/login");
+  if (!user) {
+    return <RedirectToSignIn />;
   }
 
   return (
-    <>
-      <div className="mb-6 flex flex-col">
-        <h1 className="w-fit scroll-m-20 text-2xl font-semibold tracking-tight">
-          Dashboard
-        </h1>
-        <p className="w-fit text-sm font-medium leading-6 text-gray-500">
-          Welcome back, {session?.user.name}!
-        </p>
-      </div>
+    <ContentWrapper>
+      <Header>
+        <HeaderText
+          title="Dashboard"
+          subtitle={`Welcome back, ${user.fullName}!`}
+        />
+      </Header>
 
-      <Suspense fallback={<CardMetricsSkeleton length={1} />}>
-        <CardMetrics />
+      <Suspense fallback={<ContentSkeleton />}>
+        <Content />
       </Suspense>
-    </>
+    </ContentWrapper>
   );
-};
-
-export default page;
+}

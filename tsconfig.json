@@ -27,10 +27,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    },
-
-    // Uploadcare
-    "types": ["@uploadcare/blocks/types/jsx"]
+    }
   },
   "include": [
     ".eslintrc.cjs",

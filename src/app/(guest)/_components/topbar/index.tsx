@@ -1,106 +1,76 @@
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { ShareTrigger } from "@/components/share-trigger";
+import { Button } from "@/components/ui/button";
+import { publicMetadata } from "@/data";
 import { env } from "@/env";
-import { cn, isValidUrl } from "@/lib/utils";
-import { type publicMetadata, type users } from "@/server/db/schema";
-import { api } from "@/trpc/react";
+import { cn } from "@/lib/utils";
+import { IconDotsHorizontal } from "@irsyadadl/paranoid";
 import { useWindowScroll } from "@mantine/hooks";
-import { type InferSelectModel } from "drizzle-orm";
 import Image from "next/image";
-import { ShareButton } from "./share-button";
-
-type ProfileDataProps = InferSelectModel<typeof users> & {
-  publicMetadata: InferSelectModel<typeof publicMetadata>;
-};
+import { useEffect, useState } from "react";
+import { TopbarSkeleton } from "./skeleton/topbar-skeleton";
 
 export default function Topbar() {
-  const [scroll] = useWindowScroll();
+  const [{ y: scrollY }] = useWindowScroll();
+  const [hasMounted, setHasMounted] = useState(false);
 
-  const {
-    data: dataProfile,
-    isLoading,
-    isError,
-  } = api.publicMetadata.getProfile.useQuery<ProfileDataProps>();
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
-  if (isError) {
-    return null;
-  }
-
-  const DEFAULT_IMAGE_URL = "https://placehold.co/96/webp";
-  let imageUrl = DEFAULT_IMAGE_URL;
-  const profileName = dataProfile?.name ?? "";
-  if (dataProfile && !isLoading) {
-    const getImageUrl = (profile: ProfileDataProps): string => {
-      const { avatar } = profile.publicMetadata;
-      const { image } = profile;
-
-      if (avatar && avatar !== "") {
-        return `${env.NEXT_PUBLIC_UPLOADCARE_BASE_URL}/${avatar}/-/quality/lighter/-/progressive/yes/`;
-      } else if (image && image !== "" && isValidUrl(image)) {
-        return image;
-      } else {
-        return DEFAULT_IMAGE_URL;
-      }
-    };
-
-    imageUrl = getImageUrl(dataProfile);
+  if (!hasMounted) {
+    return <TopbarSkeleton />;
   }
 
   return (
-    <header className="container fixed top-0 z-10 mx-auto my-3 w-full px-2">
+    <header className="container fixed top-0 z-10 my-3 w-full px-2">
       <div
         className={cn(
-          "mx-auto grid max-w-[788px] grid-cols-[min-content,auto,min-content] rounded-full border border-transparent bg-transparent p-3",
+          "mx-auto grid max-w-xl grid-cols-[min-content,auto,min-content] rounded-full border border-transparent bg-transparent p-3",
           {
-            "border-[#ebeef1] bg-neutral-50/80 backdrop-blur-sm": scroll.y > 50,
+            "border-[#ebeef1] bg-neutral-50/80 backdrop-blur-sm": scrollY > 50,
           },
         )}
       >
-        {isLoading && (
-          <>
-            <Skeleton
-              className={cn("col-start-1 hidden h-10 w-10 rounded-full", {
-                flex: scroll.y > 50,
-              })}
-            />
-            <Skeleton
-              className={cn("col-start-2 m-auto hidden h-[28px] w-[115px]", {
-                block: scroll.y > 50,
-              })}
-            />
-          </>
-        )}
+        <Image
+          src={`/${publicMetadata.avatar}`}
+          alt={`Profile Picture of ${publicMetadata.name}`}
+          className={cn(
+            "col-start-1 hidden h-10 min-w-10 rounded-full object-cover",
+            {
+              block: scrollY > 50,
+            },
+          )}
+          width={40}
+          height={40}
+        />
 
-        {dataProfile && !isLoading && (
-          <>
-            <Image
-              src={imageUrl}
-              alt={profileName}
-              className={cn(
-                "col-start-1 hidden h-10 min-w-10 rounded-full object-cover",
-                {
-                  block: scroll.y > 50,
-                },
-              )}
-              width={40}
-              height={40}
-            />
+        <p
+          className={cn(
+            "mx-auto hidden items-center justify-center font-semibold leading-7",
+            {
+              flex: scrollY > 50,
+            },
+          )}
+        >
+          {publicMetadata.name}
+        </p>
 
-            <p
-              className={cn(
-                "mx-auto hidden items-center justify-center font-semibold leading-7",
-                {
-                  flex: scroll.y > 50,
-                },
-              )}
-            >
-              {profileName}
-            </p>
-          </>
-        )}
-
-        <ShareButton yPosition={scroll.y} />
+        <ShareTrigger url={env.NEXT_PUBLIC_BASE_URL} asChild>
+          <Button
+            className={cn(
+              "col-start-3 flex h-10 w-10 items-center justify-center justify-self-end rounded-full border-[#E2E2E2] bg-[#F0F0F0] px-3 text-lg font-bold text-zinc-900 hover:bg-[#EBEBEB] focus-visible:ring-[#D2D2D2]",
+              {
+                "bg-primary text-zinc-50 hover:bg-primary/90 focus-visible:ring-ring":
+                  scrollY > 50,
+              },
+            )}
+            aria-label="Share this Link"
+          >
+            <IconDotsHorizontal />
+          </Button>
+        </ShareTrigger>
       </div>
     </header>
   );

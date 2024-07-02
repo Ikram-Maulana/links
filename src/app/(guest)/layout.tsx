@@ -1,31 +1,25 @@
-import { env } from "@/env";
-import dynamic from "next/dynamic";
-import Script from "next/script";
 import { type FC } from "react";
 import { Footer } from "./_components/footer";
-import { TopbarSkeleton } from "./_components/skeleton/topbar-skeleton";
-
-const Topbar = dynamic(() => import("./_components/topbar"), {
-  loading: () => <TopbarSkeleton />,
-});
+import { TopGradient } from "./_components/top-gradient";
+import Topbar from "./_components/topbar";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
+export const runtime = "edge";
+
 const Layout: FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="flex min-h-screen flex-col items-center bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-rose-100 to-teal-100">
-      <Topbar />
-      <main className="flex-grow">{children}</main>
-      <Footer />
+    <>
+      <TopGradient />
 
-      <Script
-        src={env.NEXT_PUBLIC_UMAMI_URL}
-        strategy="lazyOnload"
-        data-website-id={env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-      />
-    </div>
+      <div className="flex h-full w-full flex-col items-center">
+        <Topbar />
+        <main className="relative w-full flex-grow">{children}</main>
+        <Footer />
+      </div>
+    </>
   );
 };
 
