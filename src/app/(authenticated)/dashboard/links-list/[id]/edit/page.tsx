@@ -1,11 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { IconArrowLeft } from "@irsyadadl/paranoid";
+import { type Metadata } from "next";
 import Link from "next/link";
 import { Suspense, type FC } from "react";
 import { ContentWrapper } from "../../../_components/content-wrapper";
 import { Header, HeaderText } from "../../../_components/header";
 import { Content } from "./_components/content";
 import { ContentSkeleton } from "./_components/content/skeleton/content-skeleton";
+
+export const metadata: Metadata = {
+  title: "Update Link | Ikram Maulana Links",
+};
 
 interface LinkProps {
   params: {

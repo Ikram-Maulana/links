@@ -1,10 +1,15 @@
 import { RedirectToSignIn } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
+import { type Metadata } from "next";
 import { Suspense } from "react";
 import { ContentWrapper } from "../_components/content-wrapper";
 import { Header, HeaderText } from "../_components/header";
 import { Content } from "./_components/content";
 import { ContentSkeleton } from "./_components/skeleton/content-skeleton";
+
+export const metadata: Metadata = {
+  title: "Dashboard | Ikram Maulana Links",
+};
 
 export default async function Dashboard() {
   const user = await currentUser();

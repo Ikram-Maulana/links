@@ -6,7 +6,7 @@ import { type Metadata } from "next";
 import { type FC } from "react";
 
 export const metadata: Metadata = {
-  title: "Internal Server Error | Ikram Maulana Portfolio",
+  title: "Internal Server Error | Ikram Maulana Links",
 };
 
 interface ErrorProps {

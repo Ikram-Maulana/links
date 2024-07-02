@@ -1,10 +1,15 @@
+import { Button } from "@/components/ui/button";
+import { IconArrowLeft } from "@irsyadadl/paranoid";
+import { type Metadata } from "next";
+import Link from "next/link";
 import { type FC } from "react";
 import { ContentWrapper } from "../../_components/content-wrapper";
 import { Header, HeaderText } from "../../_components/header";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { IconArrowLeft } from "@irsyadadl/paranoid";
 import { Content } from "./_components/content";
+
+export const metadata: Metadata = {
+  title: "Add Link | Ikram Maulana Links",
+};
 
 const AddLinks: FC = () => {
   return (

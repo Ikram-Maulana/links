@@ -4,7 +4,7 @@ import { type Metadata } from "next";
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: "Page Not Found | Ikram Maulana Portfolio",
+  title: "Page Not Found | Ikram Maulana Links",
 };
 
 const page = () => {

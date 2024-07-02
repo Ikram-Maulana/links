@@ -6,7 +6,7 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Internal Server Error | Ikram Maulana Portfolio",
+  title: "Internal Server Error | Ikram Maulana Links",
 };
 
 export default function GlobalError({
