@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { redirectTo } from "@/lib/redirect";
 import { revalidate } from "@/lib/revalidate";
 import { type list } from "@/server/db/schema";
 import { api } from "@/trpc/react";
@@ -21,7 +22,6 @@ import { IconLoader } from "@irsyadadl/paranoid";
 import { useDebouncedValue } from "@mantine/hooks";
 import { type InferSelectModel } from "drizzle-orm";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 import { useCallback, useMemo, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -55,7 +55,6 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ detailLink }) => {
     url: oldUrl,
     isPublished: oldIsPublished,
   } = detailLink;
-  const router = useRouter();
 
   const isFormEmpty = useMemo(() => title === "" || url === "", [title, url]);
 
@@ -77,8 +76,9 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ detailLink }) => {
 
   const { mutate: mutateLink, isPending: isPendingMutateLink } =
     api.list.update.useMutation({
-      onSuccess: async () => {
-        await revalidate().then(() => router.push("/dashboard/links-list"));
+      onSuccess: () => {
+        revalidate();
+        redirectTo("/dashboard/links-list");
         return toast.success("Link updated successfully");
       },
       onError: handleError,
