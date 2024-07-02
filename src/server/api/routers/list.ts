@@ -44,9 +44,9 @@ export const listRouter = createTRPCRouter({
         )
         .orderBy(
           column && column in list
-            ? order === "asc"
-              ? asc(list[column])
-              : desc(list[column])
+            ? order === "desc"
+              ? desc(list[column])
+              : asc(list[column])
             : desc(list.createdAt),
         )
         .prepare();
@@ -98,6 +98,7 @@ export const listRouter = createTRPCRouter({
         .select()
         .from(list)
         .where(eq(list.isPublished, true))
+        .orderBy(desc(list.createdAt))
         .prepare();
       const allList = await getAllPrepared.all();
 
