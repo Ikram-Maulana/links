@@ -7,8 +7,10 @@ import {
   authRoutes,
   linkRoutes,
   publicRoutes,
+  trpcPublicRoutes,
 } from "./routes";
 import { type list } from "./server/db/schema";
+import { RedisRateLimiter } from "./lib/upstash/rate-limit";
 
 const isPublicRoute = createRouteMatcher(publicRoutes);
 const isAuthRoute = createRouteMatcher(authRoutes);
@@ -17,7 +19,7 @@ const isLinkRoute = createRouteMatcher(linkRoutes);
 
 type DataLinkProps = InferSelectModel<typeof list>;
 
-export default clerkMiddleware(async (auth, req) => {
+export default clerkMiddleware(async (auth, req, event) => {
   if (isAPIRoute(req)) return NextResponse.next();
 
   const { nextUrl } = req;
@@ -36,6 +38,16 @@ export default clerkMiddleware(async (auth, req) => {
   if (isLinkRoute(req)) {
     const slug = req.url.split("/").pop();
 
+    const rateLimit = RedisRateLimiter.getInstance();
+    const ip = req.headers.get("CF-Connecting-IP");
+
+    const { success, pending } = await rateLimit.limit(ip ?? "anonymous");
+    event.waitUntil(pending);
+
+    if (!success) {
+      return NextResponse.rewrite(new URL("/api/blocked", req.url), req);
+    }
+
     try {
       const response = await fetch(`${req.nextUrl.origin}/api/url/${slug}`);
       if (!response.ok) {
@@ -53,6 +65,19 @@ export default clerkMiddleware(async (auth, req) => {
     } catch (error) {
       console.error("Error fetching", error);
       return NextResponse.next();
+    }
+  }
+
+  // Rate limit the list tRPC API that publicly accessible
+  if (trpcPublicRoutes.some((route) => req.url.includes(route))) {
+    const rateLimit = RedisRateLimiter.getInstance();
+    const ip = req.headers.get("CF-Connecting-IP");
+
+    const { success, pending } = await rateLimit.limit(ip ?? "anonymous");
+    event.waitUntil(pending);
+
+    if (!success) {
+      return NextResponse.rewrite(new URL("/api/blocked", req.url), req);
     }
   }
 

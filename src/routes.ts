@@ -32,3 +32,13 @@ export const DEFAULT_LOGIN_REDIRECT: string = "/dashboard";
  * @type {string[]}
  */
 export const linkRoutes: string[] = ["/s/(.*)"];
+
+/**
+ * An array of routes that are used for the list tRPC API
+ * These routes will be rate limited
+ * @type {string[]}
+ */
+export const trpcPublicRoutes: string[] = [
+  "list.getAllWithoutPagination",
+  "list.increaseClickCount",
+];

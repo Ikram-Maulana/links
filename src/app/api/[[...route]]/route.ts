@@ -46,4 +46,15 @@ app.get("/url/:slug", async (c) => {
   return c.json(data);
 });
 
+app.get("/blocked", (c) => {
+  return c.json(
+    {
+      message: "Too many requests",
+    },
+    {
+      status: 429,
+    },
+  );
+});
+
 export const GET = handle(app);

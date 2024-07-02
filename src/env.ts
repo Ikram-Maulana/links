@@ -15,6 +15,13 @@ export const env = createEnv({
     CLERK_SECRET_KEY: z
       .string()
       .refine((str) => str !== "", "Please provide a clerk secret key"),
+    UPSTASH_REDIS_REST_URL: z
+      .string()
+      .url()
+      .refine((str) => str !== "", "Please provide a Upstash Redis REST URL"),
+    UPSTASH_REDIS_REST_TOKEN: z
+      .string()
+      .refine((str) => str !== "", "Please provide a Upstash Redis REST Token"),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
