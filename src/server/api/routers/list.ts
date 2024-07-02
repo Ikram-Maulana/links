@@ -1,6 +1,10 @@
 import { getListSchema } from "@/app/(authenticated)/dashboard/links-list/_lib/validation";
 import { filterColumn } from "@/lib/filter-column";
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 import { db } from "@/server/db";
 import { list } from "@/server/db/schema";
 import { asc, count, desc, eq, sql, type InferSelectModel } from "drizzle-orm";
@@ -77,6 +81,27 @@ export const listRouter = createTRPCRouter({
 
       const pageCount = Math.ceil(total / per_page);
       return { data, pageCount };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+
+      return {
+        error: "Internal Server Error",
+      };
+    }
+  }),
+
+  getAllWithoutPagination: publicProcedure.query(async () => {
+    try {
+      const getAllPrepared = db
+        .select()
+        .from(list)
+        .where(eq(list.isPublished, true))
+        .prepare();
+      const allList = await getAllPrepared.all();
+
+      return allList;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);
