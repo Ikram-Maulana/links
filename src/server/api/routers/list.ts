@@ -196,6 +196,38 @@ export const listRouter = createTRPCRouter({
       }
     }),
 
+  increaseClickCount: publicProcedure
+    .input(
+      z.object({
+        slug: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      try {
+        const increaseClickCountPrepared = db
+          .update(list)
+          .set({
+            clicked: sql`${list.clicked} + 1`,
+          })
+          .where(eq(list.slug, sql.placeholder("listSlug")))
+          .returning()
+          .prepare();
+        const updatedList = await increaseClickCountPrepared.all({
+          listSlug: input.slug,
+        });
+
+        return updatedList;
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+
+        return {
+          error: "Internal Server Error",
+        };
+      }
+    }),
+
   getOneById: protectedProcedure
     .input(
       z.object({
