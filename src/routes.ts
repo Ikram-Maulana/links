@@ -25,3 +25,10 @@ export const apiRoutes: string[] = ["/api/(.*)"];
  * @type {string}
  */
 export const DEFAULT_LOGIN_REDIRECT: string = "/dashboard";
+
+/**
+ * An array of routes that are used for links
+ * These routes will redirect logged in users to /s/:slug
+ * @type {string[]}
+ */
+export const linkRoutes: string[] = ["/s/(.*)"];
