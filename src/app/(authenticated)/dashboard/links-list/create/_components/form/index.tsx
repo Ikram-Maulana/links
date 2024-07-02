@@ -13,13 +13,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { redirectTo } from "@/lib/redirect";
 import { revalidate } from "@/lib/revalidate";
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconLoader } from "@irsyadadl/paranoid";
 import { useDebouncedValue } from "@mantine/hooks";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 import { useCallback, useMemo, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -48,7 +48,6 @@ const AddLinkForm: FC = () => {
   const formValues = form.watch();
   const [debouncedFormValues] = useDebouncedValue(formValues, 500);
   const { title, url } = debouncedFormValues;
-  const router = useRouter();
 
   // isFormEmpty is function that check the title and url should not be empty
   const isFormEmpty = useMemo(() => title === "" || url === "", [title, url]);
@@ -65,8 +64,9 @@ const AddLinkForm: FC = () => {
 
   const { mutate: mutateList, isPending: isPendingMutateList } =
     api.list.create.useMutation({
-      onSuccess: async () => {
-        await revalidate().then(() => router.push("/dashboard/links-list"));
+      onSuccess: () => {
+        revalidate();
+        redirectTo("/dashboard/links-list");
         return toast.success("Link has been added.");
       },
       onError: handleError,

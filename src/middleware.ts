@@ -29,11 +29,6 @@ export default clerkMiddleware(async (auth, req, event) => {
 
   if (isAuth && userId)
     return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
-  // The code below manipulates routes that are not public path, not contain the "default login redirect path, and not contain the "/s/" path to be nexted and will be directed to not found page by Next.js
-  if (!req.url.includes(DEFAULT_LOGIN_REDIRECT) && !req.url.includes("/s/"))
-    return NextResponse.next();
-  if (!userId && !isPublic) return redirectToSignIn();
-  if (!isPublic) protect();
 
   if (isLinkRoute(req)) {
     const slug = req.url.split("/").pop();
@@ -79,7 +74,14 @@ export default clerkMiddleware(async (auth, req, event) => {
     if (!success) {
       return NextResponse.rewrite(new URL("/api/blocked", req.url), req);
     }
+
+    return NextResponse.next();
   }
+
+  // The code below manipulates routes that are not public path, not contain the "default login redirect path, and not contain the "/s/" path to be nexted and will be directed to not found page by Next.js
+  if (!req.url.includes(DEFAULT_LOGIN_REDIRECT)) return NextResponse.next();
+  if (!userId && !isPublic) return redirectToSignIn();
+  if (!isPublic) protect();
 
   return NextResponse.next();
 });
