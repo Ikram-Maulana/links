@@ -40,5 +40,6 @@ export const list = createTable(
   (list) => ({
     unq: unique().on(list.slug),
     idListIdx: index("id_list_idx").on(list.id),
+    slugListIdx: index("slug_list_idx").on(list.slug),
   }),
 );
