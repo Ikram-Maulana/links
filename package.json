@@ -45,7 +45,6 @@
     "hono": "^4.4.10",
     "next": "^14.2.4",
     "nextjs-toploader": "^1.6.12",
-    "posthog-js": "^1.142.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.52.0",
