@@ -11,6 +11,15 @@ jiti("./src/env");
 /** @type {import("next").NextConfig} */
 const config = {
   poweredByHeader: false,
+  async rewrites() {
+    return [
+      {
+        source: "/ancika.js",
+        destination: "https://ancika.ikrammaulana.my.id/ancika.js",
+      },
+    ];
+  },
+  skipTrailingSlashRedirect: true,
 };
 
 export default config;
