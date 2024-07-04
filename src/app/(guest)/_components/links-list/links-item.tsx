@@ -3,13 +3,11 @@
 import { ShareTrigger } from "@/components/share-trigger";
 import { Button } from "@/components/ui/button";
 import { env } from "@/env";
-import { api } from "@/trpc/react";
 import { IconDotsHorizontal } from "@irsyadadl/paranoid";
 import { useViewportSize } from "@mantine/hooks";
 import { LazyMotion, domAnimation, m, useReducedMotion } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState, type FC } from "react";
-import { toast } from "sonner";
+import Link from "next/link";
+import { useEffect, useState, type FC } from "react";
 
 interface LinksItemProps {
   title: string;
@@ -18,26 +16,7 @@ interface LinksItemProps {
 
 export const LinksItem: FC<LinksItemProps> = ({ title, slug }) => {
   const { width } = useViewportSize();
-  const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
-
-  const handleError = useCallback((error: unknown) => {
-    if (error instanceof Error) {
-      toast.error(error.message);
-      return;
-    }
-
-    toast.error("Internal Server Error");
-    return;
-  }, []);
-
-  const { mutate: mutateIncrease } = api.list.increaseClickCount.useMutation({
-    onError: handleError,
-    onSettled: () => {
-      router.refresh();
-      return;
-    },
-  });
 
   const [animationProps, setAnimationProps] = useState<{
     whileHover?: { scale: number };
@@ -55,25 +34,20 @@ export const LinksItem: FC<LinksItemProps> = ({ title, slug }) => {
     }
   }, [shouldReduceMotion, width]);
 
-  const handleClick = () => {
-    mutateIncrease({ slug });
-  };
-
   return (
     <LazyMotion features={domAnimation}>
       <m.div
         {...animationProps}
         className="group relative mb-4 h-auto w-full overflow-hidden rounded-lg bg-white shadow-sm hover:cursor-pointer"
       >
-        <a
-          href={`${env.NEXT_PUBLIC_BASE_URL}/s/${slug}`}
+        <Link
+          href={`/s/${slug}`}
           className="text-break relative flex h-auto min-h-14 w-full items-center justify-center px-[44px] py-4 text-center"
           target="_blank"
           rel="noopener noreferrer"
-          onClick={handleClick}
         >
           <p className="h-fit font-medium leading-6">{title}</p>
-        </a>
+        </Link>
 
         <ShareTrigger url={`${env.NEXT_PUBLIC_BASE_URL}/s/${slug}`} asChild>
           <Button
