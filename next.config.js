@@ -14,16 +14,11 @@ const config = {
   async rewrites() {
     return [
       {
-        source: "/ancika/static/:path*",
-        destination: "https://ancika.ikrammaulana.my.id/static/:path*",
-      },
-      {
-        source: "/ancika/:path*",
-        destination: "https://ancika.ikrammaulana.my.id/:path*",
+        source: "/ancika.js",
+        destination: "https://ancika.ikrammaulana.my.id/ancika.js",
       },
     ];
   },
-  // This is required to support PostHog trailing slash API requests
   skipTrailingSlashRedirect: true,
 };
 

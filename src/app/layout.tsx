@@ -7,7 +7,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { TRPCReactProvider } from "@/trpc/react";
 import { type Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
-import PostHogProvider from "./posthog-providers";
 
 export const metadata: Metadata = {
   title: "Ikram Maulana Links",
@@ -85,20 +84,18 @@ export default function RootLayout({
         lang="en"
         suppressHydrationWarning
       >
-        <PostHogProvider>
-          <body className="antialiased">
-            <NextTopLoader color="#16a34a" height={4} showSpinner={false} />
+        <body className="antialiased">
+          <NextTopLoader color="#16a34a" height={4} showSpinner={false} />
 
-            <TRPCReactProvider>{children}</TRPCReactProvider>
+          <TRPCReactProvider>{children}</TRPCReactProvider>
 
-            <div className="lg:hidden">
-              <Toaster richColors position="bottom-center" duration={5000} />
-            </div>
-            <div className="hidden lg:flex">
-              <Toaster richColors position="top-center" duration={5000} />
-            </div>
-          </body>
-        </PostHogProvider>
+          <div className="lg:hidden">
+            <Toaster richColors position="bottom-center" duration={5000} />
+          </div>
+          <div className="hidden lg:flex">
+            <Toaster richColors position="top-center" duration={5000} />
+          </div>
+        </body>
       </html>
     </ClerkProvider>
   );

@@ -43,6 +43,16 @@ app.get("/url/:slug", async (c) => {
     );
   }
 
+  const clickIncrement = db
+    .update(list)
+    .set({
+      clicked: sql`${list.clicked} + 1`,
+    })
+    .where(eq(list.slug, sql.placeholder("linkSlug")))
+    .prepare();
+
+  await clickIncrement.all({ linkSlug: slug });
+
   return c.json(data);
 });
 

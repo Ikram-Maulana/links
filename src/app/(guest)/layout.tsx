@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import { type FC } from "react";
 import { Footer } from "./_components/footer";
 import { TopGradient } from "./_components/top-gradient";
@@ -19,6 +20,12 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         <main className="relative w-full flex-grow">{children}</main>
         <Footer />
       </div>
+
+      <script
+        defer
+        src="/ancika.js"
+        data-website-id={env.NEXT_PUBLIC_UMAMI_ID}
+      ></script>
     </>
   );
 };
