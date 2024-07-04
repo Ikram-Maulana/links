@@ -45,6 +45,7 @@ export const LinksItem: FC<LinksItemProps> = ({ title, slug }) => {
           className="text-break relative flex h-auto min-h-14 w-full items-center justify-center px-[44px] py-4 text-center"
           target="_blank"
           rel="noopener noreferrer"
+          prefetch={false}
         >
           <p className="h-fit font-medium leading-6">{title}</p>
         </Link>

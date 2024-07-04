@@ -1,6 +1,6 @@
 import { env } from "@/env";
 import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+import { Redis } from "@upstash/redis/cloudflare";
 
 const cache = new Map();
 
