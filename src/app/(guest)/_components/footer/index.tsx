@@ -12,6 +12,7 @@ export const Footer: FC = () => {
             href="/s/analytics-links"
             target="_blank"
             rel="noopener noreferrer"
+            prefetch={false}
           >
             Analytics
           </Link>
