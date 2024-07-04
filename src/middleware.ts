@@ -20,6 +20,35 @@ const isLinkRoute = createRouteMatcher(linkRoutes);
 type DataLinkProps = InferSelectModel<typeof list>;
 
 export default clerkMiddleware(async (auth, req, event) => {
+  if (req.url.includes("/api/url/")) {
+    const rateLimit = RedisRateLimiter.getInstance();
+    const ip = req.headers.get("CF-Connecting-IP");
+
+    const { success, pending } = await rateLimit.limit(ip ?? "anonymous");
+    event.waitUntil(pending);
+
+    if (!success) {
+      return NextResponse.rewrite(`${req.nextUrl.origin}/api/blocked`);
+    }
+
+    return NextResponse.next();
+  }
+
+  // Rate limit the list tRPC API that publicly accessible
+  if (trpcPublicRoutes.some((route) => req.url.includes(route))) {
+    const rateLimit = RedisRateLimiter.getInstance();
+    const ip = req.headers.get("CF-Connecting-IP");
+
+    const { success, pending } = await rateLimit.limit(ip ?? "anonymous");
+    event.waitUntil(pending);
+
+    if (!success) {
+      return NextResponse.rewrite(`${req.nextUrl.origin}/api/blocked`);
+    }
+
+    return NextResponse.next();
+  }
+
   if (isAPIRoute(req)) return NextResponse.next();
 
   const { nextUrl } = req;
@@ -32,16 +61,6 @@ export default clerkMiddleware(async (auth, req, event) => {
 
   if (isLinkRoute(req)) {
     const slug = req.url.split("/").pop();
-
-    const rateLimit = RedisRateLimiter.getInstance();
-    const ip = req.headers.get("CF-Connecting-IP");
-
-    const { success, pending } = await rateLimit.limit(ip ?? "anonymous");
-    event.waitUntil(pending);
-
-    if (!success) {
-      return NextResponse.rewrite(new URL("/api/blocked", req.url), req);
-    }
 
     try {
       const response = await fetch(`${req.nextUrl.origin}/api/url/${slug}`);
@@ -61,21 +80,6 @@ export default clerkMiddleware(async (auth, req, event) => {
       console.error("Error fetching", error);
       return NextResponse.next();
     }
-  }
-
-  // Rate limit the list tRPC API that publicly accessible
-  if (trpcPublicRoutes.some((route) => req.url.includes(route))) {
-    const rateLimit = RedisRateLimiter.getInstance();
-    const ip = req.headers.get("CF-Connecting-IP");
-
-    const { success, pending } = await rateLimit.limit(ip ?? "anonymous");
-    event.waitUntil(pending);
-
-    if (!success) {
-      return NextResponse.rewrite(new URL("/api/blocked", req.url), req);
-    }
-
-    return NextResponse.next();
   }
 
   // The code below manipulates routes that are not public path, not contain the "default login redirect path, and not contain the "/s/" path to be nexted and will be directed to not found page by Next.js
