@@ -13,13 +13,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { redirectTo } from "@/lib/redirect";
 import { revalidate } from "@/lib/revalidate";
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconLoader } from "@irsyadadl/paranoid";
 import { useDebouncedValue } from "@mantine/hooks";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useCallback, useMemo, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -37,6 +37,7 @@ const formSchema = z.object({
 });
 
 const AddLinkForm: FC = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,9 +65,8 @@ const AddLinkForm: FC = () => {
 
   const { mutate: mutateList, isPending: isPendingMutateList } =
     api.list.create.useMutation({
-      onSuccess: () => {
-        revalidate();
-        redirectTo("/dashboard/links-list");
+      onSuccess: async () => {
+        await revalidate().then(() => router.push("/dashboard/links-list"));
         return toast.success("Link has been added.");
       },
       onError: handleError,
