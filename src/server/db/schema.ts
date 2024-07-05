@@ -33,9 +33,11 @@ export const list = createTable(
       .notNull()
       .$default(() => false),
     createdAt: int("created_at", { mode: "timestamp" })
-      .default(sql`CURRENT_TIMESTAMP`)
+      .default(sql`(unixepoch())`)
       .notNull(),
-    updatedAt: int("updated_at", { mode: "timestamp" }),
+    updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => new Date(),
+    ),
   },
   (list) => ({
     unq: unique().on(list.slug),
