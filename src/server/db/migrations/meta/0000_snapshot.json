@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "e74b491c-2f28-41f7-a791-564153e98b0f",
+  "id": "e84f8c27-ecca-4138-b83b-4708cdb27b01",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "links_list": {
@@ -55,7 +55,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "(unixepoch())"
         },
         "updated_at": {
           "name": "updated_at",

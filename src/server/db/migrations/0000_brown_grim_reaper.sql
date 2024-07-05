@@ -5,7 +5,7 @@ CREATE TABLE `links_list` (
 	`slug` text NOT NULL,
 	`clicked` integer NOT NULL,
 	`is_published` integer NOT NULL,
-	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer
 );
 --> statement-breakpoint
