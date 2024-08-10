@@ -17,7 +17,6 @@ const isPublicRoute = createRouteMatcher(publicRoutes);
 const isAuthRoute = createRouteMatcher(authRoutes);
 const isAPIRoute = createRouteMatcher(apiRoutes);
 const isLinkRoute = createRouteMatcher(linkRoutes);
-const whitelistASN = ["15169"];
 
 const aj = arcjet({
   key: env.ARCJET_KEY,
@@ -27,18 +26,34 @@ const aj = arcjet({
     }),
     detectBot({
       mode: "LIVE",
-      block: ["AUTOMATED", "LIKELY_AUTOMATED"],
+      block: ["AUTOMATED"],
+      patterns: {
+        remove: [
+          // Vercel screenshot agent
+          "vercel-screenshot/1.0",
+          // Allow generally friendly bots like GoogleBot and DiscordBot. These
+          // have a more complex user agent like "AdsBot-Google
+          // (+https://www.google.com/adsbot.html)" or "Mozilla/5.0 (compatible;
+          // Discordbot/2.0; +https://discordapp.com)" so need multiple patterns
+          "^[a-z.0-9/ \\-_]*bot",
+          "bot($|[/\\);-]+)",
+          "http[s]?://",
+          // Chrome Lighthouse
+          "Chrome-Lighthouse",
+        ],
+      },
     }),
   ],
 });
 
 const ajrl = arcjet({
   key: env.ARCJET_KEY,
+  characteristics: ["ip.src"],
   rules: [
     tokenBucket({
       mode: "LIVE",
       refillRate: 10,
-      interval: 10,
+      interval: 60,
       capacity: 100,
     }),
   ],
@@ -47,12 +62,6 @@ const ajrl = arcjet({
 type DataLinkProps = InferSelectModel<typeof list>;
 
 export default clerkMiddleware(async (auth, req) => {
-  // Allow whitelisted ASN
-  const asn = req.headers.get("x-vercel-ip-as-number") ?? "";
-  if (whitelistASN.includes(asn)) {
-    return NextResponse.next();
-  }
-
   // Protect from bots and other threats
   const decision = await aj.protect(req);
   if (decision.isDenied()) {
