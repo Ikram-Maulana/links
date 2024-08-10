@@ -1,6 +1,4 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { type InferSelectModel } from "drizzle-orm";
-import { NextResponse } from "next/server";
+import { env } from "@/env";
 import {
   DEFAULT_LOGIN_REDIRECT,
   apiRoutes,
@@ -8,42 +6,78 @@ import {
   linkRoutes,
   publicRoutes,
   trpcPublicRoutes,
-} from "./routes";
-import { type list } from "./server/db/schema";
-import { RedisRateLimiter } from "./lib/upstash/rate-limit";
+} from "@/routes";
+import { type list } from "@/server/db/schema";
+import arcjet, { detectBot, shield, tokenBucket } from "@arcjet/next";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { type InferSelectModel } from "drizzle-orm";
+import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher(publicRoutes);
 const isAuthRoute = createRouteMatcher(authRoutes);
 const isAPIRoute = createRouteMatcher(apiRoutes);
 const isLinkRoute = createRouteMatcher(linkRoutes);
+const whitelistASN = ["15169"];
+
+const aj = arcjet({
+  key: env.ARCJET_KEY,
+  rules: [
+    shield({
+      mode: "LIVE",
+    }),
+    detectBot({
+      mode: "LIVE",
+      block: ["AUTOMATED", "LIKELY_AUTOMATED"],
+    }),
+  ],
+});
+
+const ajrl = arcjet({
+  key: env.ARCJET_KEY,
+  rules: [
+    tokenBucket({
+      mode: "LIVE",
+      refillRate: 10,
+      interval: 10,
+      capacity: 100,
+    }),
+  ],
+});
 
 type DataLinkProps = InferSelectModel<typeof list>;
 
-export default clerkMiddleware(async (auth, req, event) => {
-  if (req.url.includes("/api/url/")) {
-    const rateLimit = RedisRateLimiter.getInstance();
-    const ip = req.headers.get("CF-Connecting-IP");
-
-    const { success, pending } = await rateLimit.limit(ip ?? "anonymous");
-    event.waitUntil(pending);
-
-    if (!success) {
-      return NextResponse.rewrite(`${req.nextUrl.origin}/api/blocked`);
-    }
-
+export default clerkMiddleware(async (auth, req) => {
+  // Allow whitelisted ASN
+  const asn = req.headers.get("x-vercel-ip-as-number") ?? "";
+  if (whitelistASN.includes(asn)) {
     return NextResponse.next();
   }
 
-  // Rate limit the list tRPC API that publicly accessible
-  if (trpcPublicRoutes.some((route) => req.url.includes(route))) {
-    const rateLimit = RedisRateLimiter.getInstance();
-    const ip = req.headers.get("CF-Connecting-IP");
+  // Protect from bots and other threats
+  const decision = await aj.protect(req);
+  if (decision.isDenied()) {
+    const { reason } = decision;
 
-    const { success, pending } = await rateLimit.limit(ip ?? "anonymous");
-    event.waitUntil(pending);
+    if (reason.isBot()) {
+      const { botType } = reason;
 
-    if (!success) {
-      return NextResponse.rewrite(`${req.nextUrl.origin}/api/blocked`);
+      if (botType === "VERIFIED_BOT" || botType === "LIKELY_NOT_A_BOT") {
+        return NextResponse.next();
+      }
+    }
+
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  // Rate limit the URL redirect API and the tRPC API that publicly accessible
+  if (
+    req.url.includes("/api/url/") ||
+    trpcPublicRoutes.some((route) => req.url.includes(route))
+  ) {
+    const rateLimit = await ajrl.protect(req, { requested: 1 });
+
+    if (rateLimit.isDenied() && rateLimit.reason.isRateLimit()) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     return NextResponse.next();
@@ -94,6 +128,7 @@ function isValidUrl(url: string) {
   try {
     new URL(url);
     return true;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_) {
     return false;
   }

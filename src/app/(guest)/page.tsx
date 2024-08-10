@@ -4,6 +4,8 @@ import { LinksList } from "./_components/links-list";
 import { LinksListSkeleton } from "./_components/links-list/skeleton/links-list-skeleton";
 import { Profile } from "./_components/profile";
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Homepage | Ikram Maulana Links",
 };

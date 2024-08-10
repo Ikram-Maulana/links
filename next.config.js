@@ -10,7 +10,6 @@ jiti("./src/env");
 
 /** @type {import("next").NextConfig} */
 const config = {
-  poweredByHeader: false,
   async rewrites() {
     return [
       {
