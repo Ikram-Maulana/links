@@ -8,8 +8,6 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-export const runtime = "edge";
-
 const Layout: FC<LayoutProps> = ({ children }) => {
   return (
     <>

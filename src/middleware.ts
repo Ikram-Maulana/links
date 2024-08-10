@@ -1,8 +1,4 @@
 import { env } from "@/env";
-import arcjet, { detectBot, shield, tokenBucket } from "@arcjet/next";
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { type InferSelectModel } from "drizzle-orm";
-import { NextResponse } from "next/server";
 import {
   DEFAULT_LOGIN_REDIRECT,
   apiRoutes,
@@ -10,8 +6,12 @@ import {
   linkRoutes,
   publicRoutes,
   trpcPublicRoutes,
-} from "./routes";
-import { type list } from "./server/db/schema";
+} from "@/routes";
+import { type list } from "@/server/db/schema";
+import arcjet, { detectBot, shield, tokenBucket } from "@arcjet/next";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { type InferSelectModel } from "drizzle-orm";
+import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher(publicRoutes);
 const isAuthRoute = createRouteMatcher(authRoutes);
@@ -128,6 +128,7 @@ function isValidUrl(url: string) {
   try {
     new URL(url);
     return true;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_) {
     return false;
   }
