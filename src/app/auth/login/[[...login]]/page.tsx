@@ -4,8 +4,6 @@ import { type Metadata } from "next";
 import Image from "next/image";
 import { LoginForm } from "./_components/login-form";
 
-export const runtime = "edge";
-
 export const metadata: Metadata = {
   title: "Login | Ikram Maulana Links",
 };

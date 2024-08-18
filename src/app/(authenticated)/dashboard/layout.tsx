@@ -5,8 +5,6 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-export const runtime = "edge";
-
 export default function Layout({ children }: LayoutProps) {
   return (
     <div className="flex h-full">
