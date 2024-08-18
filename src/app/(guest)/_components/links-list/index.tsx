@@ -1,16 +1,16 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { type list } from "@/server/db/schema";
+import { type links } from "@/server/db/schema";
 import { api } from "@/trpc/server";
 import { IconCircleX, IconTriangleInfo } from "@irsyadadl/paranoid";
 import { type InferSelectModel } from "drizzle-orm";
 import { type FC } from "react";
 import { LinksItem } from "./links-item";
 
-type LinksListDataProps = InferSelectModel<typeof list>;
+type LinksListDataProps = InferSelectModel<typeof links>;
 
 export const LinksList: FC = async () => {
   const linksList =
-    (await api.list.getAllWithoutPagination()) as LinksListDataProps[];
+    (await api.link.getAllWithoutPagination()) as LinksListDataProps[];
 
   if (!linksList || (linksList && !Boolean(linksList.length))) {
     return (

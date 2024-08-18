@@ -15,29 +15,23 @@ export const PublishedSwitch: FC<PublishedSwitchProps> = ({ id, checked }) => {
   const router = useRouter();
 
   const { mutate, isPending, variables, isError } =
-    api.list.setIsPublished.useMutation({
+    api.link.setIsPublished.useMutation({
       onSuccess: () => {
         toast.success("Links published status updated");
-        return;
       },
       onError: (error) => {
-        if (error instanceof Error) {
-          toast.error(error.message);
-          return;
-        }
-
-        toast.error("Internal Server Error");
-        return;
+        toast.error(
+          error instanceof Error ? error.message : "An error occurred",
+        );
       },
       onSettled: () => {
         router.refresh();
-        return;
       },
     });
 
   return (
     <Switch
-      checked={isError ? checked : variables?.isPublished ?? checked}
+      checked={isError ? checked : (variables?.isPublished ?? checked)}
       disabled={isPending}
       onCheckedChange={() => {
         mutate({

@@ -7,7 +7,7 @@ import {
   publicRoutes,
   trpcPublicRoutes,
 } from "@/routes";
-import { type list } from "@/server/db/schema";
+import { type links } from "@/server/db/schema";
 import arcjet, { detectBot, shield, tokenBucket } from "@arcjet/next";
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { type InferSelectModel } from "drizzle-orm";
@@ -59,7 +59,7 @@ const ajrl = arcjet({
   ],
 });
 
-type DataLinkProps = InferSelectModel<typeof list>;
+type DataLinkProps = InferSelectModel<typeof links>;
 
 export default clerkMiddleware(async (auth, req) => {
   // Protect from bots and other threats

@@ -3,13 +3,18 @@
 
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   index,
-  int,
-  sqliteTableCreator,
+  integer,
+  pgTableCreator,
   text,
+  timestamp,
   unique,
-} from "drizzle-orm/sqlite-core";
+  varchar,
+} from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
 import { v7 as uuidv7 } from "uuid";
+import { z } from "zod";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -17,31 +22,40 @@ import { v7 as uuidv7 } from "uuid";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = sqliteTableCreator((name) => `links_${name}`);
+export const createTable = pgTableCreator((name) => `links_${name}`);
 
-export const list = createTable(
-  "list",
+export const links = createTable(
+  "links",
   {
     id: text("id").notNull().primaryKey().$defaultFn(uuidv7),
-    title: text("title").notNull(),
-    url: text("url").notNull(),
-    slug: text("slug").notNull(),
-    clicked: int("clicked")
+    title: varchar("title").notNull(),
+    slug: varchar("slug").notNull(),
+    url: varchar("url").notNull(),
+    clicked: integer("clicked")
       .notNull()
       .$default(() => 0),
-    isPublished: int("is_published", { mode: "boolean" })
+    isPublished: boolean("is_published")
       .notNull()
       .$default(() => false),
-    createdAt: int("created_at", { mode: "timestamp" })
-      .default(sql`(unixepoch())`)
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
       () => new Date(),
     ),
   },
-  (list) => ({
-    unq: unique().on(list.slug),
-    idListIdx: index("id_list_idx").on(list.id),
-    slugListIdx: index("slug_list_idx").on(list.slug),
+  (links) => ({
+    unq: unique().on(links.slug),
+    idLinksIdx: index().on(links.id),
+    slugLinksIdx: index().on(links.slug),
   }),
 );
+export const insertLinkSchema = createInsertSchema(links, {
+  title: (schema) =>
+    schema.title.min(3, "Title must be at least 3 characters long"),
+  slug: (schema) =>
+    schema.slug.min(3, "Slug must be at least 3 characters long"),
+  url: (schema) => schema.url.url(),
+  clicked: (schema) => schema.clicked.int().positive(),
+  isPublished: z.boolean(),
+});

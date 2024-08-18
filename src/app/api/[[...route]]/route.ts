@@ -1,5 +1,5 @@
 import { db } from "@/server/db";
-import { list } from "@/server/db/schema";
+import { links } from "@/server/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
@@ -24,11 +24,11 @@ app.get("/url/:slug", async (c) => {
 
   const prepared = db
     .select()
-    .from(list)
-    .where(eq(list.slug, sql.placeholder("linkSlug")))
-    .prepare();
+    .from(links)
+    .where(eq(links.slug, sql.placeholder("linkSlug")))
+    .prepare("getLinkBySlug");
 
-  const data = await prepared.all({ linkSlug: slug });
+  const data = await prepared.execute({ linkSlug: slug });
 
   if (!data || data.length === 0) {
     return c.json(
@@ -42,14 +42,14 @@ app.get("/url/:slug", async (c) => {
   }
 
   const clickIncrement = db
-    .update(list)
+    .update(links)
     .set({
-      clicked: sql`${list.clicked} + 1`,
+      clicked: sql`${links.clicked} + 1`,
     })
-    .where(eq(list.slug, sql.placeholder("linkSlug")))
-    .prepare();
+    .where(eq(links.slug, sql.placeholder("linkSlug")))
+    .prepare("ClickIncrement");
 
-  await clickIncrement.all({ linkSlug: slug });
+  await clickIncrement.execute({ linkSlug: slug });
 
   return c.json(data);
 });

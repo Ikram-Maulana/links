@@ -53,8 +53,8 @@ const AddLinkForm: FC = () => {
   // isFormEmpty is function that check the title and url should not be empty
   const isFormEmpty = useMemo(() => title === "" || url === "", [title, url]);
 
-  const { mutate: mutateList, isPending: isPendingMutateList } =
-    api.list.create.useMutation({
+  const { mutate: mutateLink, isPending: isPendingMutateLink } =
+    api.link.create.useMutation({
       onSuccess: async () => {
         await revalidate().then(() => router.push("/dashboard/links-list"));
         toast.success("Link has been added.");
@@ -67,11 +67,11 @@ const AddLinkForm: FC = () => {
     });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    if (isPendingMutateList || isFormEmpty) {
+    if (isPendingMutateLink || isFormEmpty) {
       return;
     }
 
-    mutateList({
+    mutateLink({
       title: data.title,
       url: data.url,
       isPublished: data.isPublished,
@@ -143,8 +143,8 @@ const AddLinkForm: FC = () => {
         </CardContent>
 
         <CardFooter className="justify-end border-t px-6 py-4">
-          <Button type="submit" disabled={isPendingMutateList || isFormEmpty}>
-            {isPendingMutateList ? (
+          <Button type="submit" disabled={isPendingMutateLink || isFormEmpty}>
+            {isPendingMutateLink ? (
               <IconLoader className="mr-2 h-3 w-3 animate-spin" />
             ) : null}
             Submit

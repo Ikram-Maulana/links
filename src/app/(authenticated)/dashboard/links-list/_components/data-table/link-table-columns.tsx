@@ -6,14 +6,14 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 
 import { Badge } from "@/components/ui/badge";
-import { type list } from "@/server/db/schema";
+import { type links } from "@/server/db/schema";
 import { type InferSelectModel } from "drizzle-orm";
-import { ListTableActions } from "./list-table-actions";
+import { LinkTableActions } from "./link-table-actions";
 import { PublishedSwitch } from "./published-switch";
 
-type List = InferSelectModel<typeof list>;
+type Links = InferSelectModel<typeof links>;
 
-export function getColumns(): ColumnDef<List>[] {
+export function getColumns(): ColumnDef<Links>[] {
   return [
     {
       accessorKey: "title",
@@ -88,12 +88,12 @@ export function getColumns(): ColumnDef<List>[] {
     },
     {
       id: "actions",
-      cell: ({ row }) => <ListTableActions row={row} />,
+      cell: ({ row }) => <LinkTableActions row={row} />,
     },
   ];
 }
 
-export const searchableColumns: DataTableSearchableColumn<List>[] = [
+export const searchableColumns: DataTableSearchableColumn<Links>[] = [
   {
     id: "title",
     placeholder: "Search Link Title...",

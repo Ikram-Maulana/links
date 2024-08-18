@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { revalidate } from "@/lib/revalidate";
-import { type list } from "@/server/db/schema";
+import { type links } from "@/server/db/schema";
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconLoader } from "@irsyadadl/paranoid";
@@ -29,7 +29,7 @@ import * as z from "zod";
 import { EditLinkFormSkeleton } from "./skeleton/form-skeleton";
 
 interface EditLinkFormProps {
-  detailLink: InferSelectModel<typeof list>;
+  detailLink: InferSelectModel<typeof links>;
 }
 
 const formSchema = z.object({
@@ -66,7 +66,7 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ detailLink }) => {
   );
 
   const { mutate: mutateLink, isPending: isPendingMutateLink } =
-    api.list.update.useMutation({
+    api.link.update.useMutation({
       onSuccess: async () => {
         await revalidate().then(() => router.push("/dashboard/links-list"));
         toast.success("Link updated successfully");
@@ -88,7 +88,7 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ detailLink }) => {
       title: data.title,
       url: data.url,
       isPublished: data.isPublished,
-    } as InferSelectModel<typeof list>;
+    } as InferSelectModel<typeof links>;
 
     mutateLink(linkData);
   }

@@ -1,26 +1,26 @@
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
-import { type list } from "@/server/db/schema";
+import { type links } from "@/server/db/schema";
 import { api } from "@/trpc/server";
+import { type searchLinkParamsSchema } from "@/types";
 import { IconCircleX } from "@irsyadadl/paranoid";
 import { type InferSelectModel } from "drizzle-orm";
 import { Suspense, type FC } from "react";
 import type * as z from "zod";
-import { type searchParamsSchema } from "../../_lib/validation";
-import { ListTable } from "../data-table/list-table";
+import { LinksTable } from "../data-table/link-table";
 
 interface ContentProps {
-  search: z.infer<typeof searchParamsSchema>;
+  search: z.infer<typeof searchLinkParamsSchema>;
 }
 
 export const Content: FC<ContentProps> = async ({ search }) => {
-  const listData = (await api.list.getAll(search)) as {
-    data: InferSelectModel<typeof list>[];
+  const linksData = (await api.link.getAll(search)) as {
+    data: InferSelectModel<typeof links>[];
     pageCount: number;
   };
 
-  if (!listData || (listData && "error" in listData)) {
+  if (!linksData || (linksData && "error" in linksData)) {
     <Alert
       variant="destructive"
       className="border-red-500 bg-red-500 text-zinc-50 dark:border-red-900 dark:bg-red-900"
@@ -28,7 +28,7 @@ export const Content: FC<ContentProps> = async ({ search }) => {
       <IconCircleX className="h-4 w-4 !text-zinc-50" />
       <AlertTitle>Error</AlertTitle>
       <AlertDescription>
-        An error occurred while loading list data.
+        An error occurred while loading links data.
       </AlertDescription>
     </Alert>;
   }
@@ -37,10 +37,10 @@ export const Content: FC<ContentProps> = async ({ search }) => {
     <Card className="relative">
       <CardContent className="p-6">
         <Suspense
-          key={`list-table-${search.page}-${search.sort}`}
+          key={`links-table-${search.page}-${search.sort}`}
           fallback={<DataTableSkeleton columnCount={4} />}
         >
-          <ListTable list={listData} />
+          <LinksTable links={linksData} />
         </Suspense>
       </CardContent>
     </Card>
