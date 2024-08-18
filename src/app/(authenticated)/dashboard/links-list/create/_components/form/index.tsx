@@ -20,7 +20,7 @@ import { IconLoader } from "@irsyadadl/paranoid";
 import { useDebouncedValue } from "@mantine/hooks";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo, type FC } from "react";
+import { useMemo, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -53,44 +53,29 @@ const AddLinkForm: FC = () => {
   // isFormEmpty is function that check the title and url should not be empty
   const isFormEmpty = useMemo(() => title === "" || url === "", [title, url]);
 
-  const handleError = useCallback((error: unknown) => {
-    if (error instanceof Error) {
-      toast.error(error.message);
-      return;
-    }
-
-    toast.error("Internal Server Error");
-    return;
-  }, []);
-
   const { mutate: mutateList, isPending: isPendingMutateList } =
     api.list.create.useMutation({
       onSuccess: async () => {
         await revalidate().then(() => router.push("/dashboard/links-list"));
-        return toast.success("Link has been added.");
+        toast.success("Link has been added.");
       },
-      onError: handleError,
+      onError: (error) => {
+        toast.error(
+          error instanceof Error ? error.message : "Internal Server Error",
+        );
+      },
     });
 
-  const isOperationPending = useMemo(
-    () => isPendingMutateList,
-    [isPendingMutateList],
-  );
-
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    if (isOperationPending || isFormEmpty) {
+    if (isPendingMutateList || isFormEmpty) {
       return;
     }
 
-    try {
-      mutateList({
-        title: data.title,
-        url: data.url,
-        isPublished: data.isPublished,
-      });
-    } catch (error) {
-      handleError(error);
-    }
+    mutateList({
+      title: data.title,
+      url: data.url,
+      isPublished: data.isPublished,
+    });
   }
 
   return (
@@ -158,8 +143,8 @@ const AddLinkForm: FC = () => {
         </CardContent>
 
         <CardFooter className="justify-end border-t px-6 py-4">
-          <Button type="submit" disabled={isOperationPending || isFormEmpty}>
-            {isOperationPending ? (
+          <Button type="submit" disabled={isPendingMutateList || isFormEmpty}>
+            {isPendingMutateList ? (
               <IconLoader className="mr-2 h-3 w-3 animate-spin" />
             ) : null}
             Submit

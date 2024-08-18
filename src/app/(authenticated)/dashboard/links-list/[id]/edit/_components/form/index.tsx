@@ -22,7 +22,7 @@ import { useDebouncedValue } from "@mantine/hooks";
 import { type InferSelectModel } from "drizzle-orm";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo, type FC } from "react";
+import { useMemo, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -65,32 +65,21 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ detailLink }) => {
     [title, url, isPublished, oldTitle, oldUrl, oldIsPublished],
   );
 
-  const handleError = useCallback((error: unknown) => {
-    if (error instanceof Error) {
-      toast.error(error.message);
-      return;
-    }
-
-    toast.error("Internal Server Error");
-    return;
-  }, []);
-
   const { mutate: mutateLink, isPending: isPendingMutateLink } =
     api.list.update.useMutation({
       onSuccess: async () => {
         await revalidate().then(() => router.push("/dashboard/links-list"));
-        return toast.success("Link updated successfully");
+        toast.success("Link updated successfully");
       },
-      onError: handleError,
+      onError: (error) => {
+        toast.error(
+          error instanceof Error ? error.message : "Internal Server Error",
+        );
+      },
     });
 
-  const isOperationPending = useMemo(
-    () => isPendingMutateLink,
-    [isPendingMutateLink],
-  );
-
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    if (isOperationPending || isFormUnchanged || isFormEmpty) {
+    if (isPendingMutateLink || isFormUnchanged || isFormEmpty) {
       return;
     }
 
@@ -101,11 +90,7 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ detailLink }) => {
       isPublished: data.isPublished,
     } as InferSelectModel<typeof list>;
 
-    try {
-      mutateLink(linkData);
-    } catch (error) {
-      handleError(error);
-    }
+    mutateLink(linkData);
   }
 
   return (
@@ -175,9 +160,9 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ detailLink }) => {
         <CardFooter className="justify-end border-t px-6 py-4">
           <Button
             type="submit"
-            disabled={isOperationPending || isFormUnchanged || isFormEmpty}
+            disabled={isPendingMutateLink || isFormUnchanged || isFormEmpty}
           >
-            {isOperationPending ? (
+            {isPendingMutateLink ? (
               <IconLoader className="mr-2 h-3 w-3 animate-spin" />
             ) : null}
             Submit
