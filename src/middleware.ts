@@ -8,9 +8,11 @@ import {
   trpcPublicRoutes,
 } from "@/routes";
 import { type links } from "@/server/db/schema";
+import { hono } from "@/server/hono/hono";
 import arcjet, { detectBot, shield, tokenBucket } from "@arcjet/next";
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { type InferSelectModel } from "drizzle-orm";
+import { notFound } from "next/navigation";
 import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher(publicRoutes);
@@ -103,15 +105,25 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, url));
 
   if (isLinkRoute(req)) {
-    const slug = req.url.split("/").pop();
+    const slug = req.url.split("/").pop() ?? "";
 
     try {
-      const response = await fetch(`${req.nextUrl.origin}/api/url/${slug}`);
+      const response = await hono.short[":slug"].$get({
+        param: { slug },
+      });
       if (!response.ok) {
-        throw new Error(`Error fetching: ${response.statusText}`);
+        return notFound();
       }
 
-      const [data] = (await response.json()) as DataLinkProps[];
+      const rawData = (await response.json()) as
+        | { message?: string }
+        | DataLinkProps[];
+
+      if ("message" in rawData) {
+        return notFound();
+      }
+
+      const [data] = rawData as DataLinkProps[];
       if (!data || !isValidUrl(data.url)) {
         throw new Error("URL is invalid or not found in response");
       }
