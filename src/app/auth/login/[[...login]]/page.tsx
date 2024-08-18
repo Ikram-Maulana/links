@@ -1,4 +1,4 @@
-import coffeeBarImage from "@/assets/images/coffee-bar.webp";
+import { CoffeBar } from "@/assets/images";
 import { BackToHomeButton } from "@/components/back-to-home-button";
 import { type Metadata } from "next";
 import Image from "next/image";
@@ -24,7 +24,7 @@ export default function Page() {
 
         <div className="relative hidden h-full overflow-hidden lg:block">
           <Image
-            src={coffeeBarImage}
+            src={CoffeBar}
             alt="Cozy Sitting Area in Filipenko Coffee Bar"
             className="h-full w-full object-cover"
             fill

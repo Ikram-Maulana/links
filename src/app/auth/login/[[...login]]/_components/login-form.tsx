@@ -1,6 +1,6 @@
 "use client";
 
-import ikramLogo from "@/assets/images/ikram-logo.webp";
+import { IkramLogo } from "@/assets/images";
 import { Button } from "@/components/ui/button";
 import * as Clerk from "@clerk/elements/common";
 import * as SignIn from "@clerk/elements/sign-in";
@@ -35,7 +35,7 @@ export const LoginForm: FC = () => {
         {(globalLoading: boolean) => (
           <SignIn.Step name="start">
             <div>
-              <Image src={ikramLogo} alt="Ikram Logo" width={64} height={64} />
+              <Image src={IkramLogo} alt="Ikram Logo" width={64} height={64} />
 
               <h1
                 className={`${leagueSpartan.className} mt-4 text-left text-2xl font-bold tracking-tight dark:text-zinc-50`}
