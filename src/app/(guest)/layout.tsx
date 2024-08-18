@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import Script from "next/script";
 import { type FC } from "react";
 import { Footer } from "./_components/footer";
 import { TopGradient } from "./_components/top-gradient";
@@ -19,11 +20,11 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         <Footer />
       </div>
 
-      <script
-        defer
+      <Script
         src="/ancika.js"
+        strategy="afterInteractive"
         data-website-id={env.NEXT_PUBLIC_UMAMI_ID}
-      ></script>
+      />
     </>
   );
 };
