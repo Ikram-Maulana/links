@@ -33,18 +33,22 @@ export default function Topbar() {
           },
         )}
       >
-        <Image
-          src={`/${publicMetadata.avatar}`}
-          alt={`Profile Picture of ${publicMetadata.name}`}
+        <div
           className={cn(
-            "col-start-1 hidden h-10 min-w-10 rounded-full object-cover",
+            "relative col-start-1 hidden h-10 w-10 overflow-hidden rounded-full",
             {
               block: scrollY > 50,
             },
           )}
-          width={40}
-          height={40}
-        />
+        >
+          <Image
+            src={publicMetadata.avatar}
+            alt={`Profile Picture of ${publicMetadata.name}`}
+            className="h-full w-full object-cover"
+            fill
+            placeholder="blur"
+          />
+        </div>
 
         <p
           className={cn(
