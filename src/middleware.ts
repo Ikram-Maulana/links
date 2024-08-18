@@ -94,13 +94,13 @@ export default clerkMiddleware(async (auth, req) => {
 
   if (isAPIRoute(req)) return NextResponse.next();
 
-  const { nextUrl } = req;
+  const { url } = req;
   const { userId, redirectToSignIn, protect } = auth();
   const isAuth = isAuthRoute(req);
   const isPublic = isPublicRoute(req);
 
   if (isAuth && userId)
-    return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+    return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, url));
 
   if (isLinkRoute(req)) {
     const slug = req.url.split("/").pop();
