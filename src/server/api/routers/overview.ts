@@ -1,7 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { db } from "@/server/db";
-import { list } from "@/server/db/schema";
-import { count, sum } from "drizzle-orm";
+import { links, logs } from "@/server/db/schema";
+import { count } from "drizzle-orm";
 
 export const overviewRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async () => {
@@ -10,14 +10,14 @@ export const overviewRouter = createTRPCRouter({
         .select({
           count: count(),
         })
-        .from(list)
+        .from(links)
         .prepare();
 
       const clickedLinksSumPrepared = db
         .select({
-          sum: sum(list.clicked),
+          count: count(),
         })
-        .from(list)
+        .from(logs)
         .prepare();
 
       const { linksListCount, clickedLinksSum } = await db.transaction(
@@ -27,7 +27,7 @@ export const overviewRouter = createTRPCRouter({
             .then((res) => res[0]?.count ?? 0);
           const clickedLinksSum = await clickedLinksSumPrepared
             .execute()
-            .then((res) => res[0]?.sum ?? 0);
+            .then((res) => res[0]?.count ?? 0);
 
           return {
             linksListCount,
@@ -41,13 +41,9 @@ export const overviewRouter = createTRPCRouter({
         clickedLinksSum,
       };
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      }
-
-      return {
-        error: "Internal Server Error",
-      };
+      throw new Error(
+        error instanceof Error ? error.message : "Internal Server Error",
+      );
     }
   }),
 });

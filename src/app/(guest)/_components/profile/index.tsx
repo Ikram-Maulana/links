@@ -16,11 +16,10 @@ export const Profile: FC = () => {
     <div className="flex flex-col items-center pt-16">
       <div className="relative mb-4 h-24 w-24 overflow-hidden rounded-full">
         <Image
-          src={`/${publicMetadata.avatar}`}
+          src={publicMetadata.avatar}
           alt={publicMetadata.name}
           className="h-full w-full object-cover"
           fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           priority
         />
       </div>

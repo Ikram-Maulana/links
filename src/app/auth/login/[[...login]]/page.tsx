@@ -1,10 +1,7 @@
-import coffeeBarImage from "@/assets/images/coffee-bar.webp";
 import { BackToHomeButton } from "@/components/back-to-home-button";
 import { type Metadata } from "next";
 import Image from "next/image";
 import { LoginForm } from "./_components/login-form";
-
-export const runtime = "edge";
 
 export const metadata: Metadata = {
   title: "Login | Ikram Maulana Links",
@@ -22,13 +19,12 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="relative hidden h-full overflow-hidden lg:block">
+        <div className="relative hidden h-full w-full overflow-hidden lg:block">
           <Image
-            src={coffeeBarImage}
+            src="/images/coffee-bar.webp"
             alt="Cozy Sitting Area in Filipenko Coffee Bar"
             className="h-full w-full object-cover"
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             priority
           />
         </div>

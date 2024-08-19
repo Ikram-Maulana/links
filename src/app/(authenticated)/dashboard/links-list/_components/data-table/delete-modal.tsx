@@ -12,15 +12,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { type list } from "@/server/db/schema";
 import { api } from "@/trpc/react";
-import { type InferSelectModel } from "drizzle-orm";
+import { type LinkWithClicked } from "@/types";
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo, type FC } from "react";
+import { useMemo, type FC } from "react";
 import { toast } from "sonner";
 
 type DeleteProps = {
-  row: InferSelectModel<typeof list>;
+  row: LinkWithClicked;
   setIsLoadingDelete: (isLoading: boolean) => void;
   handlerClose: () => void;
   children: React.ReactNode;
@@ -34,44 +33,29 @@ export const DeleteModal: FC<DeleteProps> = ({
 }) => {
   const router = useRouter();
 
-  const handleError = useCallback((error: unknown) => {
-    if (error instanceof Error) {
-      toast.error(error.message);
-      return;
-    }
-
-    toast.error("Internal Server Error");
-    return;
-  }, []);
-
-  const { mutate, isPending } = api.list.delete.useMutation({
+  const { mutate, isPending } = api.link.delete.useMutation({
     onSuccess: async () => {
-      return toast.success(`\"${row.title}\" deleted successfully from list`);
+      toast.success(`\"${row.title}\" deleted successfully from links`);
     },
-    onError: handleError,
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "An error occurred");
+    },
     onSettled: () => {
       setIsLoadingDelete(false);
       handlerClose();
-      return router.refresh();
+      router.refresh();
     },
   });
 
   const isOperationPending = useMemo(() => isPending, [isPending]);
 
-  const onDeleteHandler = useCallback(
-    async ({ id }: { id: string }) => {
-      if (isOperationPending) return;
+  const onDeleteHandler = ({ id }: { id: string }) => {
+    if (isOperationPending) return;
 
-      setIsLoadingDelete(true);
+    setIsLoadingDelete(true);
 
-      try {
-        mutate({ id });
-      } catch (error) {
-        handleError(error);
-      }
-    },
-    [isOperationPending, setIsLoadingDelete, mutate, handleError],
-  );
+    mutate({ id });
+  };
 
   return (
     <AlertDialog>
@@ -88,9 +72,7 @@ export const DeleteModal: FC<DeleteProps> = ({
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <Button variant="destructive" asChild>
             <AlertDialogAction
-              onClick={async () => {
-                await onDeleteHandler({ id: row.id });
-              }}
+              onClick={() => onDeleteHandler({ id: row.id })}
               disabled={isOperationPending}
             >
               Delete

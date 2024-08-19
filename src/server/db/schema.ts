@@ -1,15 +1,19 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
+  boolean,
   index,
-  int,
-  sqliteTableCreator,
+  mysqlTableCreator,
   text,
+  timestamp,
   unique,
-} from "drizzle-orm/sqlite-core";
+  varchar,
+} from "drizzle-orm/mysql-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { v7 as uuidv7 } from "uuid";
+import { z } from "zod";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -17,31 +21,76 @@ import { v7 as uuidv7 } from "uuid";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = sqliteTableCreator((name) => `links_${name}`);
+export const createTable = mysqlTableCreator((name) => `links_${name}`);
 
-export const list = createTable(
-  "list",
+export const links = createTable(
+  "links",
   {
-    id: text("id").notNull().primaryKey().$defaultFn(uuidv7),
-    title: text("title").notNull(),
-    url: text("url").notNull(),
-    slug: text("slug").notNull(),
-    clicked: int("clicked")
+    id: varchar("id", { length: 256 })
       .notNull()
-      .$default(() => 0),
-    isPublished: int("is_published", { mode: "boolean" })
+      .primaryKey()
+      .$defaultFn(uuidv7),
+    title: text("title").notNull(),
+    slug: varchar("slug", { length: 256 }).notNull(),
+    url: text("url").notNull(),
+    isPublished: boolean("is_published")
       .notNull()
       .$default(() => false),
-    createdAt: int("created_at", { mode: "timestamp" })
-      .default(sql`(unixepoch())`)
+    createdAt: timestamp("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
-      () => new Date(),
-    ),
+    updatedAt: timestamp("updated_at").onUpdateNow(),
   },
-  (list) => ({
-    unq: unique().on(list.slug),
-    idListIdx: index("id_list_idx").on(list.id),
-    slugListIdx: index("slug_list_idx").on(list.slug),
+  (links) => ({
+    unq: unique().on(links.slug),
+    idLinksIdx: index("id_idx").on(links.id),
+    slugLinksIdx: index("slug_idx").on(links.slug),
   }),
 );
+export const linksRelations = relations(links, ({ many }) => ({
+  logs: many(logs),
+}));
+export const insertLinkSchema = createInsertSchema(links, {
+  title: (schema) =>
+    schema.title.min(3, "Title must be at least 3 characters long"),
+  slug: (schema) =>
+    schema.slug.min(3, "Slug must be at least 3 characters long"),
+  url: (schema) => schema.url.url(),
+  isPublished: z.boolean(),
+});
+export const selectLinkSchema = createSelectSchema(links);
+
+export const logs = createTable(
+  "logs",
+  {
+    id: varchar("id", { length: 256 })
+      .notNull()
+      .primaryKey()
+      .$defaultFn(uuidv7),
+    linkId: text("link_id").notNull(),
+    ipAddress: text("ip_address").default(""),
+    userAgent: text("user_agent").default(""),
+    referer: text("referer").default(""),
+    platform: text("platform").default(""),
+    createdAt: timestamp("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (logs) => ({
+    idLogsIdx: index("id_idx").on(logs.id),
+  }),
+);
+export const logsRelations = relations(logs, ({ one }) => ({
+  link: one(links, {
+    fields: [logs.linkId],
+    references: [links.id],
+  }),
+}));
+export const insertLogSchema = createInsertSchema(logs, {
+  linkId: z.string(),
+  ipAddress: z.string().optional(),
+  userAgent: z.string().optional(),
+  referer: z.string().optional(),
+  platform: z.string().optional(),
+});
+export const selectLogSchema = createSelectSchema(logs);

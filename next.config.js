@@ -10,6 +10,15 @@ jiti("./src/env");
 
 /** @type {import("next").NextConfig} */
 const config = {
+  async redirects() {
+    return [
+      {
+        source: "/s/:slug",
+        destination: "/api/hono/short/:slug",
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {

@@ -12,7 +12,7 @@ body,
 #topbar-desktop,
 #topbar-mobile,
 #sidebar {
-  background-image: url("../assets/images/noise.png");
+  background-image: url("/noise.webp");
   background-size: 200px 200px;
   background-position: 0 0;
 }

@@ -33,18 +33,23 @@ export default function Topbar() {
           },
         )}
       >
-        <Image
-          src={`/${publicMetadata.avatar}`}
-          alt={`Profile Picture of ${publicMetadata.name}`}
+        <div
           className={cn(
-            "col-start-1 hidden h-10 min-w-10 rounded-full object-cover",
+            "relative col-start-1 hidden h-10 w-10 overflow-hidden rounded-full",
             {
               block: scrollY > 50,
             },
           )}
-          width={40}
-          height={40}
-        />
+        >
+          <Image
+            src={publicMetadata.avatar}
+            alt={`Profile Picture of ${publicMetadata.name}`}
+            className="h-full w-full object-cover"
+            fill
+            placeholder="blur"
+            blurDataURL="data:image/webp;base64,UklGRtIDAABXRUJQVlA4WAoAAAAgAAAAvQAAvQAASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZWUDgg5AEAAFAUAJ0BKr4AvgA+7XayU7otJSKkVDnbQB2JZ27g3paa8CD/JtJo2N8ysDBp2RERERIDF7ptRiTZ6pMpPexYWX/DAZBFBf3KNfTvC99KUl/5Y3/bNC//2trxYQlnpgDbALy/0MJnZYQAcvGEO2sC623c9LlgXDzm0fAe/Slzi3h4u2Wz+B8lLmiPCwhe9Uprw9Jsbn841rRKtzkjHYizfaacZkzmRmlXIbh9AAD+ujt3n2+2Y600jn7OuG2bEG3XeQm8TVR8e64dBU1UtGBj1MWl9LK4s4EXNS6zK207e85Th8ioX5IbXNQjCIMMMlv9PKl9jZqyOdXrYmBmjgFAzxtjZZ8XZ+1bUYbAY9yiGRD7AedqVpHiJz6AoQe4g80aoe3+avSrKKx3raP3eDkihmY5+9N15juTv5u7vgMAKRWaEBqaJNvLyq1TTBKc/De9TmsKFN0BCLNRf81mGYiLTngZTfG6Jvdpf+SzrT9jdX4/IKxCxOI3jX72JfgM4CuswRYWRKNZl5GAytFNp6lLLypLaB91GanEMZYuU+2tlpCjmCoCJRPIhsam4BEjlk58VbBnhFt6F0lJxMhB6mZTN0KDumzT5oYSh8egs4v7EktRqVPgru4CnFpsigHbTo+XnwGy+AA="
+          />
+        </div>
 
         <p
           className={cn(

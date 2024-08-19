@@ -1,24 +1,31 @@
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  type selectLinkSchema,
+  type selectLogSchema,
+} from "@/server/db/schema";
 import { api } from "@/trpc/server";
-import { type LinkWithClicked, type searchLinkParamsSchema } from "@/types";
+import { type searchLogParamsSchema } from "@/types";
 import { IconCircleX } from "@irsyadadl/paranoid";
 import { Suspense, type FC } from "react";
 import type { z } from "zod";
-import { LinksTable } from "../data-table/link-table";
+import { LogsTable } from "../data-table/logs-table";
 
 interface ContentProps {
-  search: z.infer<typeof searchLinkParamsSchema>;
+  search: z.infer<typeof searchLogParamsSchema>;
 }
 
 export const Content: FC<ContentProps> = async ({ search }) => {
-  const linksData = (await api.link.getAll(search)) as {
-    data: LinkWithClicked[];
+  const logsData = (await api.log.getAll(search)) as {
+    data: {
+      logs: z.infer<typeof selectLogSchema>;
+      links: z.infer<typeof selectLinkSchema> | null;
+    }[];
     pageCount: number;
   };
 
-  if (!linksData || (linksData && "error" in linksData)) {
+  if (!logsData || (logsData && "error" in logsData)) {
     <Alert
       variant="destructive"
       className="border-red-500 bg-red-500 text-zinc-50 dark:border-red-900 dark:bg-red-900"
@@ -26,7 +33,7 @@ export const Content: FC<ContentProps> = async ({ search }) => {
       <IconCircleX className="h-4 w-4 !text-zinc-50" />
       <AlertTitle>Error</AlertTitle>
       <AlertDescription>
-        An error occurred while loading links data.
+        An error occurred while loading logs data.
       </AlertDescription>
     </Alert>;
   }
@@ -35,10 +42,10 @@ export const Content: FC<ContentProps> = async ({ search }) => {
     <Card className="relative">
       <CardContent className="p-6">
         <Suspense
-          key={`links-table-${search.page}-${search.sort}`}
+          key={`logs-table-${search.page}-${search.sort}`}
           fallback={<DataTableSkeleton columnCount={4} />}
         >
-          <LinksTable links={linksData} />
+          <LogsTable logs={logsData} />
         </Suspense>
       </CardContent>
     </Card>
