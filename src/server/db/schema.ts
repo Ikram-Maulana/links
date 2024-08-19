@@ -11,7 +11,7 @@ import {
   unique,
   varchar,
 } from "drizzle-orm/mysql-core";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { v7 as uuidv7 } from "uuid";
 import { z } from "zod";
 
@@ -58,6 +58,7 @@ export const insertLinkSchema = createInsertSchema(links, {
   url: (schema) => schema.url.url(),
   isPublished: z.boolean(),
 });
+export const selectLinkSchema = createSelectSchema(links);
 
 export const logs = createTable(
   "logs",

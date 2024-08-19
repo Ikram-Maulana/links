@@ -5,13 +5,23 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import { db } from "@/server/db";
-import { insertLinkSchema, links } from "@/server/db/schema";
-import { createLinkSchema, getLinksSchema, updateLinkSchema } from "@/types";
-import { asc, count, desc, eq, sql, type InferSelectModel } from "drizzle-orm";
+import {
+  insertLinkSchema,
+  links,
+  logs,
+  type selectLinkSchema,
+} from "@/server/db/schema";
+import {
+  createLinkSchema,
+  getLinksSchema,
+  updateLinkSchema,
+  type LinkWithClicked,
+} from "@/types";
+import { asc, count, desc, eq, sql } from "drizzle-orm";
 import slugify from "slugify";
-import * as z from "zod";
+import { z } from "zod";
 
-type Links = InferSelectModel<typeof links>;
+type Links = z.infer<typeof selectLinkSchema>;
 
 export const linkRouter = createTRPCRouter({
   getAll: protectedProcedure.input(getLinksSchema).query(async ({ input }) => {
@@ -67,17 +77,33 @@ export const linkRouter = createTRPCRouter({
         )
         .prepare();
 
-      const { data, total } = await db.transaction(async () => {
-        const data = await dataPrepared.execute();
-        const total = await totalPrepared
-          .execute()
-          .then((res) => res[0]?.count ?? 0);
+      const clickedLinksPrepared = db
+        .select({ count: count() })
+        .from(logs)
+        .where(eq(logs.linkId, sql.placeholder("linkId")))
+        .prepare();
 
-        return {
-          data,
-          total,
-        };
-      });
+      const { dataWithClicked: data, total } = await db.transaction(
+        async () => {
+          const data = await dataPrepared.execute();
+          const dataWithClicked: LinkWithClicked[] = await Promise.all(
+            data.map(async (link) => {
+              const clickedLinks = await clickedLinksPrepared.execute({
+                linkId: link.id,
+              });
+
+              return {
+                ...link,
+                clicked: clickedLinks[0]?.count ?? 0,
+              };
+            }),
+          );
+          const total = await totalPrepared
+            .execute()
+            .then((res) => res[0]?.count ?? 0);
+          return { dataWithClicked, total };
+        },
+      );
 
       const pageCount = Math.ceil(total / per_page);
       return { data, pageCount };

@@ -1,7 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { db } from "@/server/db";
-import { links } from "@/server/db/schema";
-import { count, sum } from "drizzle-orm";
+import { links, logs } from "@/server/db/schema";
+import { count } from "drizzle-orm";
 
 export const overviewRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async () => {
@@ -15,9 +15,9 @@ export const overviewRouter = createTRPCRouter({
 
       const clickedLinksSumPrepared = db
         .select({
-          sum: sum(links.clicked),
+          count: count(),
         })
-        .from(links)
+        .from(logs)
         .prepare();
 
       const { linksListCount, clickedLinksSum } = await db.transaction(
@@ -27,7 +27,7 @@ export const overviewRouter = createTRPCRouter({
             .then((res) => res[0]?.count ?? 0);
           const clickedLinksSum = await clickedLinksSumPrepared
             .execute()
-            .then((res) => res[0]?.sum ?? 0);
+            .then((res) => res[0]?.count ?? 0);
 
           return {
             linksListCount,

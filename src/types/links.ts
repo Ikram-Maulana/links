@@ -1,4 +1,4 @@
-import { insertLinkSchema } from "@/server/db/schema";
+import { insertLinkSchema, type selectLinkSchema } from "@/server/db/schema";
 import { z } from "zod";
 
 export const searchLinkParamsSchema = z.object({
@@ -22,3 +22,7 @@ export const updateLinkSchema = insertLinkSchema.omit({
   createdAt: true,
   updatedAt: true,
 });
+
+export type LinkWithClicked = z.infer<typeof selectLinkSchema> & {
+  clicked: number;
+};
