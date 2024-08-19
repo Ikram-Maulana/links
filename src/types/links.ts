@@ -13,14 +13,12 @@ export const getLinksSchema = searchLinkParamsSchema;
 export const createLinkSchema = insertLinkSchema.omit({
   id: true,
   slug: true,
-  clicked: true,
   createdAt: true,
   updatedAt: true,
 });
 
 export const updateLinkSchema = insertLinkSchema.omit({
   slug: true,
-  clicked: true,
   createdAt: true,
   updatedAt: true,
 });

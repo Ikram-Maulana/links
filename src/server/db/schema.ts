@@ -1,11 +1,10 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   index,
-  integer,
   pgTableCreator,
   text,
   timestamp,
@@ -31,9 +30,6 @@ export const links = createTable(
     title: varchar("title").notNull(),
     slug: varchar("slug").notNull(),
     url: varchar("url").notNull(),
-    clicked: integer("clicked")
-      .notNull()
-      .$default(() => 0),
     isPublished: boolean("is_published")
       .notNull()
       .$default(() => false),
@@ -50,12 +46,45 @@ export const links = createTable(
     slugLinksIdx: index().on(links.slug),
   }),
 );
+export const linksRelations = relations(links, ({ many }) => ({
+  logs: many(logs),
+}));
 export const insertLinkSchema = createInsertSchema(links, {
   title: (schema) =>
     schema.title.min(3, "Title must be at least 3 characters long"),
   slug: (schema) =>
     schema.slug.min(3, "Slug must be at least 3 characters long"),
   url: (schema) => schema.url.url(),
-  clicked: (schema) => schema.clicked.int().positive(),
   isPublished: z.boolean(),
+});
+
+export const logs = createTable(
+  "logs",
+  {
+    id: text("id").notNull().primaryKey().$defaultFn(uuidv7),
+    linkId: text("link_id").notNull(),
+    ipAddress: text("ip_address").default(""),
+    userAgent: text("user_agent").default(""),
+    referer: text("referer").default(""),
+    platform: text("platform").default(""),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (logs) => ({
+    idLogsIdx: index().on(logs.id),
+  }),
+);
+export const logsRelations = relations(logs, ({ one }) => ({
+  link: one(links, {
+    fields: [logs.linkId],
+    references: [links.id],
+  }),
+}));
+export const insertLogSchema = createInsertSchema(logs, {
+  linkId: z.string(),
+  ipAddress: z.string().optional(),
+  userAgent: z.string().optional(),
+  referer: z.string().optional(),
+  platform: z.string().optional(),
 });
