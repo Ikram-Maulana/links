@@ -14,13 +14,13 @@ export const shortRouter = h.get("/:slug", async (c) => {
     return c.notFound();
   }
 
-  const prepared = db
+  const getMainLinkPrepared = db
     .select()
     .from(links)
     .where(eq(links.slug, sql.placeholder("linkSlug")))
     .prepare();
 
-  const data = await prepared.execute({ linkSlug: slug });
+  const data = await getMainLinkPrepared.execute({ linkSlug: slug });
 
   if (!data || !Boolean(data.length)) {
     return c.notFound();
@@ -42,10 +42,10 @@ export const shortRouter = h.get("/:slug", async (c) => {
 
   const logData = {
     linkId: data[0]?.id,
-    ipAddress,
-    platform,
-    userAgent,
-    referer,
+    ipAddress: ipAddress ? ipAddress : "-",
+    platform: platform ? platform.replace(/"/g, "") : "-",
+    userAgent: userAgent ? userAgent : "-",
+    referer: referer ? referer : "direct",
   };
 
   try {
