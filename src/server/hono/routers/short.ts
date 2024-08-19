@@ -18,7 +18,7 @@ export const shortRouter = h.get("/:slug", async (c) => {
     .select()
     .from(links)
     .where(eq(links.slug, sql.placeholder("linkSlug")))
-    .prepare("getLinkBySlug");
+    .prepare();
 
   const data = await prepared.execute({ linkSlug: slug });
 
@@ -54,8 +54,8 @@ export const shortRouter = h.get("/:slug", async (c) => {
     const insertLogPrepared = db
       .insert(logs)
       .values(logDataValidated)
-      .returning()
-      .prepare("createLog");
+      .$returningId()
+      .prepare();
     await insertLogPrepared.execute();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {

@@ -15,7 +15,7 @@ const seedLinks = async () => {
           .select()
           .from(links)
           .where(eq(links.slug, sql.placeholder("slug")))
-          .prepare("checkLinkExists");
+          .prepare();
         const [existingLink] = await linkExistsPrepared.execute({
           slug: link.slug,
         });
@@ -28,8 +28,8 @@ const seedLinks = async () => {
         const insertLinkPrepared = db
           .insert(links)
           .values(link)
-          .returning()
-          .prepare("insertLink");
+          .$returningId()
+          .prepare();
         await insertLinkPrepared.execute();
         console.log(`Link with slug ${link.slug} has been inserted.`);
       }

@@ -5,12 +5,12 @@ import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   index,
-  pgTableCreator,
+  mysqlTableCreator,
   text,
   timestamp,
   unique,
   varchar,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/mysql-core";
 import { createInsertSchema } from "drizzle-zod";
 import { v7 as uuidv7 } from "uuid";
 import { z } from "zod";
@@ -21,29 +21,30 @@ import { z } from "zod";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = pgTableCreator((name) => `links_${name}`);
+export const createTable = mysqlTableCreator((name) => `links_${name}`);
 
 export const links = createTable(
   "links",
   {
-    id: text("id").notNull().primaryKey().$defaultFn(uuidv7),
-    title: varchar("title").notNull(),
-    slug: varchar("slug").notNull(),
-    url: varchar("url").notNull(),
+    id: varchar("id", { length: 256 })
+      .notNull()
+      .primaryKey()
+      .$defaultFn(uuidv7),
+    title: text("title").notNull(),
+    slug: varchar("slug", { length: 256 }).notNull(),
+    url: text("url").notNull(),
     isPublished: boolean("is_published")
       .notNull()
       .$default(() => false),
-    createdAt: timestamp("created_at", { withTimezone: true })
+    createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date(),
-    ),
+    updatedAt: timestamp("updated_at").onUpdateNow(),
   },
   (links) => ({
     unq: unique().on(links.slug),
-    idLinksIdx: index().on(links.id),
-    slugLinksIdx: index().on(links.slug),
+    idLinksIdx: index("id_idx").on(links.id),
+    slugLinksIdx: index("slug_idx").on(links.slug),
   }),
 );
 export const linksRelations = relations(links, ({ many }) => ({
@@ -61,18 +62,21 @@ export const insertLinkSchema = createInsertSchema(links, {
 export const logs = createTable(
   "logs",
   {
-    id: text("id").notNull().primaryKey().$defaultFn(uuidv7),
+    id: varchar("id", { length: 256 })
+      .notNull()
+      .primaryKey()
+      .$defaultFn(uuidv7),
     linkId: text("link_id").notNull(),
     ipAddress: text("ip_address").default(""),
     userAgent: text("user_agent").default(""),
     referer: text("referer").default(""),
     platform: text("platform").default(""),
-    createdAt: timestamp("created_at", { withTimezone: true })
+    createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
   },
   (logs) => ({
-    idLogsIdx: index().on(logs.id),
+    idLogsIdx: index("id_idx").on(logs.id),
   }),
 );
 export const logsRelations = relations(logs, ({ one }) => ({

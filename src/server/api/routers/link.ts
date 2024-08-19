@@ -49,7 +49,7 @@ export const linkRouter = createTRPCRouter({
               : asc(links[column])
             : desc(links.createdAt),
         )
-        .prepare("getAllLinks");
+        .prepare();
 
       const totalPrepared = db
         .select({
@@ -65,7 +65,7 @@ export const linkRouter = createTRPCRouter({
               })
             : undefined,
         )
-        .prepare("getTotalLinks");
+        .prepare();
 
       const { data, total } = await db.transaction(async () => {
         const data = await dataPrepared.execute();
@@ -95,7 +95,7 @@ export const linkRouter = createTRPCRouter({
         .from(links)
         .where(eq(links.isPublished, true))
         .orderBy(desc(links.createdAt))
-        .prepare("getAllLinksWithoutPagination");
+        .prepare();
       const allLinks = await getAllPrepared.execute();
 
       return allLinks;
@@ -116,7 +116,7 @@ export const linkRouter = createTRPCRouter({
           .select()
           .from(links)
           .where(eq(links.slug, sql.placeholder("slug")))
-          .prepare("getExistingLinks");
+          .prepare();
         const [existingLinks] = await existingLinksPrepared.execute({ slug });
         const isSlugExist = !!existingLinks;
 
@@ -135,8 +135,8 @@ export const linkRouter = createTRPCRouter({
         const createLinkPrepared = db
           .insert(links)
           .values(linkDataValidated)
-          .returning()
-          .prepare("createNewLink");
+          .$returningId()
+          .prepare();
         const createdLinks = await createLinkPrepared.execute();
 
         return createdLinks;
@@ -162,8 +162,7 @@ export const linkRouter = createTRPCRouter({
             isPublished: input.isPublished,
           })
           .where(eq(links.id, sql.placeholder("linkId")))
-          .returning()
-          .prepare("setIsPublished");
+          .prepare();
         const setIsPublished = await setIsPublishedPrepared.execute({
           linkId: input.id,
         });
@@ -188,7 +187,7 @@ export const linkRouter = createTRPCRouter({
           .select()
           .from(links)
           .where(eq(links.id, sql.placeholder("linkId")))
-          .prepare("getOneLinkById");
+          .prepare();
         const [linkData] = await getOnePrepared.execute({
           linkId: input.id,
         });
@@ -211,7 +210,7 @@ export const linkRouter = createTRPCRouter({
           .select()
           .from(links)
           .where(eq(links.slug, sql.placeholder("slug")))
-          .prepare("getExistingLink");
+          .prepare();
         const [existingLink] = await existingLinkPrepared.execute({ slug });
         const isSlugExist = !!existingLink;
 
@@ -231,8 +230,7 @@ export const linkRouter = createTRPCRouter({
           .update(links)
           .set(linkDataValidated)
           .where(eq(links.id, sql.placeholder("linkId")))
-          .returning()
-          .prepare("updateLink");
+          .prepare();
         const updatedLinks = await updateLinksPrepared.execute({
           linkId: input.id,
         });
@@ -256,7 +254,7 @@ export const linkRouter = createTRPCRouter({
         const deleteLinksPrepared = db
           .delete(links)
           .where(eq(links.id, sql.placeholder("linkId")))
-          .prepare("deleteLink");
+          .prepare();
         const deleteLinks = await deleteLinksPrepared.execute({
           linkId: input.id,
         });

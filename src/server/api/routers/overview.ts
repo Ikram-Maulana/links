@@ -11,14 +11,14 @@ export const overviewRouter = createTRPCRouter({
           count: count(),
         })
         .from(links)
-        .prepare("linksListCount");
+        .prepare();
 
       const clickedLinksSumPrepared = db
         .select({
           sum: sum(links.clicked),
         })
         .from(links)
-        .prepare("clickedLinksSum");
+        .prepare();
 
       const { linksListCount, clickedLinksSum } = await db.transaction(
         async () => {
