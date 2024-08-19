@@ -93,3 +93,4 @@ export const insertLogSchema = createInsertSchema(logs, {
   referer: z.string().optional(),
   platform: z.string().optional(),
 });
+export const selectLogSchema = createSelectSchema(logs);
