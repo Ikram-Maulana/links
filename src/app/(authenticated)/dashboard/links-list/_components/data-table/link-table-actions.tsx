@@ -10,10 +10,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { type links } from "@/server/db/schema";
+import { type LinkWithClicked } from "@/types";
 import { IconLoader } from "@irsyadadl/paranoid";
 import { useDisclosure } from "@mantine/hooks";
-import { type InferSelectModel } from "drizzle-orm";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { DeleteModal } from "./delete-modal";
@@ -23,7 +22,7 @@ interface LinkTableActionsProps<TData> {
 }
 
 export function LinkTableActions<TData>({ row }: LinkTableActionsProps<TData>) {
-  const linksData = row.original as InferSelectModel<typeof links>;
+  const linksData = row.original as LinkWithClicked;
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
   const [opened, { toggle, open, close }] = useDisclosure(false);
 
@@ -61,7 +60,7 @@ export function LinkTableActions<TData>({ row }: LinkTableActionsProps<TData>) {
           className="hover:cursor-pointer"
           asChild
         >
-          <Link href={`/dashboard/links-links/${linksData.id}/edit`}>Edit</Link>
+          <Link href={`/dashboard/links-list/${linksData.id}/edit`}>Edit</Link>
         </DropdownMenuItem>
         <DeleteModal
           row={linksData}

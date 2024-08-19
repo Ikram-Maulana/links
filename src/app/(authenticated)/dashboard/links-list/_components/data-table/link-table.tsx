@@ -6,11 +6,10 @@ import * as React from "react";
 import { DataTable } from "@/components/data-table/data-table";
 import { useDataTable } from "@/hooks/use-data-table";
 
-import { type links } from "@/server/db/schema";
-import { type InferSelectModel } from "drizzle-orm";
+import { type LinkWithClicked } from "@/types";
 import { getColumns, searchableColumns } from "./link-table-columns";
 
-type Links = InferSelectModel<typeof links>;
+type Links = LinkWithClicked;
 type getLinksType = {
   data: Links[];
   pageCount: number;

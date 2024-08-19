@@ -1,12 +1,11 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { type links } from "@/server/db/schema";
 import { api } from "@/trpc/server";
+import { type LinkWithClicked } from "@/types";
 import { IconCircleX, IconTriangleInfo } from "@irsyadadl/paranoid";
-import { type InferSelectModel } from "drizzle-orm";
 import { type FC } from "react";
 import { LinksItem } from "./links-item";
 
-type LinksListDataProps = InferSelectModel<typeof links>;
+type LinksListDataProps = LinkWithClicked;
 
 export const LinksList: FC = async () => {
   const linksList =

@@ -12,15 +12,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { type links } from "@/server/db/schema";
 import { api } from "@/trpc/react";
-import { type InferSelectModel } from "drizzle-orm";
+import { type LinkWithClicked } from "@/types";
 import { useRouter } from "next/navigation";
 import { useMemo, type FC } from "react";
 import { toast } from "sonner";
 
 type DeleteProps = {
-  row: InferSelectModel<typeof links>;
+  row: LinkWithClicked;
   setIsLoadingDelete: (isLoading: boolean) => void;
   handlerClose: () => void;
   children: React.ReactNode;

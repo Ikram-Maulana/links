@@ -1,13 +1,11 @@
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
-import { type links } from "@/server/db/schema";
 import { api } from "@/trpc/server";
-import { type searchLinkParamsSchema } from "@/types";
+import { type LinkWithClicked, type searchLinkParamsSchema } from "@/types";
 import { IconCircleX } from "@irsyadadl/paranoid";
-import { type InferSelectModel } from "drizzle-orm";
 import { Suspense, type FC } from "react";
-import type * as z from "zod";
+import type { z } from "zod";
 import { LinksTable } from "../data-table/link-table";
 
 interface ContentProps {
@@ -16,7 +14,7 @@ interface ContentProps {
 
 export const Content: FC<ContentProps> = async ({ search }) => {
   const linksData = (await api.link.getAll(search)) as {
-    data: InferSelectModel<typeof links>[];
+    data: LinkWithClicked[];
     pageCount: number;
   };
 

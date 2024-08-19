@@ -1,17 +1,15 @@
 "use client";
 
-import type { DataTableSearchableColumn } from "@/types";
+import type { DataTableSearchableColumn, LinkWithClicked } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 
 import { Badge } from "@/components/ui/badge";
-import { type links } from "@/server/db/schema";
-import { type InferSelectModel } from "drizzle-orm";
 import { LinkTableActions } from "./link-table-actions";
 import { PublishedSwitch } from "./published-switch";
 
-type Links = InferSelectModel<typeof links>;
+type Links = LinkWithClicked;
 
 export function getColumns(): ColumnDef<Links>[] {
   return [

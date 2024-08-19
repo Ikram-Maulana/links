@@ -14,22 +14,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { revalidate } from "@/lib/revalidate";
-import { type links } from "@/server/db/schema";
 import { api } from "@/trpc/react";
+import { type createLinkSchema, type updateLinkSchema } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconLoader } from "@irsyadadl/paranoid";
 import { useDebouncedValue } from "@mantine/hooks";
-import { type InferSelectModel } from "drizzle-orm";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useMemo, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import * as z from "zod";
+import { z } from "zod";
 import { EditLinkFormSkeleton } from "./skeleton/form-skeleton";
 
 interface EditLinkFormProps {
-  detailLink: InferSelectModel<typeof links>;
+  detailLink: z.infer<typeof updateLinkSchema>;
 }
 
 const formSchema = z.object({
@@ -88,7 +87,7 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ detailLink }) => {
       title: data.title,
       url: data.url,
       isPublished: data.isPublished,
-    } as InferSelectModel<typeof links>;
+    } as z.infer<typeof createLinkSchema>;
 
     mutateLink(linkData);
   }

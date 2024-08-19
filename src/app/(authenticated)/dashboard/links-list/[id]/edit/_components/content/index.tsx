@@ -1,9 +1,9 @@
 import { Card } from "@/components/ui/card";
-import { type links } from "@/server/db/schema";
 import { api } from "@/trpc/server";
-import { type InferSelectModel } from "drizzle-orm";
+import { type updateLinkSchema } from "@/types";
 import { notFound } from "next/navigation";
 import { type FC } from "react";
+import { type z } from "zod";
 import Form from "../form";
 
 interface ContentProps {
@@ -13,7 +13,7 @@ interface ContentProps {
 export const Content: FC<ContentProps> = async ({ id }) => {
   const linkData = (await api.link.getOneById({
     id,
-  })) as InferSelectModel<typeof links>;
+  })) as z.infer<typeof updateLinkSchema>;
 
   if (!linkData) {
     return notFound();
