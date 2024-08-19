@@ -23,7 +23,7 @@ const config = {
     return [
       {
         source: "/ancika.js",
-        destination: "https://ancika.ikrammaulana.my.id/ancika",
+        destination: "https://ancika.ikrammaulana.my.id/ancika.js",
       },
     ];
   },
