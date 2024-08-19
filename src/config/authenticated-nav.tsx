@@ -1,5 +1,5 @@
 import { applyIconClassNames } from "@/lib/utils";
-import { IconCainLink3, IconHome } from "@irsyadadl/paranoid";
+import { IconCainLink3, IconFileText, IconHome } from "@irsyadadl/paranoid";
 import { type ReactNode } from "react";
 
 export type TAuthenticatedNav = {
@@ -18,6 +18,11 @@ export const authenticatedNav: TAuthenticatedNav[] = [
     title: "Links List",
     href: "/dashboard/links-list",
     icon: <IconCainLink3 />,
+  },
+  {
+    title: "Logs",
+    href: "/dashboard/logs",
+    icon: <IconFileText />,
   },
 ].map((data) => ({
   ...data,
