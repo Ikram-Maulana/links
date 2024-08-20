@@ -25,9 +25,7 @@ export function getColumns(): ColumnDef<{
         <DataTableColumnHeader column={column} title="Link Title" />
       ),
       cell: ({ row }) => {
-        const linkTitle = row.original.links?.title
-          ? row.original.links.title
-          : null;
+        const linkTitle = row.original.links?.title ?? null;
 
         if (linkTitle) {
           return linkTitle;
@@ -48,9 +46,7 @@ export function getColumns(): ColumnDef<{
         />
       ),
       cell: ({ row }) => {
-        const ipAddress = row.original.logs.ipAddress
-          ? row.original.logs.ipAddress
-          : null;
+        const ipAddress = row.original.logs.ipAddress ?? null;
 
         if (ipAddress) {
           return (
@@ -80,9 +76,7 @@ export function getColumns(): ColumnDef<{
         />
       ),
       cell: ({ row }) => {
-        const userAgent = row.original.logs.userAgent
-          ? row.original.logs.userAgent
-          : null;
+        const userAgent = row.original.logs.userAgent ?? null;
 
         if (userAgent) {
           return (
@@ -108,19 +102,30 @@ export function getColumns(): ColumnDef<{
         />
       ),
       cell: ({ row }) => {
-        const referer = row.original.logs.referer
-          ? new URL(row.original.logs.referer)
-          : null;
+        const referer = row.original.logs.referer ?? null;
 
         if (referer) {
+          const isURL = (url: string) => {
+            try {
+              new URL(url);
+              return true;
+            } catch {
+              return false;
+            }
+          };
+
+          if (!isURL(referer)) {
+            return referer;
+          }
+
           return (
             <a
-              href={referer.href}
+              href={referer}
               target="_blank"
               rel="noopener"
               className="font-medium text-blue-500 hover:underline hover:underline-offset-4"
             >
-              {referer.hostname}
+              {referer}
             </a>
           );
         } else {
@@ -136,9 +141,7 @@ export function getColumns(): ColumnDef<{
         <DataTableColumnHeader column={column} title="Platform" />
       ),
       cell: ({ row }) => {
-        const platform = row.original.logs.platform
-          ? row.original.logs.platform
-          : null;
+        const platform = row.original.logs.platform ?? null;
 
         if (platform) {
           return platform;
@@ -159,9 +162,7 @@ export function getColumns(): ColumnDef<{
         />
       ),
       cell: ({ row }) => {
-        const date = row.original.logs.createdAt
-          ? new Date(row.original.logs.createdAt)
-          : null;
+        const date = new Date(row.original.logs.createdAt) ?? null;
 
         if (date) {
           const day = date.getDate();
