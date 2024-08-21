@@ -68,10 +68,10 @@ export const logs = createTable(
       .primaryKey()
       .$defaultFn(uuidv7),
     linkId: text("link_id").notNull(),
-    ipAddress: text("ip_address").default(""),
-    userAgent: text("user_agent").default(""),
-    referer: text("referer").default(""),
-    platform: text("platform").default(""),
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    referer: text("referer"),
+    platform: text("platform"),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
