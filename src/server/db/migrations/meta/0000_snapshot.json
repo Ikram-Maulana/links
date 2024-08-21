@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "f67f8375-3a73-44d1-82e0-3b32fd5e98d1",
+  "id": "b55bfcbf-ce25-4fa3-814a-d44788d076a7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "links_links": {
@@ -115,32 +115,28 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": "('')"
+          "autoincrement": false
         },
         "user_agent": {
           "name": "user_agent",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": "('')"
+          "autoincrement": false
         },
         "referer": {
           "name": "referer",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": "('')"
+          "autoincrement": false
         },
         "platform": {
           "name": "platform",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": "('')"
+          "autoincrement": false
         },
         "created_at": {
           "name": "created_at",

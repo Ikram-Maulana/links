@@ -42,10 +42,10 @@ export const shortRouter = h.get("/:slug", async (c) => {
 
   const logData = {
     linkId: data[0]?.id,
-    ipAddress: ipAddress ? ipAddress : "-",
-    platform: platform ? platform.replace(/"/g, "") : "-",
-    userAgent: userAgent ? userAgent : "-",
-    referer: referer ? referer : "direct",
+    ipAddress: ipAddress ?? "-",
+    platform: platform?.replace(/"/g, "") ?? "-",
+    userAgent: userAgent ?? "-",
+    referer: referer ?? "direct",
   };
 
   try {

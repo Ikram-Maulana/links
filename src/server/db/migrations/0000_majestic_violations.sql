@@ -13,10 +13,10 @@ CREATE TABLE `links_links` (
 CREATE TABLE `links_logs` (
 	`id` varchar(256) NOT NULL,
 	`link_id` text NOT NULL,
-	`ip_address` text DEFAULT (''),
-	`user_agent` text DEFAULT (''),
-	`referer` text DEFAULT (''),
-	`platform` text DEFAULT (''),
+	`ip_address` text,
+	`user_agent` text,
+	`referer` text,
+	`platform` text,
 	`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT `links_logs_id` PRIMARY KEY(`id`)
 );
