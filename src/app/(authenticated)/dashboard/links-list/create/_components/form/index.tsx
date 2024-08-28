@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { IconLoader } from "@irsyadadl/paranoid";
 import { useDebouncedValue } from "@mantine/hooks";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 import { useMemo, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
