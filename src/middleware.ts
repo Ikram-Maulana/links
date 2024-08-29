@@ -1,12 +1,12 @@
 import { env } from "@/env";
 import {
-  DEFAULT_LOGIN_REDIRECT,
   apiRoutes,
   authRoutes,
+  DEFAULT_LOGIN_REDIRECT,
   publicRoutes,
   trpcPublicRoutes,
 } from "@/routes";
-import arcjet, { detectBot, shield, tokenBucket } from "@arcjet/next";
+import arcjet, { detectBot, fixedWindow, shield } from "@arcjet/next";
 import {
   clerkMiddleware,
   type ClerkMiddlewareAuthObject,
@@ -50,17 +50,19 @@ const ajrl = arcjet({
   key: env.ARCJET_KEY,
   characteristics: ["ip.src"],
   rules: [
-    tokenBucket({
+    fixedWindow({
       mode: "LIVE",
-      refillRate: 10,
-      interval: 60,
-      capacity: 100,
+      window: "60s",
+      max: 100,
     }),
   ],
 });
 
 async function handleBotProtection(req: NextRequest) {
   const decision = await aj.protect(req);
+  if (decision.isErrored()) {
+    return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
+  }
   if (decision.isDenied()) {
     const { reason } = decision;
     if (reason.isBot()) {
@@ -79,7 +81,13 @@ async function handleRateLimiting(req: NextRequest) {
     req.url.includes("/api/hono") ||
     trpcPublicRoutes.some((route) => req.url.includes(route))
   ) {
-    const rateLimit = await ajrl.protect(req, { requested: 1 });
+    const rateLimit = await ajrl.protect(req);
+    if (rateLimit.isErrored()) {
+      return NextResponse.json(
+        { error: "Service unavailable" },
+        { status: 503 },
+      );
+    }
     if (rateLimit.isDenied() && rateLimit.reason.isRateLimit()) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }

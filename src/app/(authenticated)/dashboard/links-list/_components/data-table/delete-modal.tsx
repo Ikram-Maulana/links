@@ -14,7 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/react";
 import { type LinkWithClicked } from "@/types";
-import { useRouter } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 import { useMemo, type FC } from "react";
 import { toast } from "sonner";
 

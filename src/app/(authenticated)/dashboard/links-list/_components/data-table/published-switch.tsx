@@ -2,7 +2,7 @@
 
 import { Switch } from "@/components/ui/switch";
 import { api } from "@/trpc/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 import { type FC } from "react";
 import { toast } from "sonner";
 
