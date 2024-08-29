@@ -15,6 +15,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@arcjet/next": "^1.0.0-alpha.22",
     "@clerk/elements": "^0.14.3",
     "@clerk/nextjs": "^5.3.6",
     "@hookform/resolvers": "^3.9.0",
@@ -61,8 +62,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@arcjet/next": "^1.0.0-alpha.22",
-    "@cloudflare/next-on-pages": "^1.13.2",
     "@types/eslint": "^8.56.12",
     "@types/node": "^22.5.1",
     "@types/react": "^18.3.4",
