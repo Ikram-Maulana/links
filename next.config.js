@@ -10,6 +10,14 @@ jiti("./src/env");
 
 /** @type {import("next").NextConfig} */
 const config = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "ucarecdn.com",
+      },
+    ],
+  },
   async redirects() {
     return [
       {
