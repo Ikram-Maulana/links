@@ -7,7 +7,7 @@ import { IconBrandGithub, IconLoader } from "@irsyadadl/paranoid";
 import { League_Spartan } from "next/font/google";
 import Image from "next/image";
 import { useEffect, useState, type FC } from "react";
-import { LoginFormSkeleton } from "./skeleton/login-form-skeleton";
+import { LoginFormSkeleton } from "./skeleton";
 
 const leagueSpartan = League_Spartan({
   display: "swap",
