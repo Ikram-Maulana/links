@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 import { connect, type Connection } from "@tidbcloud/serverless";
 import { drizzle } from "drizzle-orm/tidb-serverless";
 
