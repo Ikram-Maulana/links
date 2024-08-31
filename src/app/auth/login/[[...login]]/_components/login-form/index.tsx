@@ -1,13 +1,14 @@
 "use client";
 
+import UcareImage from "@/components/ucare-image";
 import { Button } from "@/components/ui/button";
+import { publicMetadata } from "@/data";
 import * as Clerk from "@clerk/elements/common";
 import * as SignIn from "@clerk/elements/sign-in";
 import { IconBrandGithub, IconLoader } from "@irsyadadl/paranoid";
 import { League_Spartan } from "next/font/google";
-import Image from "next/image";
 import { useEffect, useState, type FC } from "react";
-import { LoginFormSkeleton } from "./skeleton/login-form-skeleton";
+import { LoginFormSkeleton } from "./skeleton";
 
 const leagueSpartan = League_Spartan({
   display: "swap",
@@ -35,11 +36,12 @@ export const LoginForm: FC = () => {
           <SignIn.Step name="start">
             <div>
               <div className="relative h-16 w-16 overflow-hidden">
-                <Image
-                  src="/images/ikram-logo.webp"
-                  alt="Ikram Logo"
+                <UcareImage
+                  src={publicMetadata.logo.url}
+                  alt={publicMetadata.logo.description}
                   className="h-full w-full object-cover"
-                  fill
+                  width={64}
+                  height={64}
                   priority
                 />
               </div>

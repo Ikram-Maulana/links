@@ -56,7 +56,8 @@ const AddLinkForm: FC = () => {
   const { mutate: mutateLink, isPending: isPendingMutateLink } =
     api.link.create.useMutation({
       onSuccess: async () => {
-        await revalidate().then(() => router.push("/dashboard/links-list"));
+        revalidate();
+        router.push("/dashboard/links-list");
         toast.success("Link has been added.");
       },
       onError: (error) => {

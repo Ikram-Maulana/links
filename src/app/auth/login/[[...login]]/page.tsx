@@ -1,6 +1,7 @@
 import { BackToHomeButton } from "@/components/back-to-home-button";
+import UcareImage from "@/components/ucare-image";
+import { publicMetadata } from "@/data";
 import { type Metadata } from "next";
-import Image from "next/image";
 import { LoginForm } from "./_components/login-form";
 
 export const metadata: Metadata = {
@@ -20,11 +21,12 @@ export default function Page() {
         </div>
 
         <div className="relative hidden h-full w-full overflow-hidden lg:block">
-          <Image
-            src="/images/coffee-bar.webp"
-            alt="Cozy Sitting Area in Filipenko Coffee Bar"
+          <UcareImage
+            src={publicMetadata.authImage.url}
+            alt={publicMetadata.authImage.description}
             className="h-full w-full object-cover"
-            fill
+            width={800}
+            height={1000}
             priority
           />
         </div>

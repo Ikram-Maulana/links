@@ -66,8 +66,9 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ detailLink }) => {
 
   const { mutate: mutateLink, isPending: isPendingMutateLink } =
     api.link.update.useMutation({
-      onSuccess: async () => {
-        await revalidate().then(() => router.push("/dashboard/links-list"));
+      onSuccess: () => {
+        revalidate();
+        router.push("/dashboard/links-list");
         toast.success("Link updated successfully");
       },
       onError: (error) => {
