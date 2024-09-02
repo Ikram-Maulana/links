@@ -14,7 +14,7 @@ const config = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "ucarecdn.com",
+        hostname: "ik.imagekit.io",
       },
     ],
   },

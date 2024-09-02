@@ -17,6 +17,7 @@ export const env = createEnv({
       .refine((str) => str !== "", "Please provide a clerk secret key"),
     ARCJET_KEY: z.string(),
     ARCJET_ENV: z.enum(["production", "development"]).optional(),
+    IMAGEKIT_PRIVATE_KEY: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -40,7 +41,8 @@ export const env = createEnv({
     NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string(),
     NEXT_PUBLIC_BASE_URL: z.string().url(),
     NEXT_PUBLIC_UMAMI_ID: z.string(),
-    NEXT_PUBLIC_UPLOADCARE_PUBLIC_KEY: z.string(),
+    NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY: z.string(),
+    NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT: z.string().url(),
   },
 
   /**
@@ -58,7 +60,10 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     NEXT_PUBLIC_UMAMI_ID: process.env.NEXT_PUBLIC_UMAMI_ID,
-    NEXT_PUBLIC_UPLOADCARE_PUBLIC_KEY: process.env.NEXT_PUBLIC_UPLOADCARE_PUBLIC_KEY,
+    NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY:
+      process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY,
+    NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT:
+      process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

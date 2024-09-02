@@ -1,7 +1,7 @@
 "use client";
 
+import Ikmage from "@/components/ikmage";
 import { ShareTrigger } from "@/components/share-trigger";
-import UcareImage from "@/components/ucare-image";
 import { Button } from "@/components/ui/button";
 import { publicMetadata } from "@/data";
 import { env } from "@/env";
@@ -41,12 +41,13 @@ export default function Topbar() {
             },
           )}
         >
-          <UcareImage
-            src={publicMetadata.avatar.url}
+          <Ikmage
+            path={publicMetadata.avatar.url}
             alt={publicMetadata.avatar.description}
             className="h-full w-full object-cover"
             width={40}
             height={40}
+            loading="lazy"
           />
         </div>
 

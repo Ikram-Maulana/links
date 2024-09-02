@@ -1,6 +1,6 @@
 "use client";
 
-import UcareImage from "@/components/ucare-image";
+import Ikmage from "@/components/ikmage";
 import { Button } from "@/components/ui/button";
 import { publicMetadata } from "@/data";
 import * as Clerk from "@clerk/elements/common";
@@ -36,13 +36,13 @@ export const LoginForm: FC = () => {
           <SignIn.Step name="start">
             <div>
               <div className="relative h-16 w-16 overflow-hidden">
-                <UcareImage
-                  src={publicMetadata.logo.url}
+                <Ikmage
+                  path={publicMetadata.logo.url}
                   alt={publicMetadata.logo.description}
                   className="h-full w-full object-cover"
                   width={64}
                   height={64}
-                  priority
+                  loading="lazy"
                 />
               </div>
 
