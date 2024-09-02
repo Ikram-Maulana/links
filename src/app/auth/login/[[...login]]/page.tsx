@@ -1,5 +1,5 @@
 import { BackToHomeButton } from "@/components/back-to-home-button";
-import UcareImage from "@/components/ucare-image";
+import Ikmage from "@/components/ikmage";
 import { publicMetadata } from "@/data";
 import { type Metadata } from "next";
 import { LoginForm } from "./_components/login-form";
@@ -21,12 +21,12 @@ export default function Page() {
         </div>
 
         <div className="relative hidden h-full w-full overflow-hidden lg:block">
-          <UcareImage
-            src={publicMetadata.authImage.url}
+          <Ikmage
+            path={publicMetadata.authImage.url}
             alt={publicMetadata.authImage.description}
             className="h-full w-full object-cover"
-            width={800}
-            height={1000}
+            width={666}
+            height={999}
             priority
           />
         </div>

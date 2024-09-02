@@ -1,4 +1,4 @@
-import UcareImage from "@/components/ucare-image";
+import Ikmage from "@/components/ikmage";
 import { Button } from "@/components/ui/button";
 import { publicMetadata } from "@/data";
 import { IconLocation } from "@irsyadadl/paranoid";
@@ -15,8 +15,8 @@ export const Profile: FC = () => {
   return (
     <div className="flex flex-col items-center pt-16">
       <div className="relative mb-4 h-24 w-24 overflow-hidden rounded-full">
-        <UcareImage
-          src={publicMetadata.avatar.url}
+        <Ikmage
+          path={publicMetadata.avatar.url}
           alt={publicMetadata.avatar.description}
           className="h-full w-full object-cover"
           width={96}
