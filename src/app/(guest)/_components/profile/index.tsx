@@ -16,7 +16,7 @@ export const Profile: FC = () => {
     <div className="flex flex-col items-center pt-16">
       <div className="relative mb-4 h-24 w-24 overflow-hidden rounded-full">
         <Ikmage
-          path={publicMetadata.avatar.url}
+          src={publicMetadata.avatar.url}
           alt={publicMetadata.avatar.description}
           className="h-full w-full object-cover"
           width={96}
