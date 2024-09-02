@@ -1,19 +1,20 @@
 "use client";
 
 import { env } from "@/env";
-import { type IKImageProps, type ImageKitProviderProps } from "@/types";
-import { IKImage } from "imagekitio-next";
-import { type ImageProps } from "next/image";
+import Image, { type ImageProps } from "next/image";
 import { type FC } from "react";
 
-type IkmageProps = Omit<ImageProps, "src" | "loading" | "loader"> &
-  IKImageProps &
-  ImageKitProviderProps;
+type IkmageProps = ImageProps & {
+  src: string;
+};
 
 const urlEndpoint = env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT;
 
 const Ikmage: FC<IkmageProps> = (props) => {
-  return <IKImage urlEndpoint={urlEndpoint} {...props} />;
+  const { alt, width, height, src, ...rest } = props;
+  const imageUrl = `${urlEndpoint}/tr:w-${width},h-${height}/${src}`;
+
+  return <Image src={imageUrl} alt={alt} {...rest} unoptimized />;
 };
 
 export default Ikmage;

@@ -37,7 +37,7 @@ export const LoginForm: FC = () => {
             <div>
               <div className="relative h-16 w-16 overflow-hidden">
                 <Ikmage
-                  path={publicMetadata.logo.url}
+                  src={publicMetadata.logo.url}
                   alt={publicMetadata.logo.description}
                   className="h-full w-full object-cover"
                   width={64}

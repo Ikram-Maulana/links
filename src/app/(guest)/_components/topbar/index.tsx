@@ -42,7 +42,7 @@ export default function Topbar() {
           )}
         >
           <Ikmage
-            path={publicMetadata.avatar.url}
+            src={publicMetadata.avatar.url}
             alt={publicMetadata.avatar.description}
             className="h-full w-full object-cover"
             width={40}

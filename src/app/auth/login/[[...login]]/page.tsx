@@ -22,7 +22,7 @@ export default function Page() {
 
         <div className="relative hidden h-full w-full overflow-hidden lg:block">
           <Ikmage
-            path={publicMetadata.authImage.url}
+            src={publicMetadata.authImage.url}
             alt={publicMetadata.authImage.description}
             className="h-full w-full object-cover"
             width={666}
