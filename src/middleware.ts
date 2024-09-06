@@ -1,3 +1,4 @@
+import { allowedBotList } from "@/data";
 import { env } from "@/env";
 import {
   apiRoutes,
@@ -26,22 +27,7 @@ const aj = arcjet({
     }),
     detectBot({
       mode: "LIVE",
-      block: ["AUTOMATED"],
-      patterns: {
-        remove: [
-          // Allow generally friendly bots like GoogleBot and DiscordBot. These
-          // have a more complex user agent like "AdsBot-Google
-          // (+https://www.google.com/adsbot.html)" or "Mozilla/5.0 (compatible;
-          // Discordbot/2.0; +https://discordapp.com)" so need multiple patterns
-          "^[a-z.0-9/ \\-_]*bot",
-          "bot($|[/\\);-]+)",
-          "http[s]?://",
-          // Vercel screenshot agent
-          "vercel-screenshot/1.0",
-          // Chrome Lighthouse
-          "Chrome-Lighthouse",
-        ],
-      },
+      allow: allowedBotList,
     }),
   ],
 });
@@ -60,19 +46,15 @@ const ajrl = arcjet({
 
 async function handleBotProtection(req: NextRequest) {
   const decision = await aj.protect(req);
+
   if (decision.isErrored()) {
     return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
   }
-  if (decision.isDenied()) {
-    const { reason } = decision;
-    if (reason.isBot()) {
-      const { botType } = reason;
-      if (botType === "VERIFIED_BOT" || botType === "LIKELY_NOT_A_BOT") {
-        return NextResponse.next();
-      }
-    }
+
+  if (decision.isDenied() && decision.reason.isBot()) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
+
   return NextResponse.next();
 }
 
