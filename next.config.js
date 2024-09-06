@@ -10,14 +10,6 @@ jiti("./src/env");
 
 /** @type {import("next").NextConfig} */
 const config = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "ik.imagekit.io",
-      },
-    ],
-  },
   async redirects() {
     return [
       {
