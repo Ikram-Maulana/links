@@ -1,4 +1,4 @@
-import { allowedBotList } from "@/data";
+import { allowedBotCategoryList } from "@/config/allowed-bot";
 import { env } from "@/env";
 import {
   apiRoutes,
@@ -27,7 +27,7 @@ const aj = arcjet({
     }),
     detectBot({
       mode: "LIVE",
-      allow: allowedBotList,
+      allow: allowedBotCategoryList,
     }),
   ],
 });
